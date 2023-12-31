@@ -4,7 +4,7 @@ import addFileIcon from "@public/icons/addFile.png";
 const AddIconSize = 38;
 const AddButtonList = () => {
   return (
-    <div className="grid grid-cols-2">
+    <div className="grid grid-cols-2 select-none cursor-pointer">
       <div className="col-span-1 py-1 flex rounded-l-lg border-l border-r border-t border-b">
         <div className="mx-auto">
           <Image

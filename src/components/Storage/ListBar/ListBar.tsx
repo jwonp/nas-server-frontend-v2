@@ -1,5 +1,4 @@
 import Image from "next/image";
-import logoIcon from "@public/icons/logo.jpeg";
 import folderIcon from "@public/icons/folder.png";
 import backIcon from "@public/icons/arrowLeft.png";
 import addFolderIcon from "@public/icons/addFolder.png";
@@ -7,14 +6,13 @@ import addFileIcon from "@public/icons/addFile.png";
 import fileIcon from "@public/icons/file.png";
 import imageIcon from "@public/icons/photo.png";
 import videoIcon from "@public/icons/video.png";
-import logoutIcon from "@public/icons/logout.png";
 import userIcon from "@public/icons/userCircle.png";
 import deleteIcon from "@public/icons/delete.png";
 import favoriteIcon from "@public/icons/star.png";
 import editTitleIcon from "@public/icons/edit.png";
 import downloadIcon from "@public/icons/download.png";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
-import { useState } from "react";
+
 import { useHover } from "@uidotdev/usehooks";
 const fileIcons = {
   back: backIcon,
@@ -94,7 +92,7 @@ const ListBar = ({
         {`${fileSize ?? "-"}`}
       </div>
       <div
-        className={`col-span-3 flex gap-2 ${
+        className={`col-span-3 grid grid-cols-4 gap-1 ${
           hovering ? "opacity-100" : "opacity-0"
         }`}>
         <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">

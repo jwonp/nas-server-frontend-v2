@@ -21,7 +21,7 @@ const StoragePage = () => {
       </div>
       
       <ListColumnBar />
-      <div className="w-full h-[calc(100vh-56px-132px)] max-h-[calc(100vh-56px-132px)] overflow-scroll">
+      <div className="w-full h-[calc(100vh-56px-132px)] max-h-[calc(100vh-56px-132px)] overflow-scroll overflow-x-hidden">
         <FolderListBar
           title={"폴더 제목"}
           owner={"소유자"}
