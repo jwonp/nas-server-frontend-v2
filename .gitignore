@@ -36,4 +36,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-nas-server-a31ec-firebase-adminsdk-2js5w-eb702e0c2d.json
+firebase-admin-key.json
+
+bugfix.txt
