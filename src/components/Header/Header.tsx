@@ -1,15 +1,18 @@
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import logoutIcon from "@public/icons/logout.png";
 import loginIcon from "@public/icons/login.png";
 import MenuIcon from "@public/icons/menu.png";
+import UserIcon from "@public/icons/userCircle.png";
 import Logo from "./Logo";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   getVisibleSideBar,
   setVisibleSideBar,
 } from "@/redux/featrues/sideBarVisibleSlice";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 const Header = () => {
   const { data: session } = useSession();
@@ -19,6 +22,32 @@ const Header = () => {
     dispatch(setVisibleSideBar(!isVisibleSidebar));
   };
   const handleLoginOutClick = session ? () => signOut() : () => signIn();
+
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["profileIcon"],
+    queryFn: (): Promise<{ url: string }> =>
+      axios
+        .get(`/api/download?key=${session?.user.image}`)
+        .then((response) => response.data),
+        enabled: session?.user.image ? true : false
+  });
+  const userIcon = useMemo(() => {
+    if (isLoading && !data) {
+      return UserIcon;
+    }
+    if (data && data.url) {
+      return data.url;
+    }
+    return UserIcon;
+  }, [data, isLoading]);
+  // const profileIconMutation = useMutation({
+  //   mutationFn: (newKey): Promise<{ url: string }> => {
+  //     return axios.get(`/api/download?key=${newKey}`);
+  //   },
+  // });
+  useEffect(() => {
+   console.log(session?.user)
+  }, [session]);
 
   return (
     <div className="grid lg:grid-cols-2 grid-cols-3  w-screen h-14 p-3  border-b border-zinc-100 select-none">
@@ -38,8 +67,16 @@ const Header = () => {
       <div className="ml-auto">
         <div className="grid grid-cols-2 gap-5">
           <div className="flex">
+            <div className="cursor-pointer rounded-full overflow-hidden max-h-8 h-8 w-8 relative">
+              <Image
+                src={userIcon}
+                alt={""}
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+            </div>
             <div className="ml-auto align-middle leading-8  text-white text-lg font-semibold font-['Inter']">
-              유저 이름
+              {session?.user?.name ?? ""}
             </div>
           </div>
 
