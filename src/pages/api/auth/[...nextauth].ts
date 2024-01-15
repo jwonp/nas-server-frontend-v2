@@ -1,37 +1,71 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { randomBytes, randomUUID } from "crypto";
+import axios from "axios";
+import { encryptCredentials } from "@/utils/encrypt";
+
+
 
 export const authOptions: AuthOptions = {
+
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. 'Sign in with...')
       name: "Credentials",
-      // The credentials is used to generate a suitable form on the sign in page.
-      // You can specify whatever fields you are expecting to be submitted.
-      // e.g. domain, username, password, 2FA token, etc.
-      // You can pass any HTML attribute to the <input> tag through the object.
+
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
+        name: { label: "Name", type: "text" },
+        phone: { label: "Phone", type: "text" },
+        icon: { label: "icon", type: "text" },
       },
       type: "credentials",
       async authorize(credentials, req) {
-        // You need to provide your own logic here that takes the credentials
-        // submitted and returns either a object representing a user or value
-        // that is false/null if the credentials are invalid.
-        // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
-        // You can also use the `req` object to obtain additional parameters
-        // (i.e., the request IP address)
-        const res = await fetch("/your/endpoint", {
-          method: "POST",
-          body: JSON.stringify(credentials),
-          headers: { "Content-Type": "application/json" },
-        });
-        const user = await res.json();
+        if (!credentials?.username || !credentials?.password) {
+          return null;
+        }
+        /** if sign up
+         * {
+                csrfToken: '52ff7143053a22b3a310cfd2ee8e7a164f31465e2466051957cb06f343502236',
+                username: 'tkdel222@gmail.com',
+                password: '123qweasd!@',
+                name: '박주원',
+                'profile-icon': '【PC版】2022年6月メンバー限定壁紙.jpg',
+                icon: '66682ca6-f912-4986-95a9-41bb9a9197e3.jpeg',
+                phone: '01012312312'
+            }
+         */
+        if (credentials?.phone && credentials?.name) {
+          const encryptedCredentials = await encryptCredentials(credentials);
+          if (encryptedCredentials) {
+            const encryptedUserDetail = {
+              username: encryptedCredentials.username,
+              password: encryptedCredentials.password,
+              name: encryptedCredentials.name,
+              icon: encryptedCredentials.icon,
+              phone: encryptedCredentials.phone,
+            };
+            const res = await axios.post(
+              `${process.env.BACKEND_ENDPOINT}/user/signup`,
+              encryptedUserDetail
+            );
 
+            return res.data;
+          }
+          return null;
+        }
+        const encryptedCredentials = await encryptCredentials(credentials);
+
+        const res = await axios.post(
+          `${process.env.BACKEND_ENDPOINT}/user/signin`,
+          encryptedCredentials
+        );
+        const user = await res.data;
+        console.log("get user");
+        console.log(user);
         // If no error and we have user data, return it
-        if (res.ok && user) {
+        if (res.status === 200 && user) {
           return user;
         }
         // Return null if user data could not be retrieved
@@ -40,7 +74,7 @@ export const authOptions: AuthOptions = {
     }),
   ],
 
-  secret: process.env.SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
 
   session: {
     strategy: "jwt",
@@ -52,49 +86,65 @@ export const authOptions: AuthOptions = {
   },
 
   jwt: {
-    secret: process.env.SECRET,
+    secret: process.env.NEXTAUTH_SECRET,
   },
 
   pages: {
     signIn: "/auth/signin", // Displays signin buttons
     // signOut: '/auth/signout', // Displays form with sign out button
-    // error: '/auth/error', // Error code passed in query string as ?error=
+    error: "/auth/error", // Error code passed in query string as ?error=
     // verifyRequest: '/auth/verify-request', // Used for check email page
     // newUser: "/auth/new-user", // If set, new users will be directed here on first sign in
   },
 
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      return true;
+      if (user.username && user.name && user.icon && user.phone) {
+        return true;
+      }
+      return false;
     },
     async redirect({ url, baseUrl }) {
-      return process.env.FRONTEND_END_POINT as string;
+      return `${process.env.FRONTEND_ENDPOINT as string}/storage`;
     },
-    async jwt({ token, account, profile }) {
-      if (account) {
-        token.accessToken = account.access_token;
-        token.id = profile?.sub;
+    async jwt({ token, user, account, profile }) {
+      console.log("jwt");
+      console.log(token);
+      console.log(user);
+      console.log(account);
+      console.log(profile);
+      if (user) {
+        token.email = user.username;
+        token.picture = user.icon;
       }
       return token;
     },
     async session({ session, token, user }) {
+      session.user.id = (token.id as string) ?? (token.sub as string);
       return session;
     },
-    // async jwt({ token, user, account, profile, isNewUser }) { return token }
   },
 
   events: {
     async signIn({ user, account, profile, isNewUser }) {
+      console.log("event sign in");
       /* on successful sign in */
     },
     //   async signOut(message) { /* on signout */ },
-    //   async createUser(message) { /* user created */ },
-    //   async updateUser(message) { /* user updated - e.g. their email was verified */ },
-    //   async linkAccount(message) { /* account (e.g. Twitter) linked to a user */ },
+    async createUser(message) {
+      /* user created */
+    },
+    async updateUser(message) {
+      /* user updated - e.g. their email was verified */
+    },
+    async linkAccount(message) {
+      /* account (e.g. Twitter) linked to a user */
+      console.log("link account");
+    },
     // async session(message: any) {},
   },
 
-  debug: false,
+  debug: true,
 };
 
 export default NextAuth(authOptions);
