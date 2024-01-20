@@ -1,41 +1,33 @@
-import Image from "next/image";
 import { Inter } from "next/font/google";
-import { ChangeEvent, useState } from "react";
+import { FormEvent, useState } from "react";
 import axios from "axios";
+import { uploadFileToS3ByFormChangeEvent } from "@/utils/handleS3";
 
-const uploadToS3 = async (e: ChangeEvent<HTMLFormElement>) => {
-  const formData = new FormData(e.target);
-
-  const file = formData.get("file");
-
-  if (!file) {
-    return null;
-  }
-
-  // @ts-ignore
-  const fileType = encodeURIComponent(file.type);
-
-  const { data } = await axios.get(`/api/media?fileType=${fileType}`);
-
-  const { uploadUrl, key } = data;
-
-  await axios.put(uploadUrl, file);
-
-  return key;
-};
+import { useSession } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
+  const { data: session } = useSession();
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const key = await uploadToS3(e);
+    const formData = new FormData(e.currentTarget);
+    const file = formData.get("file") as File;
+    // uploadFileToS3ByFormChangeEvent -> uploadFile
+    // -> POST /api/media -> getSignedUrlParams -> getSignedUrl
+    // -> PUT uploadUrl
+    const meta = {
+      directory: "/example1/example2",
+      ownerId: session?.user.id ?? "",
+    };
+    const key = await uploadFileToS3ByFormChangeEvent(file, meta);
   };
   const handleDownload = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    const url = await axios.get("/api/download");
+    const url = await axios.get(
+      "/api/download?key=9b0174a2-a013-4c35-a0af-e1437fd26a81.jpeg"
+    );
     setUrl(url.data.url);
   };
   const [url, setUrl] = useState<string>("");
@@ -43,22 +35,7 @@ export default function Home() {
     <main>
       <div>
         <p>select file to upload</p>
-        <form onSubmit={(e: ChangeEvent<HTMLFormElement>)=>{
-          e.preventDefault();
-            const formData = new FormData(e.target);
-
-            const file = formData.get("file");
-          
-            if (!file) {
-              return null;
-            }
-          
-            // @ts-ignore
-            const fileType = encodeURIComponent(file.type);
-            console.log(fileType);
-        }
-          //handleSubmit
-          }>
+        <form onSubmit={handleSubmit}>
           <input
             type="file"
             accept="image/jpeg image/png"

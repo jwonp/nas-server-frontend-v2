@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import S3 from "aws-sdk/clients/s3";
-import { randomUUID } from "crypto";
+import { getSignedUrlParams } from "@/utils/handleS3";
 
 const s3 = new S3({
   apiVersion: "latest",
@@ -15,21 +15,13 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  
-  const ex = (req.query.fileType as string).split("/")[1];
-  // `image/jpg`
-  const Key = `${randomUUID()}.${ex}`;
+  const { fileType, directory, ownerId } = req.query;
 
-  const s3Params = {
-    Bucket: process.env.BUCKET_NAME,
-    Key,
-    Expires: 60,
-    ContentType: `image/${ex}`,
-  };
+  const { key, params } = getSignedUrlParams(fileType as string, directory as string,ownerId as string);
+  const uploadUrl = s3.getSignedUrl(`putObject`, params);
 
-  const uploadUrl = await s3.getSignedUrl(`putObject`, s3Params);
   res.status(200).json({
     uploadUrl,
-    key: Key,
+    key: key,
   });
 }

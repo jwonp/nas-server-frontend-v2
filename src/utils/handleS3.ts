@@ -1,18 +1,10 @@
+import { MetaData } from "@/types/MetaData";
 import axios from "axios";
 import { randomUUID } from "crypto";
-/**
- * ex.
- *  @directory  /example1/example2
- *  @ownerId    session.user.username
- */
+import { getFileType } from "./parseFileType";
+
 type Nullable<T> = T | null;
-export type MetaData = {
-  directory: string;
-  ownerId: string;
-  key: string;
-  uploadTime: number;
-  size: number;
-};
+
 /**
  *
  * @param fileType .png와 같은 확장자, . 없이 png 만 사용
@@ -36,6 +28,8 @@ export const getSignedUrlParams = (
   return { key, params };
 };
 const addMeta = async (metas: Nullable<MetaData>[]) => {
+  console.log("add meta");
+  console.log(metas);
   const filterdMetas: MetaData[] = [];
   for (let meta of metas) {
     if (meta) {
@@ -43,12 +37,12 @@ const addMeta = async (metas: Nullable<MetaData>[]) => {
     }
   }
 
-  await axios.post("/api/storage/meta", { metas: filterdMetas });
-  return;
+  const res = await axios.post("/api/storage/meta", { metas: filterdMetas });
+  return res.data;
 };
 const uploadFile = async (
   file: File | null,
-  meta: Omit<MetaData, "key" | "uploadTime" | "size">
+  meta: Omit<MetaData, "key" | "uploadTime" | "size" | "fileName" | "type">
 ): Promise<Nullable<MetaData>> => {
   if (!file) {
     return null;
@@ -56,11 +50,11 @@ const uploadFile = async (
 
   // @ts-ignore
   const fileType = (file.name as string).split(".").slice(-1)[0];
-
+  
   const { data } = await axios.get(`/api/media`, {
     params: {
       fileType: fileType,
-      directory: meta.directory,
+      directory:meta.directory,
       ownerId: meta.ownerId,
     },
   });
@@ -71,10 +65,12 @@ const uploadFile = async (
 
   const uploadedMeta: MetaData = {
     directory: meta.directory,
+    fileName: file.name,
     ownerId: meta.ownerId,
     key: key,
     uploadTime: Date.now(),
     size: file.size,
+    type: getFileType(file.type),
   };
   return uploadedMeta;
 };
@@ -99,7 +95,7 @@ export const uploadProfileIconToS3 = async (file: File) => {
  */
 export const uploadFileToS3ByFormChangeEvent = async (
   file: File,
-  meta: Omit<MetaData, "key" | "uploadTime" | "size">
+  meta: Omit<MetaData, "key" | "uploadTime" | "size" | "fileName" | "type">
 ): Promise<Nullable<MetaData>> => {
   const storedMeta = await uploadFile(file, meta);
   addMeta([storedMeta]);
@@ -112,18 +108,28 @@ export const uploadFileToS3ByFormChangeEvent = async (
  */
 export const uploadFilesToS3ByFileList = async (
   fileList: FileList,
-  meta: Omit<MetaData, "key" | "uploadTime" | "size">
+  meta: Omit<MetaData, "key" | "uploadTime" | "size" | "fileName" | "type">
 ) => {
   const indexs = Array.from(Array(fileList.length).keys());
   const files = indexs.map((index) => fileList[index]);
+  console.log(indexs);
+  console.log(files);
 
-  const storedMetas: Nullable<MetaData>[] = [];
-
-  files.forEach(async (file) => {
-    const storedMeta = await uploadFile(file, meta);
-    storedMetas.push(storedMeta);
+  const storedMetas = new Promise<Nullable<MetaData>[]>((resolve, reject) => {
+    let metas: Nullable<MetaData>[] = [];
+    files.forEach(async (file, index) => {
+      const storedMeta = await uploadFile(file, meta);
+      metas.push(storedMeta);
+      if (metas.length === files.length) {
+        return resolve(metas);
+      }
+    });
+    if (files.length < 1) {
+      return reject([]);
+    }
   });
-
-  addMeta(storedMetas);
+  console.log(storedMetas);
+  const result = addMeta(await storedMetas);
+  console.log(result);
   return storedMetas;
 };

@@ -8,16 +8,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (!session || !session.user) {
     return res.status(403).json({});
   }
-  //   console.log(session.user);
-  //   console.log(`/${(path as string[]).join("/")}`);
-  //   console.log(
-  //     `${process.env.BACKEND_ENDPOINT}/storage/item?path=${(
-  //       path as string[]
-  //     ).join("/")}`
-  //   );
-  
+
   const result = await request(session?.user).get(
-    `/storage/item?path=/${(path as string[]).join("/")}`
+    `/storage/item?path=${path ? `/${(path as string[]).join("/")}` : ""}`
   );
 
   res.status(200).json(result.data);

@@ -29,7 +29,7 @@ type fileIconType = keyof typeof fileIcons;
 export type ListBarType = {
   title: string;
   owner: string;
-  ownerImage: string | StaticImport | null;
+  ownerImage: string | StaticImport | null | undefined;
   uploadTime: string | null;
   fileIcon: fileIconType;
   fileSize: string | null;
@@ -52,7 +52,7 @@ const ListBar = ({
       ref={ref}
       className="grid grid-cols-16 w-full h-14 py-1 cursor-pointer select-none border-b">
       <div className="col-span-7 flex gap-2">
-        <div className="my-auto">
+        <div className="my-auto w-10 h-10">
           <Image
             className="w-10 h-10"
             src={fileIcons[fileIcon]}
@@ -61,7 +61,7 @@ const ListBar = ({
             height={FileTypeIconSize}
           />
         </div>
-        <div className=" text-white leading-12 text-lg font-semibold font-['Inter']">
+        <div className=" text-white truncate leading-12 text-lg font-semibold font-['Inter']">
           {title}
         </div>
       </div>
@@ -69,17 +69,16 @@ const ListBar = ({
         <div className="flex">
           <div className="mx-auto">
             <div className="flex gap-2">
-              <div className="py-2">
+              <div className="my-auto  rounded-full overflow-hidden max-h-7 h-7 w-7  relative">
                 <Image
-                  className="w-7 h-7"
                   src={ownerImage ?? userIcon}
                   alt=""
-                  width={ButtonIconSize}
-                  height={ButtonIconSize}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
                 />
               </div>
-              <div className=" text-white leading-12 text-lg font-semibold font-['Inter']">
-                {owner}
+              <div className=" text-white truncate leading-12 text-lg font-semibold font-['Inter']">
+                {owner ?? "-"}
               </div>
             </div>
           </div>

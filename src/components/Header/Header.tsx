@@ -1,17 +1,17 @@
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import logoutIcon from "@public/icons/logout.png";
 import loginIcon from "@public/icons/login.png";
 import MenuIcon from "@public/icons/menu.png";
 import UserIcon from "@public/icons/userCircle.png";
 import Logo from "./Logo";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   getVisibleSideBar,
   setVisibleSideBar,
 } from "@/redux/featrues/sideBarVisibleSlice";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {  useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 const Header = () => {
@@ -36,6 +36,7 @@ const Header = () => {
       return UserIcon;
     }
     if (data && data.url) {
+      console.log(data.url)
       return data.url;
     }
     return UserIcon;
@@ -45,9 +46,6 @@ const Header = () => {
   //     return axios.get(`/api/download?key=${newKey}`);
   //   },
   // });
-  useEffect(() => {
-   console.log(session?.user)
-  }, [session]);
 
   return (
     <div className="grid lg:grid-cols-2 grid-cols-3  w-screen h-14 p-3  border-b border-zinc-100 select-none">

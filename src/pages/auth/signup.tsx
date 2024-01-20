@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useState } from "react";
 import userIcon from "@public/icons/userCircle.png";
 import { useHover } from "@uidotdev/usehooks";
-import { MetaData, uploadFileToS3ByFormChangeEvent, uploadProfileIconToS3 } from "@/utils/handleS3";
+import { uploadProfileIconToS3 } from "@/utils/handleS3";
 
 type InputVaild = {
   username: boolean;
@@ -149,7 +149,7 @@ const SignUp = ({
                 </div>
                 <div className="mt-auto">
                   <label htmlFor="profile-icon">
-                    <div className="cursor-pointer rounded-full overflow-hidden max-h-12 relative h-12 w-12" >
+                    <div className="cursor-pointer rounded-full overflow-hidden max-h-12 relative h-12 w-12">
                       <Image
                         src={preview ?? userIcon}
                         alt={""}

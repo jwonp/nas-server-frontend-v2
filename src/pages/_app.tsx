@@ -6,7 +6,8 @@ import { store } from "@/redux/store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+
+
 export default function App({
   Component,
   pageProps: { session, ...pageProps },

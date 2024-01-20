@@ -1,13 +1,12 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { randomBytes, randomUUID } from "crypto";
-import axios from "axios";
+
 import { encryptCredentials } from "@/utils/encrypt";
-
-
+import { request } from "@/utils/request";
+import { UserSession } from "@/types/UserSession";
 
 export const authOptions: AuthOptions = {
-
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. 'Sign in with...')
@@ -36,6 +35,14 @@ export const authOptions: AuthOptions = {
                 phone: '01012312312'
             }
          */
+        const dumySession: UserSession = {
+          id: "",
+          username: "",
+          name: "",
+          icon: "",
+          image: "",
+          phone: "",
+        };
         if (credentials?.phone && credentials?.name) {
           const encryptedCredentials = await encryptCredentials(credentials);
           if (encryptedCredentials) {
@@ -46,8 +53,8 @@ export const authOptions: AuthOptions = {
               icon: encryptedCredentials.icon,
               phone: encryptedCredentials.phone,
             };
-            const res = await axios.post(
-              `${process.env.BACKEND_ENDPOINT}/user/signup`,
+            const res = await request(dumySession).post(
+              `/user/signup`,
               encryptedUserDetail
             );
 
@@ -55,10 +62,11 @@ export const authOptions: AuthOptions = {
           }
           return null;
         }
+        console.log(`backend is ${process.env.BACKEND_ENDPOINT}`);
         const encryptedCredentials = await encryptCredentials(credentials);
 
-        const res = await axios.post(
-          `${process.env.BACKEND_ENDPOINT}/user/signin`,
+        const res = await request(dumySession).post(
+          `/user/signin`,
           encryptedCredentials
         );
         const user = await res.data;
@@ -108,11 +116,11 @@ export const authOptions: AuthOptions = {
       return `${process.env.FRONTEND_ENDPOINT as string}/storage`;
     },
     async jwt({ token, user, account, profile }) {
-      console.log("jwt");
-      console.log(token);
-      console.log(user);
-      console.log(account);
-      console.log(profile);
+      // console.log("jwt");
+      // console.log(token);
+      // console.log(user);
+      // console.log(account);
+      // console.log(profile);
       if (user) {
         token.email = user.username;
         token.picture = user.icon;

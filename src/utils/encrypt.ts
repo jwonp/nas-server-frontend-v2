@@ -2,8 +2,14 @@ import eccrypto from "eccrypto";
 type Credentials =
   | Record<"name" | "username" | "password" | "phone" | "icon", string>
   | undefined;
+type EncryptPassword = {
+  iv: string;
+  ephemPublicKey: string;
+  ciphertext: string;
+  mac: string;
+}
 type EncryptedCredentials = {
-  password: eccrypto.Ecies;
+  password: EncryptPassword;
   name?: string;
   username: string;
   phone?: string;
@@ -19,7 +25,8 @@ export const encryptCredentials = async (
   }
 
   const ECCRYPTO_PUBLIC_KEY = Buffer.from(
-    JSON.parse(process.env.ECCRYPTO_PUBLIC_KEY)
+    process.env.ECCRYPTO_PUBLIC_KEY,
+    "hex"
   );
 
   const encryptedPassword = await eccrypto.encrypt(
@@ -29,7 +36,12 @@ export const encryptCredentials = async (
 
   const cryptedCredentials: EncryptedCredentials = {
     ...credentials,
-    password: encryptedPassword,
+    password:{
+      iv: encryptedPassword.iv.toString("hex"),
+      ephemPublicKey: encryptedPassword.ephemPublicKey.toString("hex"),
+      ciphertext: encryptedPassword.ciphertext.toString("hex"),
+      mac: encryptedPassword.mac.toString("hex")
+    },
   };
 
   return cryptedCredentials;

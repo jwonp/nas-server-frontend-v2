@@ -16,23 +16,23 @@ const createPresignedUrlWithClient = async ({
   const command = new GetObjectCommand({ Bucket: bucket, Key: key });
   return getSignedUrl(client, command, { expiresIn: 3600 });
 };
-type Url ={
-  url:string
-}
+type Url = {
+  url: string;
+};
 const handler = async (req: NextApiRequest, res: NextApiResponse<Url>) => {
-  const key = "2b561120-3fcb-40fc-bc66-36b6e38c53eb.jpeg";
-  let clientUrl=""
+  const { key } = req.query;
+  let clientUrl = "";
   try {
     clientUrl = await createPresignedUrlWithClient({
       region: process.env.BUCKET_REGION as string,
       bucket: process.env.BUCKET_NAME as string,
-      key: key,
+      key: key as string,
     });
-  } catch(err) {
-    console.log(err)
+  } catch (err) {
+    console.log(err);
   }
   res.status(200).json({
-    url:clientUrl
-  })
+    url: clientUrl,
+  });
 };
 export default handler;

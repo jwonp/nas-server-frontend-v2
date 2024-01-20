@@ -1,8 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import {  useMemo } from "react";
 
 const DirectoryHistory = () => {
   const router = useRouter();
@@ -29,17 +27,6 @@ const DirectoryHistory = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [historyList]);
 
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["history"],
-    queryFn: () =>
-      axios
-        .get(`/api/storage/${historyList ? historyList.join("/") : ""}`)
-        .then((response) => response.data),
-  });
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   return (
     <div className="p-2 text-white text-2xl font-semibold font-['Inter']">
