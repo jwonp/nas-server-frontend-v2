@@ -1,63 +1,115 @@
 import ListColumnBar from "@/components/Storage/ListBar/ListColumnBar";
 import DirectoryHistory from "@/components/Storage/DirectoryHistory";
 import AddButtonList from "@/components/Storage/AddButtonList";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
-import { ItemResponse, MetaData } from "@/types/MetaData";
-import ListBarGenerator from "@/components/Storage/ListBar/ListBarGenerator";
-import VideoListBar from "@/components/Storage/ListBar/ListBarTemplates/VideoListBar";
+import { useCallback, useEffect, useMemo } from "react";
+import { ItemResponse } from "@/types/MetaData";
+import { useAppDispatch } from "@/redux/hooks";
+import { getTimeString } from "@/utils/parseTime";
+import { convertFileSize } from "@/utils/parseFileSize";
+import { IsExistDirectoryResponse } from "@/types/Responses";
+import ListBar from "@/components/Storage/ListBar/ListBar";
 
+// ItemQuery.data -> itemList -> itemElements => render
 const StoragePage = () => {
   const router = useRouter();
-  const [itemList, setItemList] = useState<Omit<MetaData, "ownerId">[]>([]);
-  const { isLoading, error, data } = useQuery<ItemResponse>({
-    queryKey: (router.query.history as string[]) ?? ["/"],
+  const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
+  const directory = useCallback(
+    (type: "string" | "array", exceptionString?: string) => {
+      let exception = "/";
+      if (exceptionString) {
+        exception = exceptionString;
+      }
+      if (type === "string") {
+        return (router.query.history as string[])
+          ? (router.query.history as string[]).join("/")
+          : exception;
+      }
+      return (router.query.history as string[])
+        ? [(router.query.history as string[]).join("/")]
+        : [exception];
+    },
+    [router.query]
+  );
+  const isExistDirectoryQuery = useQuery<IsExistDirectoryResponse>({
+    queryKey: ["isExist", { path: directory("array") }],
     queryFn: () =>
       axios
-        .get(
-          `/api/storage/item/${
-            router.query.history
-              ? (router.query.history as string[]).join("/")
-              : ""
-          }`
-        )
+        .get(`/api/storage/directory/check?path=${directory("string", "")}`)
         .then((response) => response.data),
   });
+
+  const ItemQuery = useQuery<ItemResponse>({
+    queryKey: ["item", directory("array") as string[]],
+    queryFn: () =>
+      axios
+        .get(`/api/storage/item/${directory("string", "")}`)
+        .then((response) => response.data),
+  });
+
   const userIconQuery = useQuery({
     queryKey: ["profileIcon"],
     queryFn: (): Promise<{ url: string }> =>
       axios
-        .get(`/api/download?key=${data?.image}`)
+        .get(`/api/download?key=${ItemQuery.data?.image}`)
         .then((response) => response.data),
-    enabled: data?.image ? true : false,
+    enabled: ItemQuery.data?.image ? true : false,
   });
+
   useEffect(() => {
-    if (data) {
-      setItemList(() => [...data.files]);
+    queryClient.invalidateQueries({
+      queryKey: ["isExist", { path: directory("array") }],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["item", directory("array") as string[]],
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query]);
+  useEffect(() => {
+    if (
+      isExistDirectoryQuery.data &&
+      !isExistDirectoryQuery.data.isExistDirectory
+    ) {
+      router.push("/storage");
     }
-  }, [data]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isExistDirectoryQuery.data]);
+
   const itemElements = useMemo(() => {
-    if (isLoading) {
+    if (ItemQuery.isLoading) {
       return <div>Loading...</div>;
     }
-    if (!data) {
+    if (!ItemQuery.data) {
       return <div>Error to load files</div>;
     }
-    if (data && data.files.length === 0) {
+    if (ItemQuery.data && ItemQuery.data.files.length === 0) {
       return <div>No files</div>;
     }
-    return itemList.map((meta, index) => (
-      <ListBarGenerator
-        key={index}
-        userId={data.id}
-        username={data.username}
-        userIcon={userIconQuery?.data?.url}
-        meta={meta}
-      />
-    ));
-  }, [data, isLoading, itemList, userIconQuery?.data?.url]);
+    console.log(ItemQuery.data.files.map((file) => file.fileName));
+    return ItemQuery.data.files.map((meta, index) => {
+      const metas = {
+        fileId: meta.key,
+        uploadTime: getTimeString(meta.uploadTime),
+        title: meta.fileName,
+        owner: ItemQuery.data.username,
+        ownerImage: ItemQuery.data.image,
+        fileIcon: meta.type,
+        fileSize: convertFileSize(meta.size),
+      };
+      return (
+        <ListBar
+          key={index}
+          {...metas}
+        />
+      );
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ItemQuery.data]);
+
   //132 43
   return (
     <div className="w-full h-full">
@@ -73,69 +125,6 @@ const StoragePage = () => {
       <ListColumnBar />
       <div className="w-full h-[calc(100vh-56px-132px)] max-h-[calc(100vh-56px-132px)] overflow-scroll overflow-x-hidden">
         {itemElements}
-        {/*       <FolderListBar
-          title={"폴더 제목"}
-          owner={"소유자"}
-          ownerImage={null}
-          uploadTime={null}
-          fileSize={null}
-        /><FolderListBar
-          title={"폴더 제목"}
-          owner={"소유자"}
-          ownerImage={null}
-          uploadTime={null}
-          fileSize={null}
-        />
-        <FileListBar
-          title={"파일 제목"}
-          owner={"소유자"}
-          ownerImage={null}
-          uploadTime={"2023.01.01"}
-          fileSize={"3KB"}
-        />
-        <ImageListBar
-          title={"이미지 제목"}
-          owner={"소유자"}
-          ownerImage={null}
-          uploadTime={"2023.01.01"}
-          fileSize={"20MB"}
-        />
-        <VideoListBar
-          title={"비디오 제목"}
-          owner={"소유자"}
-          ownerImage={null}
-          uploadTime={"2023.01.01"}
-          fileSize={"2.3GB"}
-        />
-        <VideoListBar
-          title={"비디오 제목"}
-          owner={"소유자"}
-          ownerImage={null}
-          uploadTime={"2023.01.01"}
-          fileSize={"2.3GB"}
-        />
-        <VideoListBar
-          title={"비디오 제목"}
-          owner={"소유자"}
-          ownerImage={null}
-          uploadTime={"2023.01.01"}
-          fileSize={"2.3GB"}
-        />
-        <VideoListBar
-          title={"비디오 제목"}
-          owner={"소유자"}
-          ownerImage={null}
-          uploadTime={"2023.01.01"}
-          fileSize={"2.3GB"}
-        />
-       */}
-        <VideoListBar
-          title={"비디오 제목"}
-          owner={"소유자"}
-          ownerImage={null}
-          uploadTime={"2023.01.01"}
-          fileSize={"2.3GB"}
-        /> 
       </div>
     </div>
   );

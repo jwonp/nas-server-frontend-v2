@@ -9,6 +9,7 @@ export const FileSizeUnit = {
 };
 
 export const convertFileSize = (byte: number): string => {
+
   const divided_byte = [
     { unit: FileSizeUnit.BYTES, size: byte },
     { unit: FileSizeUnit.KB, size: Math.floor(byte / KB_DIVIDER) },
@@ -17,7 +18,9 @@ export const convertFileSize = (byte: number): string => {
   ];
 
   let result = divided_byte[0];
-
+  if(result.size === 0){
+    return "-"
+  }
   for (const item of divided_byte) {
     if (item.size < 1) break;
     result = item;

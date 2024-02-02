@@ -10,7 +10,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(403).json({});
   }
 
-//   const result = await request(session?.user).post(`/storage/meta`, metas);
+  const result = await request(session?.user).post(`/storage/meta`, metas);
 
   res.status(200).json({});
 };
