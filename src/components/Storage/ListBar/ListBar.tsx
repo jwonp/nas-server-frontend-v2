@@ -17,10 +17,12 @@ import { useHover } from "@uidotdev/usehooks";
 import axios from "axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { deleteFileItem } from "@/redux/featrues/fileItemListSlice";
-import { useAppDispatch } from "@/redux/hooks";
+
 import { useEffect, useState } from "react";
-import { FileType } from "@/types/MetaData";
+import { useDirectoryArray } from "@/components/hooks/useDirectory.hook";
+import { convertFileSize } from "@/utils/parseFileSize";
+import { downloadFile } from "@/utils/download";
+
 const fileIcons = {
   back: backIcon,
   addFolder: addFolderIcon,
@@ -41,7 +43,7 @@ export type ListBarType = {
   ownerImage: string | StaticImport | null | undefined;
   uploadTime: string | null;
   fileIcon: fileIconType;
-  fileSize: string | null;
+  fileSize: number;
 };
 
 const FileTypeIconSize = 40;
@@ -55,12 +57,11 @@ const ListBar = ({
   uploadTime,
   fileIcon,
   fileSize,
-
 }: ListBarType) => {
   const [ref, hovering] = useHover();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const dispatch = useAppDispatch();
+  const directoryArray = useDirectoryArray();
   const [fileTitle, setFileTitle] = useState<string>(title);
   const [isEditTitle, setEditTitle] = useState<boolean>(false);
   const [editSkipFlag, setEditSkipFlag] = useState<boolean>(true);
@@ -72,20 +73,21 @@ const ListBar = ({
 
   const deleteFile = useMutation({
     mutationFn: (fileId: string) =>
-      axios.delete("/api/storage/item", { data: { fileId: fileId } }),
+      axios.delete("/api/storage/item", {
+        data: { fileId: fileId, fileSize: fileSize },
+      }),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: (router.query.history as string[])
-          ? [(router.query.history as string[]).join("/")]
-          : ["/"],
+        queryKey: ["item", { path: directoryArray }],
       });
-
-      dispatch(deleteFileItem(variables));
+      queryClient.invalidateQueries({
+        queryKey: ["volume"],
+      });
     },
   });
-useEffect(()=>{
-  setFileTitle(title);
-},[title])
+  useEffect(() => {
+    setFileTitle(title);
+  }, [title]);
   useEffect(() => {
     if (editSkipFlag) {
       setEditSkipFlag(false);
@@ -108,7 +110,7 @@ useEffect(()=>{
           className="grid grid-cols-listBarTitle gap-2"
           onClick={() => {
             if (!isEditTitle && fileIcon === "folder") {
-              router.push(`${router.asPath}/${fileTitle}`);
+              router.push(`${router.asPath}/${fileId.split("folder$")[1]}`);
             }
           }}>
           <div className="my-auto w-10 h-10">
@@ -166,14 +168,18 @@ useEffect(()=>{
         {`${uploadTime ?? "-"}`}
       </div>
       <div className="col-span-2 text-center leading-12 text-white text-lg font-semibold font-['Inter']">
-        {`${fileSize ?? "-"}`}
+        {`${convertFileSize(fileSize) ?? "-"}`}
       </div>
       <div
         className={`col-span-3 grid grid-cols-4 gap-1 ${
           hovering ? "opacity-100" : "opacity-0"
         }`}>
         <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
-          <div className="m-1 w-7 h-7 ">
+          <div
+            className="m-1 w-7 h-7 "
+            onClick={() => {
+              downloadFile(fileId, title);
+            }}>
             <Image
               src={downloadIcon}
               alt=""
