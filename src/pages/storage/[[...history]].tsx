@@ -4,67 +4,47 @@ import AddButtonList from "@/components/Storage/AddButtonList";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { ItemResponse } from "@/types/MetaData";
-import { useAppDispatch } from "@/redux/hooks";
 import { getTimeString } from "@/utils/parseTime";
-import { convertFileSize } from "@/utils/parseFileSize";
 import { IsExistDirectoryResponse } from "@/types/Responses";
 import ListBar from "@/components/Storage/ListBar/ListBar";
+import {
+  useDirectory,
+  useDirectoryArray,
+} from "@/components/hooks/useDirectory.hook";
 
 // ItemQuery.data -> itemList -> itemElements => render
 const StoragePage = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const dispatch = useAppDispatch();
-  const directory = useCallback(
-    (type: "string" | "array", exceptionString?: string) => {
-      let exception = "/";
-      if (exceptionString) {
-        exception = exceptionString;
-      }
-      if (type === "string") {
-        return (router.query.history as string[])
-          ? (router.query.history as string[]).join("/")
-          : exception;
-      }
-      return (router.query.history as string[])
-        ? [(router.query.history as string[]).join("/")]
-        : [exception];
-    },
-    [router.query]
-  );
+  const directoryArray = useDirectoryArray();
+  const directory = useDirectory();
+
   const isExistDirectoryQuery = useQuery<IsExistDirectoryResponse>({
-    queryKey: ["isExist", { path: directory("array") }],
-    queryFn: () =>
+    queryKey: ["isExist", { path: directoryArray }],
+    queryFn: async () =>
       axios
-        .get(`/api/storage/directory/check?path=${directory("string", "")}`)
+        .get(`/api/storage/directory/check?path=${directory}`)
         .then((response) => response.data),
   });
 
   const ItemQuery = useQuery<ItemResponse>({
-    queryKey: ["item", directory("array") as string[]],
-    queryFn: () =>
-      axios
-        .get(`/api/storage/item/${directory("string", "")}`)
-        .then((response) => response.data),
-  });
-
-  const userIconQuery = useQuery({
-    queryKey: ["profileIcon"],
-    queryFn: (): Promise<{ url: string }> =>
-      axios
-        .get(`/api/download?key=${ItemQuery.data?.image}`)
-        .then((response) => response.data),
-    enabled: ItemQuery.data?.image ? true : false,
+    queryKey: ["item", { path: directoryArray }],
+    queryFn: async () => {
+      console.log(`/api/storage/item/${directory}`);
+      return axios
+        .get(`/api/storage/item/${directory}`)
+        .then((response) => response.data);
+    },
   });
 
   useEffect(() => {
     queryClient.invalidateQueries({
-      queryKey: ["isExist", { path: directory("array") }],
+      queryKey: ["isExist", { path: directoryArray }],
     });
     queryClient.invalidateQueries({
-      queryKey: ["item", directory("array") as string[]],
+      queryKey: ["item", directoryArray],
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query]);
@@ -88,7 +68,13 @@ const StoragePage = () => {
     if (ItemQuery.data && ItemQuery.data.files.length === 0) {
       return <div>No files</div>;
     }
-    console.log(ItemQuery.data.files.map((file) => file.fileName));
+    // console.log(ItemQuery.data.files.map((file) => file.fileName));
+    console.log(
+      queryClient
+        .getQueryCache()
+        .getAll()
+        .map((cache) => cache.queryKey)
+    );
     return ItemQuery.data.files.map((meta, index) => {
       const metas = {
         fileId: meta.key,
@@ -97,7 +83,7 @@ const StoragePage = () => {
         owner: ItemQuery.data.username,
         ownerImage: ItemQuery.data.image,
         fileIcon: meta.type,
-        fileSize: convertFileSize(meta.size),
+        fileSize: meta.size,
       };
       return (
         <ListBar
@@ -110,7 +96,6 @@ const StoragePage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ItemQuery.data]);
 
-  //132 43
   return (
     <div className="w-full h-full">
       <div className="grid grid-cols-12 mt-5">
