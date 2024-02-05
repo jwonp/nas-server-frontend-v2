@@ -22,10 +22,13 @@ type Url = {
 const handler = async (req: NextApiRequest, res: NextApiResponse<Url>) => {
   const { key } = req.query;
   let clientUrl = "";
+  const region = process.env.BUCKET_REGION as string;
+  const bucket = process.env.BUCKET_NAME as string;
+  console.log(region, bucket);
   try {
     clientUrl = await createPresignedUrlWithClient({
-      region: process.env.BUCKET_REGION as string,
-      bucket: process.env.BUCKET_NAME as string,
+      region: region,
+      bucket: bucket,
       key: key as string,
     });
   } catch (err) {
