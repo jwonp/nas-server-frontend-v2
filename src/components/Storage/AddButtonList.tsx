@@ -8,32 +8,33 @@ import { useSession } from "next-auth/react";
 import { MetaData } from "@/types/MetaData";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useAppDispatch } from "@/redux/hooks";
-import {
-  addFileItemList,
-  addFileItemLists,
-} from "@/redux/featrues/fileItemListSlice";
 
 const AddIconSize = 38;
 const AddButtonList = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const queryClient = useQueryClient();
-  const dispatch = useAppDispatch();
+
   const addMetas = useMutation({
     mutationFn: (metas: MetaData[]) =>
       axios.post("/api/storage/meta", { metas: metas }),
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: (router.query.history as string[])
-          ? ["item", { path: (router.query.history as string[]).join("/") }]
-          : ["item", ""],
-      });
+      console.log(
+        queryClient
+          .getQueryCache()
+          .getAll()
+          .map((cache) => cache.queryKey)
+      );
+
       const mutations = variables.map((item) => {
         const { ownerId: _, ...rest } = item;
         return rest;
       });
-      dispatch(addFileItemLists(mutations as Omit<MetaData, "ownerId">[]));
+      return mutations;
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["volume"] });
+      queryClient.invalidateQueries({ queryKey: ["item"] });
     },
   });
   const handleChangeFileUpload = async (
@@ -60,34 +61,35 @@ const AddButtonList = () => {
         filterdMetas.push(meta);
       }
     }
+
     addMetas.mutate(filterdMetas);
   };
-  //9b0174a2-a013-4c35-a0af-e1437fd26a81.jpeg
-  //eb898fef-eed7-40dc-91e0-20fb476da97b.jpeg
-  //f1c58d40-8905-4764-af6c-00b0b6a52253.png
+  const handleClickAddFolder = () => {
+    if (!session?.user.id) {
+      return;
+    }
+    const history = router.query.history as string[];
+    const directory = history ? `/${history.join("/")}` : "";
+    const key = `folder$${uuidv4()}`;
+
+    const folderMeta: MetaData = {
+      ownerId: session?.user.id,
+      uploadTime: Date.now(),
+      fileName: "새 폴더",
+      type: "folder",
+      directory: directory,
+      key: key,
+      size: 0,
+    };
+    addMetas.mutate([folderMeta]);
+  };
+
   return (
     <div className="grid grid-cols-2 select-none">
       <div className="cursor-pointer col-span-1 py-1 flex rounded-l-lg border-l border-r border-t border-b">
         <div
           className="mx-auto"
-          onClick={() => {
-            const history = router.query.history as string[];
-            const directory = history ? `/${history.join("/")}` : "";
-
-            const folderMeta: Omit<MetaData, "ownerId"> = {
-              uploadTime: Date.now(),
-              fileName: "새 폴더",
-              type: "folder",
-              directory: directory,
-              key: `folder$${uuidv4()}`,
-              size: 0,
-            };
-            axios
-              .post("/api/storage/meta", { metas: [folderMeta] })
-              .then(() => {
-                dispatch(addFileItemList(folderMeta));
-              });
-          }}>
+          onClick={handleClickAddFolder}>
           <Image
             src={addFolderIcon}
             alt=""
