@@ -17,9 +17,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(200).json(result.data);
   }
   if (req.method === "DELETE") {
-    const { fileId } = req.body;
+    const { fileId, fileSize } = req.body;
     const result = await request(session?.user).delete(`/storage/item`, {
-      data: { fileId: fileId, userId:session?.user.id },
+      data: { fileId: fileId, fileSize: fileSize, userId: session?.user.id },
     });
     return res.status(200).json(result.data);
   }
