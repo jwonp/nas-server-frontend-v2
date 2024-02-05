@@ -5,13 +5,13 @@ export const FileSizeUnit = {
   GB: "GB",
   MB: "MB",
   KB: "KB",
-  BYTES: "BYTES",
+  BYTE: "BYTE",
 };
 
-export const convertFileSize = (byte: number): string => {
+export const convertFileSize = (byte: number,isReturnZeroByte?:boolean): string => {
 
   const divided_byte = [
-    { unit: FileSizeUnit.BYTES, size: byte },
+    { unit: FileSizeUnit.BYTE, size: byte },
     { unit: FileSizeUnit.KB, size: Math.floor(byte / KB_DIVIDER) },
     { unit: FileSizeUnit.MB, size: Math.floor(byte / MB_DIVIDER) },
     { unit: FileSizeUnit.GB, size: Number((byte / GB_DIVIDER).toFixed(2)) },
@@ -19,7 +19,7 @@ export const convertFileSize = (byte: number): string => {
 
   let result = divided_byte[0];
   if(result.size === 0){
-    return "-"
+    return isReturnZeroByte ? "0BYTE" : "-"
   }
   for (const item of divided_byte) {
     if (item.size < 1) break;
