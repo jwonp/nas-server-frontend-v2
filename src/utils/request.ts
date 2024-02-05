@@ -2,7 +2,7 @@ import { UserSession } from "@/types/UserSession";
 import axios from "axios";
 import { createJWT } from "./jwt";
 
-export const request = (user: UserSession) => {
+export const request = (user: Omit<UserSession,"volume">) => {
   const instance = axios.create({
     baseURL: process.env.BACKEND_ENDPOINT,
     timeout: 3000,

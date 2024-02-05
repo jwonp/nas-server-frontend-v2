@@ -1,7 +1,7 @@
 import { UserSession } from "@/types/UserSession";
 import jwt from "jsonwebtoken";
 
-export const createJWT = (user: UserSession) => {
+export const createJWT = (user: Omit<UserSession,"volume">) => {
   if (!process.env.JWT_SIGN_KEY) {
     return null;
   }
