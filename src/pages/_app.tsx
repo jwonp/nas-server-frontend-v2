@@ -14,19 +14,18 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   const [queryClient] = React.useState(() => new QueryClient());
-  // const queryClient = new QueryClient();
   const router = useRouter();
 
   return (
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
-          {router.pathname.startsWith("/auth") ? (
+          {router.pathname.startsWith("/storage") ? (
+             <Layout>
             <Component {...pageProps} />
+          </Layout>
           ) : (
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
+            <Component {...pageProps} />
           )}
         </Provider>
       </QueryClientProvider>
