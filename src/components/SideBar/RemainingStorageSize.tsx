@@ -22,9 +22,8 @@ const RemainingStorageSize = () => {
   }, [volumeQuery]);
   return (
     <div className="w-full mt-4">
-      <div className="indent-2 text-white text-base font-normal font-['Inter']">
-        {volume.max > 0 &&
-          `저장용량 (${((volume.now / volume.max) * 100).toFixed(2)}% 사용중)`}
+      <div className="indent-2 text-white text-xl font-normal  font-['Inter']">
+        저장용량
       </div>
       <div className="w-30 h-1  m-2  bg-white">
         <div
@@ -37,7 +36,9 @@ const RemainingStorageSize = () => {
         {`${convertFileSize(volume.max)} 중 ${convertFileSize(
           volume.now,
           true
-        )} 사용중 `}
+        )} ${
+          volume.max > 0 && `(${((volume.now / volume.max) * 100).toFixed(2)}%)`
+        } 사용중 `}
       </div>
     </div>
   );
