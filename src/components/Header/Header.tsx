@@ -4,14 +4,14 @@ import loginIcon from "@public/icons/login.png";
 import MenuIcon from "@public/icons/menu.png";
 import UserIcon from "@public/icons/userCircle.png";
 import Logo from "./Logo";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   getVisibleSideBar,
   setVisibleSideBar,
 } from "@/redux/featrues/sideBarVisibleSlice";
 import { signIn, signOut, useSession } from "next-auth/react";
-import {  useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 const Header = () => {
@@ -29,23 +29,17 @@ const Header = () => {
       axios
         .get(`/api/download?key=${session?.user.image}`)
         .then((response) => response.data),
-        enabled: session?.user.image ? true : false
+    enabled: session?.user.image ? true : false,
   });
   const userIcon = useMemo(() => {
     if (isLoading && !data) {
       return UserIcon;
     }
     if (data && data.url) {
-      console.log(data.url)
       return data.url;
     }
     return UserIcon;
   }, [data, isLoading]);
-  // const profileIconMutation = useMutation({
-  //   mutationFn: (newKey): Promise<{ url: string }> => {
-  //     return axios.get(`/api/download?key=${newKey}`);
-  //   },
-  // });
 
   return (
     <div className="grid lg:grid-cols-2 grid-cols-3  w-screen h-14 p-3  border-b border-zinc-100 select-none">
