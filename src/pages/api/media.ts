@@ -5,7 +5,7 @@ import { getSignedUrlParams } from "@/utils/handleS3";
 
 const s3 = new S3({
   apiVersion: "latest",
-  accessKeyId: process.env.ACCESS_KEY,
+  accessKeyId: process.env.ACCESS_KEY_ID,
   secretAccessKey: process.env.SECRET_ACCESS_KEY,
   region: process.env.BUCKET_REGION,
   signatureVersion: "v4",
