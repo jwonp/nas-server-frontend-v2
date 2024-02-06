@@ -61,7 +61,8 @@ const uploadFile = async (
 
   const { uploadUrl, key } = data;
 
-  await axios.put(uploadUrl, file);
+  const res = await axios.put(uploadUrl, file);
+  console.log(res.data)
 
   const uploadedMeta: MetaData = {
     directory: meta.directory,

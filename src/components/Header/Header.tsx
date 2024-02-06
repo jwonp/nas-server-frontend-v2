@@ -27,7 +27,7 @@ const Header = () => {
     queryKey: ["profileIcon"],
     queryFn: (): Promise<{ url: string }> =>
       axios
-        .get(`/api/download?key=${session?.user.image}`)
+        .get(`/api/storage/download?key=${session?.user.image}`)
         .then((response) => response.data),
     enabled: session?.user.image ? true : false,
   });

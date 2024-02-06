@@ -8,5 +8,6 @@ export const request = (user: Omit<UserSession,"volume">) => {
     timeout: 3000,
     headers: { Authorization: `Bearer ${createJWT(user)}` },
   });
+  console.log(`Bearer ${createJWT(user)}`)
   return instance;
 };
