@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
-
+import Head from "next/head";
 
 export default function App({
   Component,
@@ -20,10 +20,22 @@ export default function App({
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
+          <Head>
+            <title>Nas Server</title>
+            <meta charSet="utf-8" />
+            <meta
+              name="author"
+              content="Ikiningyou"
+            />
+            <meta
+              name="description"
+              content="This service is the Cloud Stoarge Service."
+            />
+          </Head>
           {router.pathname.startsWith("/storage") ? (
-             <Layout>
-            <Component {...pageProps} />
-          </Layout>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
           ) : (
             <Component {...pageProps} />
           )}
