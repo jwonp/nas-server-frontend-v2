@@ -51,7 +51,7 @@ const uploadFile = async (
   // @ts-ignore
   const fileType = (file.name as string).split(".").slice(-1)[0];
   
-  const { data } = await axios.get(`/api/media`, {
+  const { data } = await axios.get(`/api/storage/file`, {
     params: {
       fileType: fileType,
       directory:meta.directory,

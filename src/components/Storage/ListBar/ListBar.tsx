@@ -68,7 +68,7 @@ const ListBar = ({
   const iconQuery = useQuery({
     queryKey: ["icon", { source: ownerImage }],
     queryFn: (): Promise<{ url: string }> =>
-      axios.get(`/api/download?key=${ownerImage}`).then((res) => res.data),
+      axios.get(`/api/storage/download?key=${ownerImage}`).then((res) => res.data),
   });
 
   const deleteFile = useMutation({
