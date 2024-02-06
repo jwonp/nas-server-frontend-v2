@@ -18,7 +18,7 @@ export const getSignedUrlParams = (
   ownerId: string
 ) => {
   const key = `storage/${ownerId}/${randomUUID()}.${fileType}`;
-  console.log(`key is ${key}`);
+
   const params = {
     Bucket: process.env.BUCKET_NAME,
     Key: key,
@@ -27,19 +27,7 @@ export const getSignedUrlParams = (
   };
   return { key, params };
 };
-const addMeta = async (metas: Nullable<MetaData>[]) => {
-  console.log("add meta");
-  console.log(metas);
-  const filterdMetas: MetaData[] = [];
-  for (let meta of metas) {
-    if (meta) {
-      filterdMetas.push(meta);
-    }
-  }
 
-  const res = await axios.post("/api/storage/meta", { metas: filterdMetas });
-  return res.data;
-};
 const uploadFile = async (
   file: File | null,
   meta: Omit<MetaData, "key" | "uploadTime" | "size" | "fileName" | "type">
@@ -62,7 +50,6 @@ const uploadFile = async (
   const { uploadUrl, key } = data;
 
   const res = await axios.put(uploadUrl, file);
-  console.log(res.data)
 
   const uploadedMeta: MetaData = {
     directory: meta.directory,

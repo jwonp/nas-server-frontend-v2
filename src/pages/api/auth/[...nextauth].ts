@@ -62,7 +62,7 @@ export const authOptions: AuthOptions = {
           }
           return null;
         }
-        console.log(`backend is ${process.env.BACKEND_ENDPOINT}`);
+
         const encryptedCredentials = await encryptCredentials(credentials);
 
         const res = await request(dumySession).post(
@@ -116,11 +116,6 @@ export const authOptions: AuthOptions = {
       return `${process.env.FRONTEND_ENDPOINT as string}/storage`;
     },
     async jwt({ token, user, account, profile }) {
-      // console.log("jwt");
-      // console.log(token);
-      // console.log(user);
-      // console.log(account);
-      // console.log(profile);
       if (user) {
         token.email = user.username;
         token.picture = user.icon;
@@ -135,7 +130,6 @@ export const authOptions: AuthOptions = {
 
   events: {
     async signIn({ user, account, profile, isNewUser }) {
-      console.log("event sign in");
       /* on successful sign in */
     },
     //   async signOut(message) { /* on signout */ },
@@ -147,7 +141,6 @@ export const authOptions: AuthOptions = {
     },
     async linkAccount(message) {
       /* account (e.g. Twitter) linked to a user */
-      console.log("link account");
     },
     // async session(message: any) {},
   },

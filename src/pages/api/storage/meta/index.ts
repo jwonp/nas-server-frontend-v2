@@ -20,7 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return meta;
   });
   const result = await request(session?.user).post(`/storage/meta`, metas);
-  console.log(result.data);
+
   res.status(200).json(result.data);
 };
 

@@ -11,7 +11,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
   const { path } = req.query;
 
-  console.log(`path is ${path}`);
   const result = await request(session?.user).get(
     `/storage/directory/history?path=${path}`
   );

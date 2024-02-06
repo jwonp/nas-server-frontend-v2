@@ -31,12 +31,10 @@ const StoragePage = () => {
 
   const ItemQuery = useQuery<ItemResponse>({
     queryKey: ["item", { path: directoryArray }],
-    queryFn: async () => {
-      console.log(`/api/storage/item/${directory}`);
-      return axios
+    queryFn: async () =>
+      axios
         .get(`/api/storage/item/${directory}`)
-        .then((response) => response.data);
-    },
+        .then((response) => response.data),
   });
 
   useEffect(() => {
@@ -68,13 +66,7 @@ const StoragePage = () => {
     if (ItemQuery.data && ItemQuery.data.files.length === 0) {
       return <div>No files</div>;
     }
-    // console.log(ItemQuery.data.files.map((file) => file.fileName));
-    console.log(
-      queryClient
-        .getQueryCache()
-        .getAll()
-        .map((cache) => cache.queryKey)
-    );
+
     return ItemQuery.data.files.map((meta, index) => {
       const metas = {
         fileId: meta.key,

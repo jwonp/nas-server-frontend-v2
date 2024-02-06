@@ -8,11 +8,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(403).json({});
   }
   const { path } = req.query;
-  console.log("---");
-  console.log(path);
+
   let folder = "";
   let directory = "";
-  
+
   if (path === "/") {
     return res.status(200).json({ isExistDirectory: true });
   }
@@ -21,12 +20,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   folder = splitedPath.pop() as string;
   directory = splitedPath.join("/");
 
-    console.log(`folder is ${folder}, directory is ${directory}`)
   const result = await request(session?.user).get(
     `/storage/directory/check?directory=${directory}&folder=${`folder$${folder}`}`
   );
-  
-  return res.status(200).json({ isExistDirectory: result.data.isExistDirectory });
+
+  return res
+    .status(200)
+    .json({ isExistDirectory: result.data.isExistDirectory });
 };
 
 export default handler;

@@ -15,7 +15,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     title: title,
     userId: session.user.id,
   });
-  console.log(result.data);
+
   res.status(200).json(result.data);
 };
 

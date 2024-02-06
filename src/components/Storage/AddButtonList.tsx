@@ -19,13 +19,6 @@ const AddButtonList = () => {
     mutationFn: (metas: MetaData[]) =>
       axios.post("/api/storage/meta", { metas: metas }),
     onSuccess: (data, variables) => {
-      console.log(
-        queryClient
-          .getQueryCache()
-          .getAll()
-          .map((cache) => cache.queryKey)
-      );
-
       const mutations = variables.map((item) => {
         const { ownerId: _, ...rest } = item;
         return rest;

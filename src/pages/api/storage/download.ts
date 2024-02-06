@@ -24,7 +24,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Url>) => {
   let clientUrl = "";
   const region = process.env.BUCKET_REGION as string;
   const bucket = process.env.BUCKET_NAME as string;
-  console.log(region, bucket);
+  
   try {
     clientUrl = await createPresignedUrlWithClient({
       region: region,
