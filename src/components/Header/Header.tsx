@@ -42,7 +42,7 @@ const Header = () => {
   }, [data, isLoading]);
 
   return (
-    <div className="grid lg:grid-cols-2 grid-cols-3  w-screen h-14 p-3  border-b border-zinc-100 select-none">
+    <div className="grid lg:grid-cols-2 grid-cols-3  w-screen min-w-[360px] h-14 p-3  border-b border-zinc-100 select-none">
       <div
         className="lg:hidden cursor-pointer"
         onClick={handleMenuClick}>
@@ -67,7 +67,7 @@ const Header = () => {
                 sizes="(max-width: 768px) 100vw, 33vw"
               />
             </div>
-            <div className="ml-auto align-middle leading-8  text-white text-lg font-semibold font-['Inter']">
+            <div className="max-login:hidden ml-auto align-middle leading-8  text-white text-lg font-semibold font-['Inter']">
               {session?.user?.name ?? ""}
             </div>
           </div>
@@ -88,7 +88,7 @@ const Header = () => {
                     />
                   </div>
                 </div>
-                <div className="align-middle leading-8  text-center text-white text-lg font-semibold font-['Inter']">
+                <div className="max-login:hidden align-middle leading-8  text-center text-white text-lg font-semibold font-['Inter']">
                   {`${session ? "로그아웃" : "로그인"}`}
                 </div>
               </div>

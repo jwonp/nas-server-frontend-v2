@@ -7,6 +7,22 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    screens: {
+      "sm": "640px",
+
+      "md": "768px",
+
+      "lg": "1024px",
+
+      "xl": "1280px",
+
+      "2xl": "1536px",
+
+      "mobile": "415px",
+      "file": "458px",
+
+      "login": "650px",
+    },
     extend: {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -15,13 +31,12 @@ const config: Config = {
       },
       gridTemplateColumns: {
         "16": "repeat(16,minmax(0,1fr))",
-        "listBarTitle": "40px 1fr"
+        "listBarTitle": "40px 1fr",
       },
       lineHeight: {
         "12": "3rem",
         "14": "3.5rem",
       },
-
     },
   },
   plugins: [],

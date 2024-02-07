@@ -68,7 +68,9 @@ const ListBar = ({
   const iconQuery = useQuery({
     queryKey: ["icon", { source: ownerImage }],
     queryFn: (): Promise<{ url: string }> =>
-      axios.get(`/api/storage/download?key=${ownerImage}`).then((res) => res.data),
+      axios
+        .get(`/api/storage/download?key=${ownerImage}`)
+        .then((res) => res.data),
   });
 
   const deleteFile = useMutation({
@@ -104,8 +106,8 @@ const ListBar = ({
   return (
     <div
       ref={ref}
-      className="grid grid-cols-16 w-full h-14 py-1 cursor-pointer select-none border-b">
-      <div className="col-span-7 ">
+      className="grid grid-cols-16 w-full min-w-[360px] h-14 py-1 cursor-pointer select-none border-b">
+      <div className="col-span-7  max-file:col-span-8 max-mobile:col-span-10">
         <div
           className="grid grid-cols-listBarTitle gap-2"
           onClick={() => {
@@ -143,7 +145,7 @@ const ListBar = ({
           )}
         </div>
       </div>
-      <div className="col-span-2">
+      <div className="col-span-2 max-md:hidden max-mobile:hidden">
         <div className="flex">
           <div className="mx-auto">
             <div className="flex gap-2">
@@ -164,30 +166,32 @@ const ListBar = ({
           </div>
         </div>
       </div>
-      <div className="col-span-2 text-center truncate leading-12 text-white text-lg font-semibold font-['Inter']">
+      <div className="col-span-2 max-md:col-span-3 max-file:col-span-3 max-mobile:hidden text-center truncate leading-12 text-white text-lg font-semibold font-['Inter']">
         {`${uploadTime ?? "-"}`}
       </div>
-      <div className="col-span-2 text-center leading-12 text-white text-lg font-semibold font-['Inter']">
+      <div className="col-span-2 max-md:col-span-3  max-file:hidden text-center leading-12 text-white text-lg font-semibold font-['Inter']">
         {`${convertFileSize(fileSize) ?? "-"}`}
       </div>
       <div
-        className={`col-span-3 grid grid-cols-4 gap-1 ${
+        className={`col-span-3  grid grid-cols-3 gap-1 max-md:col-span-3 max-file:col-span-4 max-mobile:col-span-6 ${
           hovering ? "opacity-100" : "opacity-0"
         }`}>
-        <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
-          <div
-            className="m-1 w-7 h-7 "
-            onClick={() => {
-              downloadFile(fileId, title);
-            }}>
-            <Image
-              src={downloadIcon}
-              alt=""
-              width={ButtonIconSize}
-              height={ButtonIconSize}
-            />
+        {fileIcon !== "folder" && (
+          <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
+            <div
+              className="m-1 w-7 h-7 "
+              onClick={() => {
+                downloadFile(fileId, title);
+              }}>
+              <Image
+                src={downloadIcon}
+                alt=""
+                width={ButtonIconSize}
+                height={ButtonIconSize}
+              />
+            </div>
           </div>
-        </div>
+        )}
         <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
           <div
             className="m-1 w-7 h-7 "
@@ -200,7 +204,7 @@ const ListBar = ({
             />
           </div>
         </div>
-        {fileIcon === "folder" && (
+        {/* {fileIcon === "folder" && (
           <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
             <div className="m-1 w-7 h-7 ">
               <Image
@@ -211,7 +215,7 @@ const ListBar = ({
               />
             </div>
           </div>
-        )}
+        )} */}
         <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
           <div
             className="m-1 w-7 h-7 "

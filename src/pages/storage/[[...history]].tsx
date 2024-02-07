@@ -89,12 +89,12 @@ const StoragePage = () => {
   }, [ItemQuery.data]);
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full min-w-[360px]">
       <div className="grid grid-cols-12 mt-5">
-        <div className="col-span-10">
+        <div className="col-span-10 max-md:col-span-9">
           <DirectoryHistory />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-2 max-md:col-span-3">
           <AddButtonList />
         </div>
       </div>
