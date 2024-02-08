@@ -2,6 +2,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import S3 from "aws-sdk/clients/s3";
 import { getSignedUrlParams } from "@/utils/handleS3";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]";
 
 const s3 = new S3({
   apiVersion: "latest",
@@ -15,13 +17,24 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const session = await getServerSession(req, res, authOptions);
+  if (!session) {
+    return res.status(403).json({ error: "Unauthorized" });
+  }
   const { fileType, directory, ownerId } = req.query;
+  let responseData = { uploadUrl: "", key: "" };
+  try {
+    const { key, params } = getSignedUrlParams(
+      fileType as string,
+      directory as string,
+      ownerId as string
+    );
+    const uploadUrl = s3.getSignedUrl(`putObject`, params);
+    responseData.key = key;
+    responseData.uploadUrl = uploadUrl;
+  } catch {
+    return res.status(500).json({ status: 500, msg: "Fail to upload file" });
+  }
 
-  const { key, params } = getSignedUrlParams(fileType as string, directory as string,ownerId as string);
-  const uploadUrl = s3.getSignedUrl(`putObject`, params);
-
-  res.status(200).json({
-    uploadUrl,
-    key: key,
-  });
+  res.status(200).json(responseData);
 }

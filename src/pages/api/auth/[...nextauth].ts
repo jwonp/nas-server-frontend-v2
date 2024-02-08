@@ -5,6 +5,8 @@ import { randomBytes, randomUUID } from "crypto";
 import { encryptCredentials } from "@/utils/encrypt";
 import { request } from "@/utils/request";
 import { UserSession } from "@/types/UserSession";
+import { AxiosError } from "axios";
+import { ErrorResponse, SuccessResponse } from "@/types/Responses";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -53,23 +55,33 @@ export const authOptions: AuthOptions = {
               icon: encryptedCredentials.icon,
               phone: encryptedCredentials.phone,
             };
-            const res = await request(dumySession).post(
-              `/user/signup`,
-              encryptedUserDetail
-            );
+            const res = await request(dumySession)
+              .post(`/user/signup`, encryptedUserDetail)
+              .then((res) => {
+                return { status: res.status, data: res.data };
+              })
+              .catch((err: AxiosError) => {
+                return { status: err.status, msg: err.message };
+              });
 
-            return res.data;
+            return res.status === 200
+              ? (res as SuccessResponse).data
+              : (res as ErrorResponse);
           }
           return null;
         }
 
         const encryptedCredentials = await encryptCredentials(credentials);
 
-        const res = await request(dumySession).post(
-          `/user/signin`,
-          encryptedCredentials
-        );
-        const user = await res.data;
+        const res = await request(dumySession)
+          .post(`/user/signin`, encryptedCredentials)
+          .then((res) => {
+            return { data: res.data, status: res.status };
+          })
+          .catch((err: AxiosError) => {
+            return { status: err.status, msg: err.message };
+          });
+        const user = res;
         console.log("get user");
         console.log(user);
         // If no error and we have user data, return it

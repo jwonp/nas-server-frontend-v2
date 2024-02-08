@@ -15,17 +15,25 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  
   const fileType = req.query.fileType;
   const key = `icons/${randomUUID()}.${fileType}`;
+  let responseData = {
+    uploadUrl: "",
+    key: "",
+  };
   const params = {
     Bucket: process.env.BUCKET_NAME,
     Key: key,
     Expires: 60,
   };
-  const uploadUrl = s3.getSignedUrl(`putObject`, params);
+  try {
+    const uploadUrl = s3.getSignedUrl(`putObject`, params);
+    responseData.key = key;
+    responseData.uploadUrl = uploadUrl;
+  } catch (error) {
+    return res.status(500).json({ status: 500, msg: "Fail to upload icon" });
+  }
 
-  res.status(200).json({
-    uploadUrl,
-    key: key,
-  });
+  res.status(200).json(responseData);
 }
