@@ -8,13 +8,18 @@ import { useSession } from "next-auth/react";
 import { MetaData } from "@/types/MetaData";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { getProgressPercent } from "@/redux/featrues/fileLoadProgressSlice";
+import { useEffect } from "react";
 
 const AddIconSize = 38;
 const AddButtonList = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const queryClient = useQueryClient();
-
+  const dispatch = useAppDispatch();
+  const progressPercent = useAppSelector(getProgressPercent);
+  useEffect(()=>{console.log(`${progressPercent}%`)},[progressPercent])
   const addMetas = useMutation({
     mutationFn: (metas: MetaData[]) =>
       axios.post("/api/storage/meta", { metas: metas }),
@@ -47,7 +52,7 @@ const AddButtonList = () => {
       directory: directory,
       ownerId: session.user.id,
     };
-    const storedMetas = await uploadFilesToS3ByFileList(files, meta);
+    const storedMetas = await uploadFilesToS3ByFileList(files, meta,dispatch);
     const filterdMetas: MetaData[] = [];
     for (let meta of storedMetas) {
       if (meta) {

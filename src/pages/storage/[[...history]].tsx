@@ -38,6 +38,7 @@ const StoragePage = () => {
   });
 
   useEffect(() => {
+    
     queryClient.invalidateQueries({
       queryKey: ["isExist", { path: directoryArray }],
     });
@@ -103,6 +104,7 @@ const StoragePage = () => {
       <div className="w-full h-[calc(100vh-56px-132px)] max-h-[calc(100vh-56px-132px)] overflow-scroll overflow-x-hidden">
         {itemElements}
       </div>
+      
     </div>
   );
 };

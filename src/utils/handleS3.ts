@@ -2,6 +2,9 @@ import { MetaData } from "@/types/MetaData";
 import axios from "axios";
 import { randomUUID } from "crypto";
 import { getFileType } from "./parseFileType";
+import { AppDispatch } from "@/redux/store";
+import { setProgressPercent } from "@/redux/featrues/fileLoadProgressSlice";
+import { Dispatch, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 
 type Nullable<T> = T | null;
 
@@ -30,7 +33,9 @@ export const getSignedUrlParams = (
 
 const uploadFile = async (
   file: File | null,
-  meta: Omit<MetaData, "key" | "uploadTime" | "size" | "fileName" | "type">
+  meta: Omit<MetaData, "key" | "uploadTime" | "size" | "fileName" | "type">,
+  progressDispatch?: ThunkDispatch<any, undefined, UnknownAction> &
+    Dispatch<any>
 ): Promise<Nullable<MetaData>> => {
   if (!file) {
     return null;
@@ -38,18 +43,28 @@ const uploadFile = async (
 
   // @ts-ignore
   const fileType = (file.name as string).split(".").slice(-1)[0];
-  
+
   const { data } = await axios.get(`/api/storage/file`, {
     params: {
       fileType: fileType,
-      directory:meta.directory,
+      directory: meta.directory,
       ownerId: meta.ownerId,
     },
   });
 
   const { uploadUrl, key } = data;
 
-  const res = await axios.put(uploadUrl, file);
+  const res = await axios.put(uploadUrl, file, {
+    onUploadProgress: (event) => {
+      if (!event.total || !progressDispatch) {
+        return;
+      }
+      let percent = (event.loaded * 100) / event.total;
+      let percentCompleted = Math.round(percent);
+      progressDispatch(setProgressPercent(percentCompleted));
+    },
+  });
+  console.log(res);
 
   const uploadedMeta: MetaData = {
     directory: meta.directory,
@@ -96,15 +111,17 @@ export const uploadProfileIconToS3 = async (file: File) => {
  */
 export const uploadFilesToS3ByFileList = async (
   fileList: FileList,
-  meta: Omit<MetaData, "key" | "uploadTime" | "size" | "fileName" | "type">
+  meta: Omit<MetaData, "key" | "uploadTime" | "size" | "fileName" | "type">,
+  progressDispatch?: ThunkDispatch<any, undefined, UnknownAction> &
+    Dispatch<any>
 ) => {
   const indexs = Array.from(Array(fileList.length).keys());
   const files = indexs.map((index) => fileList[index]);
-  
+
   const storedMetas = new Promise<Nullable<MetaData>[]>((resolve, reject) => {
     let metas: Nullable<MetaData>[] = [];
     files.forEach(async (file, index) => {
-      const storedMeta = await uploadFile(file, meta);
+      const storedMeta = await uploadFile(file, meta, progressDispatch);
       metas.push(storedMeta);
       if (metas.length === files.length) {
         return resolve(metas);
@@ -114,7 +131,6 @@ export const uploadFilesToS3ByFileList = async (
       return reject([]);
     }
   });
-  
 
   return storedMetas;
 };

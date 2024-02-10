@@ -1,9 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import sideBarVisibleReducer from "./featrues/sideBarVisibleSlice";
-
+import fileLoadProgressReducer from  "./featrues/fileLoadProgressSlice"
 export const store = configureStore({
   reducer: {
     sideBarVisible: sideBarVisibleReducer,
+    fileLoadProgress:fileLoadProgressReducer
   },
 });
 
