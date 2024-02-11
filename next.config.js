@@ -2,6 +2,13 @@
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
+  async redirects(){
+return [{
+  source:"/",
+  destination:"/storage",
+  permanent:true
+}]
+  },
   images: {
     remotePatterns: [
       {
