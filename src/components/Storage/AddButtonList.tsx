@@ -6,20 +6,30 @@ import { uploadFilesToS3ByFileList } from "@/utils/handleS3";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { MetaData } from "@/types/MetaData";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { getProgressPercent } from "@/redux/featrues/fileLoadProgressSlice";
-import { useEffect } from "react";
+import { useAppDispatch } from "@/redux/hooks";
+import {
+  resetFileAmount,
+  resetProgressPercent,
+} from "@/redux/featrues/fileLoadProgressSlice";
+import { VolumeSize } from "@/types/Volume";
 
 const AddIconSize = 38;
+
 const AddButtonList = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
-  const progressPercent = useAppSelector(getProgressPercent);
-  useEffect(()=>{console.log(`${progressPercent}%`)},[progressPercent])
+
+  const volumeQuery = useQuery({
+    queryKey: ["volume"],
+    queryFn: (): Promise<VolumeSize> =>
+      axios.get("/api/user/volume").then((res) => res.data),
+    initialData: { max: -1, now: -1 },
+    enabled: session?.user.id ? true : false,
+  });
   const addMetas = useMutation({
     mutationFn: (metas: MetaData[]) =>
       axios.post("/api/storage/meta", { metas: metas }),
@@ -52,14 +62,24 @@ const AddButtonList = () => {
       directory: directory,
       ownerId: session.user.id,
     };
-    const storedMetas = await uploadFilesToS3ByFileList(files, meta,dispatch);
+
+    const storedMetas = await uploadFilesToS3ByFileList(
+      files,
+      volumeQuery.data,
+      meta,
+      dispatch
+    );
+    if (!storedMetas) {
+      return;
+    }
     const filterdMetas: MetaData[] = [];
     for (let meta of storedMetas) {
       if (meta) {
         filterdMetas.push(meta);
       }
     }
-
+    dispatch(resetProgressPercent());
+    dispatch(resetFileAmount());
     addMetas.mutate(filterdMetas);
   };
   const handleClickAddFolder = () => {

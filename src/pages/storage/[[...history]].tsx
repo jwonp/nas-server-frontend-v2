@@ -9,6 +9,11 @@ import { ItemResponse } from "@/types/MetaData";
 import { getTimeString } from "@/utils/parseTime";
 import { IsExistDirectoryResponse } from "@/types/Responses";
 import ListBar from "@/components/Storage/ListBar/ListBar";
+import { useAppSelector } from "@/redux/hooks";
+import {
+  getFileAmount,
+  getProgressPercent,
+} from "@/redux/featrues/fileLoadProgressSlice";
 import {
   useDirectory,
   useDirectoryArray,
@@ -20,7 +25,8 @@ const StoragePage = () => {
   const queryClient = useQueryClient();
   const directoryArray = useDirectoryArray();
   const directory = useDirectory();
-
+  const progressPercent = useAppSelector(getProgressPercent);
+  const fileAmount = useAppSelector(getFileAmount);
   const isExistDirectoryQuery = useQuery<IsExistDirectoryResponse>({
     queryKey: ["isExist", { path: directoryArray }],
     queryFn: async () =>
@@ -38,7 +44,12 @@ const StoragePage = () => {
   });
 
   useEffect(() => {
-    
+    console.log(
+      `${fileAmount.fileCurrentAmount}/${fileAmount.fileTotalAmount} : ${progressPercent}%`
+    );
+  }, [progressPercent, fileAmount]);
+
+  useEffect(() => {
     queryClient.invalidateQueries({
       queryKey: ["isExist", { path: directoryArray }],
     });
@@ -104,7 +115,11 @@ const StoragePage = () => {
       <div className="w-full h-[calc(100vh-56px-132px)] max-h-[calc(100vh-56px-132px)] overflow-scroll overflow-x-hidden">
         {itemElements}
       </div>
-      
+      <div className={`${fileAmount.fileTotalAmount < 0 && "hidden"}`}>
+        <div className="fixed bottom-[10px] right-[15px] text-white w-[300px] h-[50px] py-[7px] px-4 leading-9 bg-slate-500 rounded-lg">
+          {`${fileAmount.fileCurrentAmount}/${fileAmount.fileTotalAmount}번쨰 ${progressPercent}% 진행중`}
+        </div>
+      </div>
     </div>
   );
 };

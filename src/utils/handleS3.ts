@@ -2,9 +2,14 @@ import { MetaData } from "@/types/MetaData";
 import axios from "axios";
 import { randomUUID } from "crypto";
 import { getFileType } from "./parseFileType";
-import { AppDispatch } from "@/redux/store";
-import { setProgressPercent } from "@/redux/featrues/fileLoadProgressSlice";
+
+import {
+  increaseFileAmount,
+  setFileAmount,
+  setProgressPercent,
+} from "@/redux/featrues/fileLoadProgressSlice";
 import { Dispatch, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
+import { VolumeSize } from "@/types/Volume";
 
 type Nullable<T> = T | null;
 
@@ -111,18 +116,32 @@ export const uploadProfileIconToS3 = async (file: File) => {
  */
 export const uploadFilesToS3ByFileList = async (
   fileList: FileList,
+  volume: VolumeSize,
   meta: Omit<MetaData, "key" | "uploadTime" | "size" | "fileName" | "type">,
-  progressDispatch?: ThunkDispatch<any, undefined, UnknownAction> &
-    Dispatch<any>
+  progressDispatch: ThunkDispatch<any, undefined, UnknownAction> & Dispatch<any>
 ) => {
+  if (volume.max < 0 || volume.now < 0) {
+    return;
+  }
   const indexs = Array.from(Array(fileList.length).keys());
   const files = indexs.map((index) => fileList[index]);
-
+  const totalFileSize = files
+    .map((file) => file.size)
+    .reduce((acc, cur) => acc + cur, 0);
+  if (volume.now + totalFileSize > volume.max) {
+    return;
+  }
   const storedMetas = new Promise<Nullable<MetaData>[]>((resolve, reject) => {
     let metas: Nullable<MetaData>[] = [];
+    if (progressDispatch) {
+      progressDispatch(setFileAmount(files.length));
+    }
     files.forEach(async (file, index) => {
       const storedMeta = await uploadFile(file, meta, progressDispatch);
       metas.push(storedMeta);
+      if (progressDispatch) {
+        progressDispatch(increaseFileAmount());
+      }
       if (metas.length === files.length) {
         return resolve(metas);
       }
