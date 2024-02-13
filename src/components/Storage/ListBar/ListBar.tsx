@@ -76,7 +76,12 @@ const ListBar = ({
   const deleteFile = useMutation({
     mutationFn: (fileId: string) =>
       axios.delete("/api/storage/item", {
-        data: { fileId: fileId, fileSize: fileSize },
+        data: {
+          fileId: fileId,
+          fileSize: fileSize,
+          fileType: fileIcon,
+          directory: `/${directoryArray.join("/")}`,
+        },
       }),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({

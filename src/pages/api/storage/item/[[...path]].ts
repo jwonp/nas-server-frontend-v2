@@ -23,11 +23,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(200).json(result.data);
   }
   if (req.method === "DELETE") {
-    const { fileId, fileSize } = req.body;
+    const { fileId, fileSize, fileType ,directory} = req.body;
     const result = await request(session?.user)
-      .delete(`/storage/item`, {
-        data: { fileId: fileId, fileSize: fileSize, userId: session?.user.id },
-      })
+      .delete(
+        fileType === "folder" ? `/storage/item/folder` : `/storage/item`,
+        {
+          data: {
+            fileId: fileId,
+            fileSize: fileSize,
+            directory: directory,
+            userId: session?.user.id,
+          },
+        }
+      )
       .then((res) => {
         return { status: res.status, data: res.data };
       })
