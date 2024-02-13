@@ -81,7 +81,7 @@ export const authOptions: AuthOptions = {
           .catch((err: AxiosError) => {
             return { status: err.status, msg: err.message };
           });
-        const user = res;
+        const user = (res as SuccessResponse).data;
         console.log("get user");
         console.log(user);
         // If no error and we have user data, return it
@@ -119,6 +119,7 @@ export const authOptions: AuthOptions = {
 
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
+
       if (user.username && user.name && user.icon && user.phone) {
         return true;
       }
