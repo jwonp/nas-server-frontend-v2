@@ -21,7 +21,11 @@ const Layout = ({ children }: { children: JSX.Element }) => {
                   로그인이 필요한 서비스 입니다.
                 </div>
                 <div className="flex">
-                  <div className="mx-auto text-center cursor-pointer underline decoration-solid" onClick={()=>{signIn()}}>
+                  <div
+                    className="mx-auto text-center cursor-pointer underline decoration-solid"
+                    onClick={() => {
+                      signIn();
+                    }}>
                     로그인
                   </div>
                 </div>
@@ -31,7 +35,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
         </div>
       )}
       {session?.user && (
-        <main className="grid lg:grid-cols-6 grid-cols-1 w-screen min-w-[360px] h-[calc(100vh-56px)] max-h-[calc(100vh-56px)] overflow-hidden max-mobile:overflow-scroll">
+        <main className="grid lg:grid-cols-6 grid-cols-1 w-screen min-w-[360px] h-[calc(100vh-56px)] max-h-[calc(100vh-56px)] overflow-hidden max-mobile:overflow-scroll overflow-y-hidden">
           <aside
             className={`lg:col-span-1 lg:block lg:static lg:w-full ${
               isVisibleSidebar ? "fixed" : "hidden"
