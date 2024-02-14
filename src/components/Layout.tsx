@@ -24,7 +24,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
                   아래 링크를 통해서 로그인 해주세요.
                 </div>
                 <div className="flex">
-                  <div className="mx-auto text-center cursor-pointer underline decoration-solid" onClick={()=>{signIn()}}>
+                  <div className="text-xl mx-auto text-center cursor-pointer underline decoration-solid" onClick={()=>{signIn()}}>
                     로그인
                   </div>
                 </div>
