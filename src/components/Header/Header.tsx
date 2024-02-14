@@ -58,19 +58,23 @@ const Header = () => {
       </div>
       <div className="ml-auto">
         <div className="grid grid-cols-2 gap-5">
-          <div className="flex">
-            <div className="cursor-pointer rounded-full overflow-hidden max-h-8 h-8 w-8 relative">
-              <Image
-                src={userIcon}
-                alt={""}
-                fill
-                sizes="(max-width: 768px) 100vw, 33vw"
-              />
+          {session?.user?.name ? (
+            <div className="flex">
+              <div className="cursor-pointer rounded-full overflow-hidden max-h-8 h-8 w-8 relative">
+                <Image
+                  src={userIcon}
+                  alt={""}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+              </div>
+              <div className="max-login:hidden ml-auto align-middle leading-8  text-white text-lg font-semibold font-['Inter']">
+                {session?.user?.name}
+              </div>
             </div>
-            <div className="max-login:hidden ml-auto align-middle leading-8  text-white text-lg font-semibold font-['Inter']">
-              {session?.user?.name ?? ""}
-            </div>
-          </div>
+          ) : (
+            <div></div>
+          )}
 
           <div
             className="flex cursor-pointer"

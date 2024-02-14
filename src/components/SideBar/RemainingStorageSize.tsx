@@ -32,14 +32,19 @@ const RemainingStorageSize = () => {
             width: `${Math.floor((volume.now / volume.max) * 100)}%`,
           }}></div>
       </div>
-      <div className="indent-2 text-white text-base font-normal font-['Inter']">
-        {`${convertFileSize(volume.max)} 중 ${convertFileSize(
-          volume.now,
-          true
-        )} ${
-          volume.max > 0 && `(${((volume.now / volume.max) * 100).toFixed(2)}%)`
-        } 사용중 `}
-      </div>
+      {volumeQuery.isLoading ? (
+        <div>불러오는 중...</div>
+      ) : (
+        <div className="indent-2 text-white text-base font-normal font-['Inter']">
+          {`${convertFileSize(volume.max)} 중 ${convertFileSize(
+            volume.now,
+            true
+          )} ${
+            volume.max > 0 &&
+            `(${((volume.now / volume.max) * 100).toFixed(2)}%)`
+          } 사용중 `}
+        </div>
+      )}
     </div>
   );
 };
