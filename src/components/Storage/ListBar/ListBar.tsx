@@ -19,7 +19,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
 import { useEffect, useState } from "react";
-import { useDirectoryArray } from "@/components/hooks/useDirectory.hook";
+import { useDirectoryArray } from "@/hooks/useDirectory.hook";
 import { convertFileSize } from "@/utils/parseFileSize";
 import { downloadFile } from "@/utils/download";
 
