@@ -34,7 +34,7 @@ const Layout = ({ children }: { children: JSX.Element }) => {
         </div>
       )}
       {session?.user && (
-        <main className="grid lg:grid-cols-6 grid-cols-1 w-screen min-w-[360px] h-[calc(100vh-56px)] max-h-[calc(100vh-56px)] overflow-hidden max-mobile:overflow-scroll">
+        <main className="grid lg:grid-cols-6 grid-cols-1 w-screen min-w-[360px] h-[calc(100vh-56px)] max-h-[calc(100vh-56px)] overflow-hidden max-mobile:overflow-scroll overflow-y-hidden">
           <aside
             className={`lg:col-span-1 lg:block lg:static lg:w-full ${
               isVisibleSidebar ? "fixed" : "hidden"
