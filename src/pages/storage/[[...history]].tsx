@@ -14,10 +14,7 @@ import {
   getFileAmount,
   getProgressPercent,
 } from "@/redux/featrues/fileLoadProgressSlice";
-import {
-  useDirectory,
-  useDirectoryArray,
-} from "@/components/hooks/useDirectory.hook";
+import { useDirectory, useDirectoryArray } from "@/hooks/useDirectory.hook";
 
 // ItemQuery.data -> itemList -> itemElements => render
 const StoragePage = () => {
