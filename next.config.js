@@ -7,6 +7,14 @@ return [{
   source:"/",
   destination:"/storage",
   permanent:true
+},{
+  source:"/api/auth/error",
+  destination:"/auth/signin",
+  has:[{
+   type:"query",
+   key:"error" 
+  }],
+  permanent:true
 }]
   },
   images: {

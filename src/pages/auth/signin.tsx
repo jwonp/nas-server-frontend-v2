@@ -16,6 +16,7 @@ export default function SignIn({
   };
   useEffect(() => {
     const { error } = router.query;
+    console.log(error)
     if (error && typeof error === "string") {
       setError(() => error);
     }
@@ -38,6 +39,7 @@ export default function SignIn({
                 defaultValue={csrfToken}
               />
               <div className="text-2xl text-center mb-2">Sign in</div>
+              <div className="text-red-500 text-center">로그인 정보가 올바르지 않습니다.</div>
               <div className="mb-2">
                 <div>
                   <label className="text-xl">ID</label>
