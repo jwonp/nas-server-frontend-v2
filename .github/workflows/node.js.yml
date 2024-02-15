@@ -63,9 +63,11 @@ jobs:
         echo FRONTEND_ENDPOINT=${{ secrets.FRONTEND_ENDPOINT }} >> .env
         echo NEXT_SHARP_PATH=${{ secrets.NEXT_SHARP_PATH }} >> .env
         
-    - run: pm2 kill
-    - run: rm -rf node_modules
+    # - run: pm2 kill
+    # - run: rm -rf node_modules
     - run: yarn install --immutable --immutable-cache --check-cache
     - run: yarn build
-    - run: pm2 start npm --name "nas-server-frontend-v2" -- start
+    - run: pm2 save --force
+    - run: pm2 restart
+    # - run: pm2 start npm --name "nas-server-frontend-v2" -- start
 
