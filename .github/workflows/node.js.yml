@@ -60,6 +60,7 @@ jobs:
         echo FIREBASE_CONFIG_MEASUREMENT_ID=${{ secrets.FIREBASE_CONFIG_MEASUREMENT_ID }} >> .env
         echo BACKEND_ENDPOINT=${{ secrets.BACKEND_ENDPOINT }} >> .env
         echo FRONTEND_ENDPOINT=${{ secrets.FRONTEND_ENDPOINT }} >> .env
+        echo NEXT_SHARP_PATH=${{ secrets.NEXT_SHARP_PATH }} >> .env
         
     - run: pm2 kill
     - run: rm -rf node_modules
