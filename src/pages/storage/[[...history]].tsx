@@ -41,12 +41,6 @@ const StoragePage = () => {
   });
 
   useEffect(() => {
-    console.log(
-      `${fileAmount.fileCurrentAmount}/${fileAmount.fileTotalAmount} : ${progressPercent}%`
-    );
-  }, [progressPercent, fileAmount]);
-
-  useEffect(() => {
     queryClient.invalidateQueries({
       queryKey: ["isExist", { path: directoryArray }],
     });
