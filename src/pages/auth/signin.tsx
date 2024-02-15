@@ -16,15 +16,15 @@ export default function SignIn({
   };
   useEffect(() => {
     const { error } = router.query;
-    console.log(error)
+    console.log(error);
     if (error && typeof error === "string") {
       setError(() => error);
     }
   }, [router]);
-  const handleClickSignUp = (e:React.MouseEvent<HTMLButtonElement>) => {
+  const handleClickSignUp = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     router.push("/auth/signup");
-  }
+  };
   return (
     <div className="w-screen h-screen flex">
       <div className="m-auto">
@@ -39,7 +39,11 @@ export default function SignIn({
                 defaultValue={csrfToken}
               />
               <div className="text-2xl text-center mb-2">Sign in</div>
-              <div className="text-red-500 text-center">로그인 정보가 올바르지 않습니다.</div>
+              {error && (
+                <div className="text-red-500 text-center">
+                  로그인 정보가 올바르지 않습니다.
+                </div>
+              )}
               <div className="mb-2">
                 <div>
                   <label className="text-xl">ID</label>
@@ -76,7 +80,6 @@ export default function SignIn({
                     minLength={8}
                     autoComplete="on"
                     pattern="^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[_!@#$%^*+=-])[a-zA-Z_!@#$%^*+=0-9]{8,32}$"
-                    
                     placeholder={`${
                       error === "CredentialsSignin"
                         ? "아이디 혹은 비밀번호를 확인해주세요."
