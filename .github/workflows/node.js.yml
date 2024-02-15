@@ -58,6 +58,7 @@ jobs:
         echo FIREBASE_CONFIG_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_CONFIG_MESSAGING_SENDER_ID }} >> .env
         echo FIREBASE_CONFIG_APP_ID=${{ secrets.FIREBASE_CONFIG_APP_ID }} >> .env
         echo FIREBASE_CONFIG_MEASUREMENT_ID=${{ secrets.FIREBASE_CONFIG_MEASUREMENT_ID }} >> .env
+        echo JWT_SIGN_KEY=${{ secrets.JWT_SIGN_KEY }} >> .env
         echo BACKEND_ENDPOINT=${{ secrets.BACKEND_ENDPOINT }} >> .env
         echo FRONTEND_ENDPOINT=${{ secrets.FRONTEND_ENDPOINT }} >> .env
         echo NEXT_SHARP_PATH=${{ secrets.NEXT_SHARP_PATH }} >> .env
