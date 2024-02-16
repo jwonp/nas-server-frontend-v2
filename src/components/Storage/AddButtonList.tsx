@@ -104,10 +104,10 @@ const AddButtonList = () => {
 
   return (
     <div className="grid grid-cols-2 select-none">
-      <div className="cursor-pointer col-span-1 py-1 flex rounded-l-lg border-l border-r border-t border-b">
-        <div
-          className="mx-auto"
-          onClick={handleClickAddFolder}>
+      <div
+        className="cursor-pointer col-span-1 py-1 flex rounded-l-lg border-l border-r border-t border-b"
+        onClick={handleClickAddFolder}>
+        <div className="mx-auto">
           <Image
             src={addFolderIcon}
             alt=""
@@ -116,11 +116,16 @@ const AddButtonList = () => {
           />
         </div>
       </div>
-      <div className="col-span-1 py-1 flex rounded-r-lg border-r border-t border-b">
+      <div
+        className="cursor-pointer col-span-1 py-1 flex rounded-r-lg border-r border-t border-b"
+        onClick={() => {
+          const fileUploadInput = document.getElementById(
+            "file-upload"
+          ) as HTMLInputElement;
+          fileUploadInput.click();
+        }}>
         <div className="mx-auto">
-          <label
-            htmlFor="file-upload"
-            className="cursor-pointer">
+          <label htmlFor="file-upload">
             <Image
               src={addFileIcon}
               alt=""
