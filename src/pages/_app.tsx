@@ -22,6 +22,7 @@ export default function App({
         <Provider store={store}>
           <Head>
             <title>Nas Server</title>
+
             <meta charSet="utf-8" />
             <meta
               name="author"
@@ -30,6 +31,10 @@ export default function App({
             <meta
               name="description"
               content="This service is the Cloud Stoarge Service."
+            />
+            <link
+              rel="icon"
+              href="/favicon.ico"
             />
           </Head>
           {router.pathname.startsWith("/storage") ? (
