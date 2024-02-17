@@ -15,13 +15,20 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 const Header = () => {
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
+
   const dispatch = useAppDispatch();
   const isVisibleSidebar = useAppSelector(getVisibleSideBar);
   const handleMenuClick = (e: React.MouseEvent<HTMLDivElement>) => {
     dispatch(setVisibleSideBar(!isVisibleSidebar));
   };
-  const handleLoginOutClick = session ? () => signOut() : () => signIn();
+  const handleLoginOutClick = () => {
+    if (session) {
+      return () => signOut();
+    }
+
+    return () => signIn();
+  };
 
   const { data, error, isLoading } = useQuery({
     queryKey: ["profileIcon"],
@@ -76,28 +83,30 @@ const Header = () => {
             <div></div>
           )}
 
-          <div
-            className="flex cursor-pointer"
-            onClick={handleLoginOutClick}>
-            <div className="ml-auto">
-              <div className="flex gap-1">
-                <div className="flex">
-                  <div className="my-auto">
-                    <Image
-                      className="w-7 h-7"
-                      src={session ? logoutIcon : loginIcon}
-                      alt={""}
-                      width={28}
-                      height={28}
-                    />
+          {sessionStatus !== "loading" && (
+            <div
+              className="flex cursor-pointer"
+              onClick={handleLoginOutClick}>
+              <div className="ml-auto">
+                <div className="flex gap-1">
+                  <div className="flex">
+                    <div className="my-auto">
+                      <Image
+                        className="w-7 h-7"
+                        src={session ? logoutIcon : loginIcon}
+                        alt={""}
+                        width={28}
+                        height={28}
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="max-login:hidden align-middle leading-8  text-center text-white text-lg font-semibold font-['Inter']">
-                  {`${session ? "로그아웃" : "로그인"}`}
+                  <div className="max-login:hidden align-middle leading-8  text-center text-white text-lg font-semibold font-['Inter']">
+                    {`${session ? "로그아웃" : "로그인"}`}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
