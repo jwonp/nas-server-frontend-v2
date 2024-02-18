@@ -14,6 +14,10 @@ import {
   resetProgressPercent,
 } from "@/redux/featrues/fileLoadProgressSlice";
 import { VolumeSize } from "@/types/Volume";
+import {
+  SnackBarProps,
+  setWarningSnackBar,
+} from "@/redux/featrues/snackBarSwitchSlice";
 
 const AddIconSize = 38;
 
@@ -70,6 +74,11 @@ const AddButtonList = () => {
       dispatch
     );
     if (!storedMetas) {
+      const warningSnackBarProps: SnackBarProps = {
+        isVisible: true,
+        message: "저장 공간이 부족합니다.",
+      };
+      dispatch(setWarningSnackBar(warningSnackBarProps));
       return;
     }
     const filterdMetas: MetaData[] = [];
@@ -125,7 +134,7 @@ const AddButtonList = () => {
           fileUploadInput.click();
         }}>
         <div className="mx-auto">
-          <label htmlFor="file-upload">
+          <label htmlFor="file-upload" onClick={(e)=>{e.preventDefault()}}>
             <Image
               src={addFileIcon}
               alt=""

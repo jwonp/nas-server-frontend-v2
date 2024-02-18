@@ -22,13 +22,7 @@ const Header = () => {
   const handleMenuClick = (e: React.MouseEvent<HTMLDivElement>) => {
     dispatch(setVisibleSideBar(!isVisibleSidebar));
   };
-  const handleLoginOutClick = () => {
-    if (session) {
-      return () => signOut();
-    }
-
-    return () => signIn();
-  };
+  const handleLoginOutClick = session ? () => signOut() :()=> signIn();
 
   const { data, error, isLoading } = useQuery({
     queryKey: ["profileIcon"],

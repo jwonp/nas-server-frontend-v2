@@ -9,19 +9,23 @@ import { ItemResponse } from "@/types/MetaData";
 import { getTimeString } from "@/utils/parseTime";
 import { IsExistDirectoryResponse } from "@/types/Responses";
 import ListBar from "@/components/Storage/ListBar/ListBar";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   getFileAmount,
   getProgressPercent,
 } from "@/redux/featrues/fileLoadProgressSlice";
 import { useDirectory, useDirectoryArray } from "@/hooks/useDirectory.hook";
-
+import { getWarningSnackBar, resetWarningSnackBar } from "@/redux/featrues/snackBarSwitchSlice";
+import WhiteCloseIcon from "@public/icons/close-white.svg";
+import Image from "next/image";
 // ItemQuery.data -> itemList -> itemElements => render
 const StoragePage = () => {
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const queryClient = useQueryClient();
   const directoryArray = useDirectoryArray();
   const directory = useDirectory();
+  const warningSnackBar = useAppSelector(getWarningSnackBar);
   const progressPercent = useAppSelector(getProgressPercent);
   const fileAmount = useAppSelector(getFileAmount);
   const isExistDirectoryQuery = useQuery<IsExistDirectoryResponse>({
@@ -109,6 +113,21 @@ const StoragePage = () => {
       <div className={`${fileAmount.fileTotalAmount < 0 && "hidden"}`}>
         <div className="fixed bottom-[10px] right-[15px] text-white w-[300px] h-[50px] py-[7px] px-4 leading-9 bg-slate-500 rounded-lg">
           {`${fileAmount.fileCurrentAmount}/${fileAmount.fileTotalAmount}번쨰 ${progressPercent}% 진행중`}
+        </div>
+      </div>
+      <div className={` ${warningSnackBar.isVisible === false && "hidden"}`}>
+        <div className="flex gap-4 fixed bottom-[10px] right-[15px] text-white  h-[50px] py-[7px] px-4 leading-8 border-rose-800 border-2 bg-red-500 rounded-lg">
+          <div>{warningSnackBar.message}</div>
+          <div className="cursor-pointer float-right py-[7px]" onClick={()=>{
+            dispatch(resetWarningSnackBar());
+          }}>
+            <Image
+              src={WhiteCloseIcon}
+              alt={""}
+              width={18}
+              height={18}
+            />
+          </div>
         </div>
       </div>
     </div>
