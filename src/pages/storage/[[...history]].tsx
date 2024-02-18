@@ -15,9 +15,13 @@ import {
   getProgressPercent,
 } from "@/redux/featrues/fileLoadProgressSlice";
 import { useDirectory, useDirectoryArray } from "@/hooks/useDirectory.hook";
-import { getWarningSnackBar, resetWarningSnackBar } from "@/redux/featrues/snackBarSwitchSlice";
+import {
+  getWarningSnackBar,
+  resetWarningSnackBar,
+} from "@/redux/featrues/snackBarSwitchSlice";
 import WhiteCloseIcon from "@public/icons/close-white.svg";
 import Image from "next/image";
+import ShareModal from "@/components/Storage/ShareModal";
 // ItemQuery.data -> itemList -> itemElements => render
 const StoragePage = () => {
   const dispatch = useAppDispatch();
@@ -118,9 +122,11 @@ const StoragePage = () => {
       <div className={` ${warningSnackBar.isVisible === false && "hidden"}`}>
         <div className="flex gap-4 fixed bottom-[10px] right-[15px] text-white  h-[50px] py-[7px] px-4 leading-8 border-rose-800 border-2 bg-red-500 rounded-lg">
           <div>{warningSnackBar.message}</div>
-          <div className="cursor-pointer float-right py-[7px]" onClick={()=>{
-            dispatch(resetWarningSnackBar());
-          }}>
+          <div
+            className="cursor-pointer float-right py-[7px]"
+            onClick={() => {
+              dispatch(resetWarningSnackBar());
+            }}>
             <Image
               src={WhiteCloseIcon}
               alt={""}
@@ -130,6 +136,8 @@ const StoragePage = () => {
           </div>
         </div>
       </div>
+
+      <ShareModal />
     </div>
   );
 };

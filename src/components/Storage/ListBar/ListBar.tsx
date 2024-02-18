@@ -11,6 +11,7 @@ import deleteIcon from "@public/icons/delete.png";
 import favoriteIcon from "@public/icons/star.png";
 import editTitleIcon from "@public/icons/edit.png";
 import downloadIcon from "@public/icons/download.png";
+import ShareIcon from "@public/icons/share.png";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 import { useHover } from "@uidotdev/usehooks";
@@ -178,7 +179,7 @@ const ListBar = ({
         {`${convertFileSize(fileSize) ?? "-"}`}
       </div>
       <div
-        className={`col-span-3  grid grid-cols-3 gap-1 max-md:col-span-3 max-file:col-span-4 max-mobile:col-span-6 ${
+        className={`col-span-3 flex gap-2 max-md:col-span-3 max-file:col-span-4 max-mobile:col-span-6 ${
           hovering ? "opacity-100" : "opacity-0"
         }`}>
         {fileIcon !== "folder" && (
@@ -209,7 +210,7 @@ const ListBar = ({
             />
           </div>
         </div>
-        {/* {fileIcon === "folder" && (
+        {fileIcon === "folder" && (
           <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
             <div className="m-1 w-7 h-7 ">
               <Image
@@ -220,7 +221,7 @@ const ListBar = ({
               />
             </div>
           </div>
-        )} */}
+        )}
         <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
           <div
             className="m-1 w-7 h-7 "
@@ -229,6 +230,20 @@ const ListBar = ({
             }}>
             <Image
               src={deleteIcon}
+              alt=""
+              width={ButtonIconSize}
+              height={ButtonIconSize}
+            />
+          </div>
+        </div>
+        <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
+          <div
+            className="m-1 w-7 h-7 "
+            onClick={() => {
+              deleteFile.mutate(fileId);
+            }}>
+            <Image
+              src={ShareIcon}
               alt=""
               width={ButtonIconSize}
               height={ButtonIconSize}
