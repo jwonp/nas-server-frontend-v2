@@ -54,7 +54,7 @@ const SignUp = ({
                 type="hidden"
                 defaultValue={csrfToken}
               />
-              <div className="text-2xl text-center mb-2">Sign up</div>
+              <div className="text-2xl text-center mb-2">회원가입</div>
               <div className="mb-2">
                 <div>
                   <label className="text-xl">아이디</label>
@@ -223,7 +223,7 @@ const SignUp = ({
                   "opacity-50 cursor-default"
                 }`}
                 disabled={Object.values(isInputVaild).includes(false)}>
-                Sign up
+                회원가입
               </button>
             </form>
           </div>
