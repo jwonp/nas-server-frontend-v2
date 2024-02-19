@@ -4,7 +4,7 @@ import type {
 } from "next";
 import { getCsrfToken } from "next-auth/react";
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import userIcon from "@public/icons/userCircle.png";
 import { useHover } from "@uidotdev/usehooks";
 import { uploadProfileIconToS3 } from "@/utils/handleS3";
@@ -26,18 +26,17 @@ const SignUp = ({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [preview, setPreview] = useState<string | null>(null);
   const [isInputVaild, setInputVaild] = useState<InputVaild>(InitInputVaiid);
+  const $iconUrlRef = useRef<HTMLInputElement>(null);
   const [ref, hovering] = useHover();
   const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const file = formData.get("profile-icon") as File;
-    console.log(file);
     const key = await uploadProfileIconToS3(file);
-    
-    const iconUrlRef = document.getElementById("icon-url") as HTMLInputElement;
-
-    iconUrlRef.value = key ?? "";
-
+    if (!$iconUrlRef.current) {
+      return;
+    }
+    $iconUrlRef.current.value = key ?? "";
     e.target.submit();
   };
   return (
@@ -176,6 +175,7 @@ const SignUp = ({
                       }}
                     />
                     <input
+                      ref={$iconUrlRef}
                       id="icon-url"
                       name="icon"
                       className="hidden"
