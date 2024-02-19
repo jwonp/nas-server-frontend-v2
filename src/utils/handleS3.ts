@@ -83,7 +83,7 @@ const uploadFile = async (
   return uploadedMeta;
 };
 export const uploadProfileIconToS3 = async (file: File) => {
-  if (!file) {
+  if (!file.name) {
     return null;
   }
   const fileType = (file.name as string).split(".").slice(-1)[0];

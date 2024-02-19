@@ -71,6 +71,7 @@ const ListBar = ({
       axios
         .get(`/api/storage/download?key=${ownerImage}`)
         .then((res) => res.data),
+    enabled: ownerImage ? true : false,
   });
 
   const deleteFile = useMutation({

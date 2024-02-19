@@ -31,12 +31,12 @@ const SignUp = ({
     e.preventDefault();
     const formData = new FormData(e.target);
     const file = formData.get("profile-icon") as File;
+    console.log(file);
     const key = await uploadProfileIconToS3(file);
+    
     const iconUrlRef = document.getElementById("icon-url") as HTMLInputElement;
-    if (!key) {
-      return;
-    }
-    iconUrlRef.value = key;
+
+    iconUrlRef.value = key ?? "";
 
     e.target.submit();
   };
