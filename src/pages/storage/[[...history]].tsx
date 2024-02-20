@@ -15,9 +15,16 @@ import {
   getProgressPercent,
 } from "@/redux/featrues/fileLoadProgressSlice";
 import { useDirectory, useDirectoryArray } from "@/hooks/useDirectory.hook";
-import { getWarningSnackBar, resetWarningSnackBar } from "@/redux/featrues/snackBarSwitchSlice";
+import {
+  getWarningSnackBar,
+  resetWarningSnackBar,
+} from "@/redux/featrues/snackBarSwitchSlice";
 import WhiteCloseIcon from "@public/icons/close-white.svg";
 import Image from "next/image";
+import NofilesAlert from "@/components/Storage/Exception/NofilesAlert";
+import LoadingErrorAlert from "@/components/Storage/Exception/LoadingErrorAlert";
+import LoadingFiles from "@/components/Storage/Exception/LoadingFiles";
+
 // ItemQuery.data -> itemList -> itemElements => render
 const StoragePage = () => {
   const dispatch = useAppDispatch();
@@ -65,13 +72,13 @@ const StoragePage = () => {
 
   const itemElements = useMemo(() => {
     if (ItemQuery.isLoading) {
-      return <div>Loading...</div>;
+      return <LoadingFiles/>;
     }
     if (!ItemQuery.data) {
-      return <div>Error to load files</div>;
+      return <LoadingErrorAlert/>;
     }
     if (ItemQuery.data && ItemQuery.data.files.length === 0) {
-      return <div>No files</div>;
+      return <NofilesAlert />;
     }
 
     return ItemQuery.data.files.map((meta, index) => {
@@ -118,9 +125,11 @@ const StoragePage = () => {
       <div className={` ${warningSnackBar.isVisible === false && "hidden"}`}>
         <div className="flex gap-4 fixed bottom-[10px] right-[15px] text-white  h-[50px] py-[7px] px-4 leading-8 border-rose-800 border-2 bg-red-500 rounded-lg">
           <div>{warningSnackBar.message}</div>
-          <div className="cursor-pointer float-right py-[7px]" onClick={()=>{
-            dispatch(resetWarningSnackBar());
-          }}>
+          <div
+            className="cursor-pointer float-right py-[7px]"
+            onClick={() => {
+              dispatch(resetWarningSnackBar());
+            }}>
             <Image
               src={WhiteCloseIcon}
               alt={""}
