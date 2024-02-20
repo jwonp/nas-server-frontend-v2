@@ -18,6 +18,7 @@ import {
   SnackBarProps,
   setWarningSnackBar,
 } from "@/redux/featrues/snackBarSwitchSlice";
+import { useRef } from "react";
 
 const AddIconSize = 38;
 
@@ -26,7 +27,7 @@ const AddButtonList = () => {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
-
+  const $fileUploadInput = useRef<HTMLInputElement>(null);
   const volumeQuery = useQuery({
     queryKey: ["volume"],
     queryFn: (): Promise<VolumeSize> =>
@@ -128,13 +129,17 @@ const AddButtonList = () => {
       <div
         className="cursor-pointer col-span-1 py-1 flex rounded-r-lg border-r border-t border-b"
         onClick={() => {
-          const fileUploadInput = document.getElementById(
-            "file-upload"
-          ) as HTMLInputElement;
-          fileUploadInput.click();
+          if (!$fileUploadInput.current) {
+            return;
+          }
+          $fileUploadInput.current.click();
         }}>
         <div className="mx-auto">
-          <label htmlFor="file-upload" onClick={(e)=>{e.preventDefault()}}>
+          <label
+            htmlFor="file-upload"
+            onClick={(e) => {
+              e.preventDefault();
+            }}>
             <Image
               src={addFileIcon}
               alt=""
@@ -144,6 +149,7 @@ const AddButtonList = () => {
           </label>
           <div className="hidden">
             <input
+              ref={$fileUploadInput}
               id="file-upload"
               name="file-upload"
               type="file"
