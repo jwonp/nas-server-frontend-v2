@@ -27,7 +27,7 @@ export const getTimeString = (dateTime: number): string => {
       .padStart(2, "0")}`;
   }
   if (today.getFullYear() === uploadTime.year) {
-    return `${uploadTime.year}.${uploadTime.month
+    return `${uploadTime.month
       .toString()
       .padStart(2, "0")}.${uploadTime.date.toString().padStart(2, "0")} `;
   }

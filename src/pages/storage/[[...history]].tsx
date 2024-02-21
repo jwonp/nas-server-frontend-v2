@@ -72,10 +72,10 @@ const StoragePage = () => {
 
   const itemElements = useMemo(() => {
     if (ItemQuery.isLoading) {
-      return <LoadingFiles/>;
+      return <LoadingFiles />;
     }
     if (!ItemQuery.data) {
-      return <LoadingErrorAlert/>;
+      return <LoadingErrorAlert />;
     }
     if (ItemQuery.data && ItemQuery.data.files.length === 0) {
       return <NofilesAlert />;
@@ -103,39 +103,41 @@ const StoragePage = () => {
   }, [ItemQuery.data]);
 
   return (
-    <div className="w-full h-full min-w-[360px]">
-      <div className="grid grid-cols-12 mt-5">
-        <div className="col-span-10 max-md:col-span-9">
-          <DirectoryHistory />
+    <div className="mx-auto w-full max-w-[1440px] min-w-[360px]">
+      <div className="w-full h-full min-w-[360px] max-w-[1440px]">
+        <div className="grid grid-cols-12 mt-5">
+          <div className="col-span-10 max-md:col-span-9">
+            <DirectoryHistory />
+          </div>
+          <div className="col-span-2 max-md:col-span-3">
+            <AddButtonList />
+          </div>
+          
         </div>
-        <div className="col-span-2 max-md:col-span-3">
-          <AddButtonList />
+        <ListColumnBar />
+        <div className="w-full h-[calc(100vh-56px-132px)] max-h-[calc(100vh-56px-132px)] overflow-scroll overflow-x-hidden">
+          {itemElements}
         </div>
-      </div>
-
-      <ListColumnBar />
-      <div className="w-full h-[calc(100vh-56px-132px)] max-h-[calc(100vh-56px-132px)] overflow-scroll overflow-x-hidden">
-        {itemElements}
-      </div>
-      <div className={`${fileAmount.fileTotalAmount < 0 && "hidden"}`}>
-        <div className="fixed bottom-[10px] right-[15px] text-white w-[300px] h-[50px] py-[7px] px-4 leading-9 bg-slate-500 rounded-lg">
-          {`${fileAmount.fileCurrentAmount}/${fileAmount.fileTotalAmount}번쨰 ${progressPercent}% 진행중`}
+        <div className={`${fileAmount.fileTotalAmount < 0 && "hidden"}`}>
+          <div className="fixed bottom-[10px] right-[15px] text-white w-[300px] h-[50px] py-[7px] px-4 leading-9 bg-slate-500 rounded-lg">
+            {`${fileAmount.fileCurrentAmount}/${fileAmount.fileTotalAmount}번쨰 ${progressPercent}% 진행중`}
+          </div>
         </div>
-      </div>
-      <div className={` ${warningSnackBar.isVisible === false && "hidden"}`}>
-        <div className="flex gap-4 fixed bottom-[10px] right-[15px] text-white  h-[50px] py-[7px] px-4 leading-8 border-rose-800 border-2 bg-red-500 rounded-lg">
-          <div>{warningSnackBar.message}</div>
-          <div
-            className="cursor-pointer float-right py-[7px]"
-            onClick={() => {
-              dispatch(resetWarningSnackBar());
-            }}>
-            <Image
-              src={WhiteCloseIcon}
-              alt={""}
-              width={18}
-              height={18}
-            />
+        <div className={` ${warningSnackBar.isVisible === false && "hidden"}`}>
+          <div className="flex gap-4 fixed bottom-[10px] right-[15px] text-white  h-[50px] py-[7px] px-4 leading-8 border-rose-800 border-2 bg-red-500 rounded-lg">
+            <div>{warningSnackBar.message}</div>
+            <div
+              className="cursor-pointer float-right py-[7px]"
+              onClick={() => {
+                dispatch(resetWarningSnackBar());
+              }}>
+              <Image
+                src={WhiteCloseIcon}
+                alt={""}
+                width={18}
+                height={18}
+              />
+            </div>
           </div>
         </div>
       </div>

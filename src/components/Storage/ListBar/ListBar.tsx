@@ -9,10 +9,10 @@ import videoIcon from "@public/icons/video.png";
 import userIcon from "@public/icons/userCircle.png";
 import deleteIcon from "@public/icons/delete.png";
 import favoriteIcon from "@public/icons/star.png";
+import MoreIcon from "@public/icons/more.svg";
 import editTitleIcon from "@public/icons/edit.png";
 import downloadIcon from "@public/icons/download.png";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
-
 import { useHover } from "@uidotdev/usehooks";
 import axios from "axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -113,7 +113,7 @@ const ListBar = ({
     <div
       ref={ref}
       className="grid grid-cols-16 w-full min-w-[360px] h-14 py-1 cursor-pointer select-none border-b">
-      <div className="col-span-7  max-file:col-span-8 max-mobile:col-span-10">
+      <article className="col-span-7  max-file:col-span-8 max-mobile:col-span-10">
         <div
           className="grid grid-cols-listBarTitle gap-2"
           onClick={() => {
@@ -150,8 +150,8 @@ const ListBar = ({
             </div>
           )}
         </div>
-      </div>
-      <div className="col-span-2 max-md:hidden max-mobile:hidden">
+      </article>
+      <article className="col-span-2 max-md:hidden max-mobile:hidden">
         <div className="flex">
           <div className="mx-auto">
             <div className="flex gap-2">
@@ -171,19 +171,20 @@ const ListBar = ({
             </div>
           </div>
         </div>
-      </div>
-      <div className="col-span-2 max-md:col-span-3 max-file:col-span-3 max-mobile:hidden text-center truncate leading-12 text-white text-lg font-semibold font-['Inter']">
+      </article>
+      <article className="col-span-2 max-md:col-span-3 max-file:col-span-3 max-mobile:hidden text-center truncate leading-12 text-white text-lg font-semibold font-['Inter']">
         {`${uploadTime ?? "-"}`}
-      </div>
-      <div className="col-span-2 max-md:col-span-3  max-file:hidden text-center leading-12 text-white text-lg font-semibold font-['Inter']">
+      </article>
+      <article className="col-span-2 max-md:col-span-3  max-file:hidden text-center leading-12 text-white text-lg font-semibold font-['Inter']">
         {`${convertFileSize(fileSize) ?? "-"}`}
-      </div>
-      <div
-        className={`col-span-3  grid grid-cols-3 gap-1 max-md:col-span-3 max-file:col-span-4 max-mobile:col-span-6 ${
+      </article>
+
+      <section
+        className={`col-span-3  flex gap-1 max-md:col-span-3 max-file:col-span-4 max-mobile:col-span-6 ${
           hovering ? "opacity-100" : "opacity-0"
         }`}>
         {fileIcon !== "folder" && (
-          <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
+          <figure className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
             <div
               className="m-1 w-7 h-7 "
               onClick={() => {
@@ -196,9 +197,9 @@ const ListBar = ({
                 height={ButtonIconSize}
               />
             </div>
-          </div>
+          </figure>
         )}
-        <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
+        <figure className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
           <div
             className="m-1 w-7 h-7 "
             onClick={() => setEditTitle(!isEditTitle)}>
@@ -209,7 +210,7 @@ const ListBar = ({
               height={ButtonIconSize}
             />
           </div>
-        </div>
+        </figure>
         {/* {fileIcon === "folder" && (
           <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
             <div className="m-1 w-7 h-7 ">
@@ -222,7 +223,7 @@ const ListBar = ({
             </div>
           </div>
         )} */}
-        <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
+        <figure className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
           <div
             className="m-1 w-7 h-7 "
             onClick={() => {
@@ -235,8 +236,22 @@ const ListBar = ({
               height={ButtonIconSize}
             />
           </div>
-        </div>
-      </div>
+        </figure>
+        <figure className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
+          <div
+            className="m-1 w-7 h-7 "
+            onClick={() => {
+              deleteFile.mutate(fileId);
+            }}>
+            <Image
+              src={MoreIcon}
+              alt=""
+              width={ButtonIconSize}
+              height={ButtonIconSize}
+            />
+          </div>
+        </figure>
+      </section>
     </div>
   );
 };
