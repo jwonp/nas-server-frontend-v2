@@ -18,7 +18,7 @@ import axios from "axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDirectoryArray } from "@/hooks/useDirectory.hook";
 import { convertFileSize } from "@/utils/parseFileSize";
 import { downloadFile } from "@/utils/download";
@@ -48,7 +48,7 @@ export type ListBarType = {
 
 const FileTypeIconSize = 40;
 const ButtonIconSize = 28;
-
+const WIDTH_ON_LG = 1007;
 const ListBar = ({
   title,
   owner,
@@ -58,10 +58,13 @@ const ListBar = ({
   fileIcon,
   fileSize,
 }: ListBarType) => {
+  const $listBar = useRef<HTMLDivElement>(null);
   const [ref, hovering] = useHover();
   const queryClient = useQueryClient();
   const router = useRouter();
   const directoryArray = useDirectoryArray();
+  const [isClickedMore, setClickedMore] = useState<boolean>(false);
+  const [isVisible, setVisible] = useState<boolean>(false);
   const [fileTitle, setFileTitle] = useState<string>(title);
   const [isEditTitle, setEditTitle] = useState<boolean>(false);
   const [editSkipFlag, setEditSkipFlag] = useState<boolean>(true);
@@ -109,109 +112,125 @@ const ListBar = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditTitle]);
+  useEffect(() => {
+    const isHoveringOnLandscape =
+      hovering === false &&
+      $listBar.current?.offsetWidth &&
+      $listBar.current?.offsetWidth > WIDTH_ON_LG;
+    if (isHoveringOnLandscape) {
+      return setVisible(false);
+    }
+    setVisible(true);
+  }, [hovering]);
+  useEffect(() => {}, []);
   return (
-    <div
-      ref={ref}
-      className="grid grid-cols-16 w-full min-w-[360px] h-14 py-1 cursor-pointer select-none border-b">
-      <article className="col-span-7  max-file:col-span-8 max-mobile:col-span-10">
-        <div
-          className="grid grid-cols-listBarTitle gap-2"
-          onClick={() => {
-            if (!isEditTitle && fileIcon === "folder") {
-              router.push(`${router.asPath}/${fileId.split("folder$")[1]}`);
-            }
-          }}>
-          <div className="my-auto w-10 h-10">
-            <Image
-              className="w-10 h-10"
-              src={fileIcons[fileIcon]}
-              alt=""
-              width={FileTypeIconSize}
-              height={FileTypeIconSize}
-            />
-          </div>
-          {isEditTitle ? (
-            <input
-              className="text-white truncate leading-12 text-lg font-semibold font-['Inter'] bg-neutral-700 focus:outline-none focus:border-0"
-              value={fileTitle}
-              onChange={(e) => {
-                setFileTitle(() => e.target.value);
-              }}
-              onKeyUp={(e) => {
-                if (e.key.toLowerCase() === "enter") {
-                  e.preventDefault();
-                  setEditTitle((prev) => !prev);
-                }
-              }}
-            />
-          ) : (
-            <div className="text-white truncate leading-12 text-lg font-semibold font-['Inter']">
-              {fileTitle}
-            </div>
-          )}
-        </div>
-      </article>
-      <article className="col-span-2 max-md:hidden max-mobile:hidden">
-        <div className="flex">
-          <div className="mx-auto">
-            <div className="flex gap-2">
-              <div className="my-auto  rounded-full overflow-hidden max-h-7 h-7 w-7  relative">
-                <Image
-                  src={
-                    iconQuery && iconQuery.data ? iconQuery.data?.url : userIcon
-                  }
-                  alt=""
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                />
-              </div>
-              <div className=" text-white truncate leading-12 text-lg font-semibold font-['Inter']">
-                {owner ?? "-"}
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
-      <article className="col-span-2 max-md:col-span-3 max-file:col-span-3 max-mobile:hidden text-center truncate leading-12 text-white text-lg font-semibold font-['Inter']">
-        {`${uploadTime ?? "-"}`}
-      </article>
-      <article className="col-span-2 max-md:col-span-3  max-file:hidden text-center leading-12 text-white text-lg font-semibold font-['Inter']">
-        {`${convertFileSize(fileSize) ?? "-"}`}
-      </article>
-
-      <section
-        className={`col-span-3  flex gap-1 max-md:col-span-3 max-file:col-span-4 max-mobile:col-span-6 ${
-          hovering ? "opacity-100" : "opacity-0"
-        }`}>
-        {fileIcon !== "folder" && (
-          <figure className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
-            <div
-              className="m-1 w-7 h-7 "
-              onClick={() => {
-                downloadFile(fileId, title);
-              }}>
+    <div ref={$listBar}>
+      <div
+        ref={ref}
+        className="grid grid-cols-16 w-full min-w-[360px] h-14 py-1 cursor-pointer select-none border-b">
+        <article className="col-span-7  max-file:col-span-8 max-mobile:col-span-10">
+          <div
+            className="grid grid-cols-listBarTitle gap-2"
+            onClick={() => {
+              if (!isEditTitle && fileIcon === "folder") {
+                router.push(`${router.asPath}/${fileId.split("folder$")[1]}`);
+              }
+            }}>
+            <div className="my-auto w-10 h-10">
               <Image
-                src={downloadIcon}
+                className="w-10 h-10"
+                src={fileIcons[fileIcon]}
                 alt=""
-                width={ButtonIconSize}
-                height={ButtonIconSize}
+                width={FileTypeIconSize}
+                height={FileTypeIconSize}
               />
             </div>
-          </figure>
-        )}
-        <figure className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
-          <div
-            className="m-1 w-7 h-7 "
-            onClick={() => setEditTitle(!isEditTitle)}>
-            <Image
-              src={editTitleIcon}
-              alt=""
-              width={ButtonIconSize}
-              height={ButtonIconSize}
-            />
+            {isEditTitle ? (
+              <input
+                className="text-white truncate leading-12 text-lg font-semibold font-['Inter'] bg-neutral-700 focus:outline-none focus:border-0"
+                value={fileTitle}
+                onChange={(e) => {
+                  setFileTitle(() => e.target.value);
+                }}
+                onKeyUp={(e) => {
+                  if (e.key.toLowerCase() === "enter") {
+                    e.preventDefault();
+                    setEditTitle((prev) => !prev);
+                  }
+                }}
+              />
+            ) : (
+              <div className="text-white truncate leading-12 text-lg font-semibold font-['Inter']">
+                {fileTitle}
+              </div>
+            )}
           </div>
-        </figure>
-        {/* {fileIcon === "folder" && (
+        </article>
+        <article className="col-span-2 max-md:hidden max-mobile:hidden">
+          <div className="flex">
+            <div className="mx-auto">
+              <div className="flex gap-2">
+                <div className="my-auto  rounded-full overflow-hidden max-h-7 h-7 w-7  relative">
+                  <Image
+                    src={
+                      iconQuery && iconQuery.data
+                        ? iconQuery.data?.url
+                        : userIcon
+                    }
+                    alt=""
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
+                <div className=" text-white truncate leading-12 text-lg font-semibold font-['Inter']">
+                  {owner ?? "-"}
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article className="col-span-2 max-md:col-span-3 max-file:col-span-3 max-mobile:hidden text-center truncate leading-12 text-white text-lg font-semibold font-['Inter']">
+          {`${uploadTime ?? "-"}`}
+        </article>
+        <article className="col-span-2 max-md:col-span-3  max-file:hidden text-center leading-12 text-white text-lg font-semibold font-['Inter']">
+          {`${convertFileSize(fileSize) ?? "-"}`}
+        </article>
+
+        <section
+          className={`col-span-3 flex justify-between ${
+            !isClickedMore ? "max-lg:ml-auto" : "lg:justify-between"
+          } ${!isVisible ? "lg:hidden" : ""}`}>
+          <div className={`${!isClickedMore ? "max-lg:hidden" : ""}  flex`}>
+            <article className="flex gap-1">
+              {fileIcon !== "folder" && (
+                <figure className="my-auto w-9 h-9 lg:hover:bg-slate-500 rounded-full">
+                  <div
+                    className="m-1 w-7 h-7 "
+                    onClick={() => {
+                      downloadFile(fileId, title);
+                    }}>
+                    <Image
+                      src={downloadIcon}
+                      alt=""
+                      width={ButtonIconSize}
+                      height={ButtonIconSize}
+                    />
+                  </div>
+                </figure>
+              )}
+              <figure className="my-auto w-9 h-9 lg:hover:bg-slate-500  rounded-full">
+                <div
+                  className="m-1 w-7 h-7 "
+                  onClick={() => setEditTitle(!isEditTitle)}>
+                  <Image
+                    src={editTitleIcon}
+                    alt=""
+                    width={ButtonIconSize}
+                    height={ButtonIconSize}
+                  />
+                </div>
+              </figure>
+              {/* {fileIcon === "folder" && (
           <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
             <div className="m-1 w-7 h-7 ">
               <Image
@@ -223,35 +242,38 @@ const ListBar = ({
             </div>
           </div>
         )} */}
-        <figure className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
-          <div
-            className="m-1 w-7 h-7 "
-            onClick={() => {
-              deleteFile.mutate(fileId);
-            }}>
-            <Image
-              src={deleteIcon}
-              alt=""
-              width={ButtonIconSize}
-              height={ButtonIconSize}
-            />
+              <figure className="my-auto w-9 h-9 lg:hover:bg-slate-500  rounded-full">
+                <div
+                  className="m-1 w-7 h-7 "
+                  onClick={() => {
+                    deleteFile.mutate(fileId);
+                  }}>
+                  <Image
+                    src={deleteIcon}
+                    alt=""
+                    width={ButtonIconSize}
+                    height={ButtonIconSize}
+                  />
+                </div>
+              </figure>
+            </article>
           </div>
-        </figure>
-        <figure className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
-          <div
-            className="m-1 w-7 h-7 "
+          <figure
+            className="lg:hidden max-lg:block my-auto w-9 h-9  float-right rounded-full"
             onClick={() => {
-              deleteFile.mutate(fileId);
+              setClickedMore((prev) => !prev);
             }}>
-            <Image
-              src={MoreIcon}
-              alt=""
-              width={ButtonIconSize}
-              height={ButtonIconSize}
-            />
-          </div>
-        </figure>
-      </section>
+            <div className="m-1 w-7 h-7 ">
+              <Image
+                src={MoreIcon}
+                alt=""
+                width={ButtonIconSize}
+                height={ButtonIconSize}
+              />
+            </div>
+          </figure>
+        </section>
+      </div>
     </div>
   );
 };
