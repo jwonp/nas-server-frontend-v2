@@ -7,23 +7,23 @@
 ## 프론트엔드
 
 <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr;">
-	<div>
+	<div style="disply:flex;"> 
 		<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566879300/noticon/fvty9lnsbjol5lq9u3by.svg" width="80px" height="80px"/>
 		<p>Next.js v12</p>
 	</div>
-	<div>
+	<div style="disply:flex;">
 		<img src="https://github.com/nextauthjs/next-auth/blob/main/docs/static/img/logo/logo.png?raw=true" width="80px" height="80px"/>
 		<p>Next Auth</p>
 	</div>
-	<div>
+	<div style="disply:flex;">
 		<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566913457/noticon/eh4d0dnic4n1neth3fui.png" width="80px" height="80px"/>
 		<p>Typescript</p>
 	</div>
-	<div>
+	<div style="disply:flex;">
 		<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1669720599/noticon/xg13hlex6bu8mu182b5y.png" width="80px" height="80px"/>
 		<p>React Query</p>
 	</div>
-	<div>
+	<div style="disply:flex;">
 		<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1567749614/noticon/zgdaxpaif5ojeduonygb.png" width="80px" height="80px"/>
 		<p>Redux</p>
 	</div>
@@ -32,32 +32,32 @@
 ## 백엔드
 
 <div style="display:grid; grid-template-columns: 1fr 1fr 1fr;">
-<div>
-	<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1657197520/noticon/hfntj9olqx1jeky3rdkt.png" width="80px" height="80px"/>
-	<p>Lambda</p>
-</div>
-<div>
-	<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1694089639/noticon/ox4ngdartf1uzusjhcqx.png" width="80px" height="80px"/>
-	<p>API Gateway</p>
-</div>
-<div>
-	<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566913958/noticon/uoqjdixts4lwsgtsa1pd.png" width="80px" height="80px"/>
-	<p>Firebase</p>
-</div>
+	<div style="disply:flex;">
+		<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1657197520/noticon/hfntj9olqx1jeky3rdkt.png" width="80px" height="80px"/>
+		<p>Lambda</p>
+	</div>
+	<div style="disply:flex;">
+		<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1694089639/noticon/ox4ngdartf1uzusjhcqx.png" width="80px" height="80px"/>
+		<p>API Gateway</p>
+	</div>
+	<div style="disply:flex;"> 
+		<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566913958/noticon/uoqjdixts4lwsgtsa1pd.png" width="80px" height="80px"/>
+		<p>Firebase</p>
+	</div>
 </div>
 
 ## 배포
 
 <div style="display:grid; grid-template-columns: 1fr 1fr 1fr;">
-	<div>
+	<div style="disply:flex;">
 		<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566914173/noticon/kos1xkevxtr81zgwvyoe.svg" width="80px" height="80px"/>
 		<p>EC2</p>
 	</div>
-	<div>
+	<div style="disply:flex;">
 		<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566798146/noticon/lku5cppzh8r7awwsmmko.png" width="80px" height="80px"/>
 		<p>NGINX</p>
 	</div>
-	<div>
+	<div style="disply:flex;">
 		<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/icons/pm2.png" width="80px" height="80px"/>
 		<p>PM2</p>
 	</div>
