@@ -7,27 +7,60 @@
 ## 프론트엔드
 
 <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr;">
-	<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566879300/noticon/fvty9lnsbjol5lq9u3by.svg" width="80px" height="80px"/>
-	<img src="https://github.com/nextauthjs/next-auth/blob/main/docs/static/img/logo/logo.png?raw=true" width="80px" height="80px"/>
-	<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566913457/noticon/eh4d0dnic4n1neth3fui.png" width="80px" height="80px"/>
-	<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1669720599/noticon/xg13hlex6bu8mu182b5y.png" width="80px" height="80px"/>
-	<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1567749614/noticon/zgdaxpaif5ojeduonygb.png" width="80px" height="80px"/>
+	<div>
+		<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566879300/noticon/fvty9lnsbjol5lq9u3by.svg" width="80px" height="80px"/>
+		<p>Next.js v12</p>
+	</div>
+	<div>
+		<img src="https://github.com/nextauthjs/next-auth/blob/main/docs/static/img/logo/logo.png?raw=true" width="80px" height="80px"/>
+		<p>Next Auth</p>
+	</div>
+	<div>
+		<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566913457/noticon/eh4d0dnic4n1neth3fui.png" width="80px" height="80px"/>
+		<p>Typescript</p>
+	</div>
+	<div>
+		<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1669720599/noticon/xg13hlex6bu8mu182b5y.png" width="80px" height="80px"/>
+		<p>React Query</p>
+	</div>
+	<div>
+		<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1567749614/noticon/zgdaxpaif5ojeduonygb.png" width="80px" height="80px"/>
+		<p>Redux</p>
+	</div>
 </div>
 
 ## 백엔드
 
 <div style="display:grid; grid-template-columns: 1fr 1fr 1fr;">
+<div>
 	<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1657197520/noticon/hfntj9olqx1jeky3rdkt.png" width="80px" height="80px"/>
+	<p>Lambda</p>
+</div>
+<div>
 	<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1694089639/noticon/ox4ngdartf1uzusjhcqx.png" width="80px" height="80px"/>
+	<p>API Gateway</p>
+</div>
+<div>
 	<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566913958/noticon/uoqjdixts4lwsgtsa1pd.png" width="80px" height="80px"/>
+	<p>Firebase</p>
+</div>
 </div>
 
 ## 배포
 
 <div style="display:grid; grid-template-columns: 1fr 1fr 1fr;">
-	<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566914173/noticon/kos1xkevxtr81zgwvyoe.svg" width="80px" height="80px"/>
-	<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566798146/noticon/lku5cppzh8r7awwsmmko.png" width="80px" height="80px"/>
-	<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/icons/pm2.png" width="80px" height="80px"/>
+	<div>
+		<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566914173/noticon/kos1xkevxtr81zgwvyoe.svg" width="80px" height="80px"/>
+		<p>EC2</p>
+	</div>
+	<div>
+		<img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566798146/noticon/lku5cppzh8r7awwsmmko.png" width="80px" height="80px"/>
+		<p>NGINX</p>
+	</div>
+	<div>
+		<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/icons/pm2.png" width="80px" height="80px"/>
+		<p>PM2</p>
+	</div>
 </div>
 
 
@@ -155,18 +188,22 @@
 - 이런 문제들은 서비스의 초기 랜더링 속도같은 성능적인 부분이 잘 최적화 되어 있더라도, 서비스 이용률을 낮추는 요인이 될 수 있기 때문에 UI/UX 개선은 꼭 필요하다고 생각했습니다.
 ##### 문제해결
 
-<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%E1%84%91%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AF%E1%84%89%E1%85%A5%E1%86%AB%E1%84%90%E1%85%A2%E1%86%A8.png"  height="240px"/>
-<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%E1%84%86%E1%85%A6%E1%84%8B%E1%85%B5%E1%86%AB.png"  height="240px"/>
+<div style="display:flex;">
+	<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%E1%84%91%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AF%E1%84%89%E1%85%A5%E1%86%AB%E1%84%90%E1%85%A2%E1%86%A8.png"  height="240px"/>
+	<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%E1%84%86%E1%85%A6%E1%84%8B%E1%85%B5%E1%86%AB.png"  height="240px"/>
+</div>
 
  - V1의 경우 파일 추가를 어떻게 해야할지 한 눈에 파악할 수 없었습니다.
 	 - 우측 상단에 파일 및 폴더 추가 아이콘을 표시해서 기능에 대한 접근성을 높였습니다.
  - V1에서는 파일 및 폴더를 다운로드, 이름 변경, 삭제 등 어떤 작업을 할 때, 반응형 웹에서 사용자의 편의성을 고려하지 않았습니다.
 	 - 데스크탑 환경에서는 `onHover`로 버튼에 접근할 수 있게 하고, 모바일 환경에서는  "더 보기" 아이콘을 통해 버튼에 접근할 수 있게 했습니다.
 
-<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/nasServer/%E1%84%92%E1%85%AA%E1%84%86%E1%85%A7%E1%86%AB/%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%8B%E1%85%B5%E1%86%AB.png"  height="240px"/>
-<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/nasServer/%E1%84%92%E1%85%AA%E1%84%86%E1%85%A7%E1%86%AB/%E1%84%92%E1%85%AC%E1%84%8B%E1%85%AF%E1%86%AB%E1%84%80%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%B8.png"  height="240px"/>
-<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%8B%E1%85%B5%E1%86%AB.png"  height="240px"/>
-<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%E1%84%92%E1%85%AC%E1%84%8B%E1%85%AF%E1%86%AB%E1%84%80%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%B8.png"  height="240px"/>
+<div style="display:flex;">
+	<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/nasServer/%E1%84%92%E1%85%AA%E1%84%86%E1%85%A7%E1%86%AB/%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%8B%E1%85%B5%E1%86%AB.png"  height="240px"/>
+	<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/nasServer/%E1%84%92%E1%85%AA%E1%84%86%E1%85%A7%E1%86%AB/%E1%84%92%E1%85%AC%E1%84%8B%E1%85%AF%E1%86%AB%E1%84%80%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%B8.png"  height="240px"/>
+	<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%8B%E1%85%B5%E1%86%AB.png"  height="240px"/>
+	<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%E1%84%92%E1%85%AC%E1%84%8B%E1%85%AF%E1%86%AB%E1%84%80%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%B8.png"  height="240px"/>
+</div>
 
 - 사용자의 이름을 입력할 때, 성 + 이름을 입력값으로 받는 것은 본명 대신 닉네임으로 이름을 입력하는 사람에게는 입력하기 애매한 경우가 있었습니다.
 	- 성 + 이름을 이름으로 대체해서 자유롭게 이름을 입력할 수 있게 변경했습니다.
