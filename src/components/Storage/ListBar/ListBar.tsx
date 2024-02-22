@@ -122,7 +122,7 @@ const ListBar = ({
     }
     setVisible(true);
   }, [hovering]);
-  useEffect(() => {}, []);
+ 
   return (
     <div ref={$listBar}>
       <div
