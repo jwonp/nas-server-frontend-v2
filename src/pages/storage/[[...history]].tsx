@@ -41,6 +41,7 @@ const StoragePage = () => {
       axios
         .get(`/api/storage/directory/check?path=${directory}`)
         .then((response) => response.data),
+    enabled: router.query.history !== undefined ? true : false,
   });
 
   const ItemQuery = useQuery<ItemResponse>({
@@ -49,6 +50,11 @@ const StoragePage = () => {
       axios
         .get(`/api/storage/item/${directory}`)
         .then((response) => response.data),
+    enabled:
+      router.query.history === undefined ||
+      isExistDirectoryQuery.data?.isExistDirectory === true
+        ? true
+        : false,
   });
 
   useEffect(() => {
@@ -112,7 +118,6 @@ const StoragePage = () => {
           <div className="col-span-2 max-md:col-span-3">
             <AddButtonList />
           </div>
-          
         </div>
         <ListColumnBar />
         <div className="w-full h-[calc(100vh-56px-132px)] max-h-[calc(100vh-56px-132px)] overflow-scroll overflow-x-hidden">
