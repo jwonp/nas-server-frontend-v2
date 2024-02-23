@@ -2,19 +2,19 @@ import ListColumnBar from "@/components/Storage/ListBar/ListColumnBar";
 import DirectoryHistory from "@/components/Storage/DirectoryHistory";
 import AddButtonList from "@/components/Storage/AddButtonList";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useMemo } from "react";
 import { ItemResponse } from "@/types/MetaData";
 import { getTimeString } from "@/utils/parseTime";
-import { IsExistDirectoryResponse } from "@/types/Responses";
+import { ErrorResponse } from "@/types/Responses";
 import ListBar from "@/components/Storage/ListBar/ListBar";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   getFileAmount,
   getProgressPercent,
 } from "@/redux/featrues/fileLoadProgressSlice";
-import { useDirectory, useDirectoryArray } from "@/hooks/useDirectory.hook";
+import { useDirectory } from "@/hooks/useDirectory.hook";
 import {
   getWarningSnackBar,
   resetWarningSnackBar,
@@ -24,57 +24,49 @@ import Image from "next/image";
 import NofilesAlert from "@/components/Storage/Exception/NofilesAlert";
 import LoadingErrorAlert from "@/components/Storage/Exception/LoadingErrorAlert";
 import LoadingFiles from "@/components/Storage/Exception/LoadingFiles";
+import {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+} from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]";
+import { request } from "@/utils/request";
+import { ERROR_RESPONSE } from "@/utils/strings";
+import InvaildDirectoryAlert from "@/components/Storage/Exception/InvaildDirectoryAlert";
+import useDirectoryItemCache from "@/hooks/useDirectoryItemCache";
 
 // ItemQuery.data -> itemList -> itemElements => render
-const StoragePage = () => {
+const StoragePage = (
+  items: InferGetServerSidePropsType<typeof getServerSideProps>
+) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const directoryArray = useDirectoryArray();
   const directory = useDirectory();
   const warningSnackBar = useAppSelector(getWarningSnackBar);
   const progressPercent = useAppSelector(getProgressPercent);
   const fileAmount = useAppSelector(getFileAmount);
-  const isExistDirectoryQuery = useQuery<IsExistDirectoryResponse>({
-    queryKey: ["isExist", { path: directoryArray }],
-    queryFn: async () =>
-      axios
-        .get(`/api/storage/directory/check?path=${directory}`)
-        .then((response) => response.data),
-    enabled: router.query.history !== undefined ? true : false,
-  });
-
-  const ItemQuery = useQuery<ItemResponse>({
-    queryKey: ["item", { path: directoryArray }],
+  const directoryItemCache = useDirectoryItemCache<
+    ItemResponse | ErrorResponse
+  >(["item", { path: directory }]);
+  const ItemQuery = useQuery<ItemResponse | ErrorResponse>({
+    queryKey: ["item", { path: directory }],
     queryFn: async () =>
       axios
         .get(`/api/storage/item/${directory}`)
         .then((response) => response.data),
-    enabled:
-      router.query.history === undefined ||
-      isExistDirectoryQuery.data?.isExistDirectory === true
-        ? true
-        : false,
+    initialData: items,
+    enabled: (directoryItemCache as ItemResponse)?.id ? true : false,
+    throwOnError: false,
   });
 
   useEffect(() => {
     queryClient.invalidateQueries({
-      queryKey: ["isExist", { path: directoryArray }],
-    });
-    queryClient.invalidateQueries({
-      queryKey: ["item", directoryArray],
+      queryKey: ["item", { path: directory }],
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query]);
-  useEffect(() => {
-    if (
-      isExistDirectoryQuery.data &&
-      !isExistDirectoryQuery.data.isExistDirectory
-    ) {
-      router.push("/storage");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isExistDirectoryQuery.data]);
 
   const itemElements = useMemo(() => {
     if (ItemQuery.isLoading) {
@@ -83,17 +75,21 @@ const StoragePage = () => {
     if (!ItemQuery.data) {
       return <LoadingErrorAlert />;
     }
-    if (ItemQuery.data && ItemQuery.data.files.length === 0) {
+    if (Object.keys(ItemQuery.data).includes(ERROR_RESPONSE.msg)) {
+      return <InvaildDirectoryAlert />;
+    }
+    const items = ItemQuery.data as ItemResponse;
+    if (ItemQuery.data && items.files.length === 0) {
       return <NofilesAlert />;
     }
 
-    return ItemQuery.data.files.map((meta, index) => {
+    return items.files.map((meta, index) => {
       const metas = {
         fileId: meta.key,
         uploadTime: getTimeString(meta.uploadTime),
         title: meta.fileName,
-        owner: ItemQuery.data.username,
-        ownerImage: ItemQuery.data.image,
+        owner: items.username,
+        ownerImage: items.image,
         fileIcon: meta.type,
         fileSize: meta.size,
       };
@@ -151,3 +147,36 @@ const StoragePage = () => {
 };
 
 export default StoragePage;
+
+export const getServerSideProps = (async (
+  context: GetServerSidePropsContext
+) => {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (!session || !session.user) {
+    return { props: { status: 403, msg: "Unauthorized" } };
+  }
+
+  let history = "";
+
+  if (context.query.history) {
+    history = `/${(context.query.history as string[]).join("/")}`;
+  }
+  const itemResponse: ItemResponse | ErrorResponse = await request(
+    session?.user
+  )
+    .get(`${process.env.BACKEND_ENDPOINT}/storage/item?path=${history}`)
+    .then((res: AxiosResponse<ItemResponse>) => {
+      return res.data;
+    })
+    .catch((err: AxiosError<{ error: string }>) => {
+      const error: ErrorResponse = {
+        status: err.status ?? 400,
+        msg: err.response?.data.error ?? "Unknown Error",
+      };
+
+      return error;
+    });
+
+  return { props: { ...itemResponse } };
+}) satisfies GetServerSideProps<ItemResponse | ErrorResponse>;

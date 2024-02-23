@@ -2,7 +2,7 @@ import { request } from "@/utils/request";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]";
-import { AxiosError } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import {
   ErrorResponse,
   ItemResponse,
@@ -16,14 +16,27 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(403).json({ error: "Unauthorized" });
     }
 
-    const result = await request(session?.user).get(
-      `/storage/item?path=${path ? `/${(path as string[]).join("/")}` : ""}`
-    );
-
-    return res.status(200).json(result.data);
+    const result = await request(session?.user)
+      .get(
+        `/storage/item?path=${path ? `/${(path as string[]).join("/")}` : ""}`
+      )
+      .then((res: AxiosResponse<ItemResponse>) => {
+        return { status: res.status, data: res.data };
+      })
+      .catch((err: AxiosError<{ error: string }>) => {
+        return {
+          status: err.response?.status ?? 400,
+          msg: err.response?.data.error ?? "",
+        };
+      });
+    const responseData =
+      result.status / 100 < 4
+        ? ((result as SuccessResponse).data as ItemResponse)
+        : (result as ErrorResponse);
+    return res.status(result.status).json(responseData);
   }
   if (req.method === "DELETE") {
-    const { fileId, fileSize, fileType ,directory} = req.body;
+    const { fileId, fileSize, fileType, directory } = req.body;
     const result = await request(session?.user)
       .delete(
         fileType === "folder" ? `/storage/item/folder` : `/storage/item`,

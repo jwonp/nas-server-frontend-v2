@@ -92,7 +92,7 @@ const ListBar = ({
         queryKey: ["item", { path: directoryArray }],
       });
       queryClient.invalidateQueries({
-        queryKey: ["volume"],
+        queryKey: ["volume",],
       });
     },
   });

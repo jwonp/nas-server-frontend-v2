@@ -12,12 +12,12 @@ export interface ErrorResponse extends BasicResponse {
   msg: string;
 }
 
-export type IsExistDirectoryResponse = {
-  isExistDirectory: boolean;
-};
-export type DisplayHistoryResponse = {
+type DisplayHistory = {
   key: string;
   title: string;
+};
+export type DisplayHistoryResponse = {
+  historys: DisplayHistory[];
 };
 export type ItemResponse = {
   id: string;
