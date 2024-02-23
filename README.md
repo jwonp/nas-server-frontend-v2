@@ -128,10 +128,24 @@
 }
 ```
 
+## 주요 로직 시퀀스 다이어그램
+
+![로그인.png](https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%EC%8B%9C%ED%80%80%EC%8A%A4+%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8/%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%8B%E1%85%B5%E1%86%AB.png)
+
+![파일 업로드.png](https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%EC%8B%9C%ED%80%80%EC%8A%A4+%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8/%E1%84%91%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AF+%E1%84%8B%E1%85%A5%E1%86%B8%E1%84%85%E1%85%A9%E1%84%83%E1%85%B3.png)
+
+![파일 삭제.png](https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%EC%8B%9C%ED%80%80%EC%8A%A4+%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8/%E1%84%91%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AF+%E1%84%89%E1%85%A1%E1%86%A8%E1%84%8C%E1%85%A6.png)
+
+![파일 불러오기.png](https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%EC%8B%9C%ED%80%80%EC%8A%A4+%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8/%E1%84%91%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AF+%E1%84%87%E1%85%AE%E1%86%AF%E1%84%85%E1%85%A5%E1%84%8B%E1%85%A9%E1%84%80%E1%85%B5.png)
+
+## Lighthouse 보고서
+
+![Lighthouse.png](https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%EC%8B%9C%ED%80%80%EC%8A%A4+%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8/Lighthouse.png)
+
 ## 프로젝트 개발(v1 -> v2 변경점)
 
 ### SWR에서 React-Query로 변경
----
+
 ##### 배경
 - 이전까지는 data fetching library를 `SWR`를 사용했었습니다.
 - `SWR` 특유의 가볍고, 간단한 사용법 때문에 계속 써왔지만, 캐시 관리와 데이터 패칭, 뮤테이션 관련 지원이 `SWR`보다  `React Query`에서 더 활성화 되어 있기 때문에 `React Query`로 migration해서 개발하기로 했습니다. 
@@ -149,7 +163,7 @@
 
 
 ### 파일 저장 공간을 EBS에서 S3로 변경
----
+
 ##### 배경
 - 이전 버전에서는 유저의 파일을 저장할 때, `EC2` 인스턴스에서 사용하는 `EBS`에 저장했기 때문에 유저가 늘어날수록 AWS 비용이 급격하게 증가하는 문제가 있었습니다.
 ##### 문제 해결
@@ -163,7 +177,7 @@
 - 가격이 높은 `EBS`에서 `S3`로 저장소를 변경한 결과, 같은 서비스를 이전대비 연평균 최소 35% 수준의 비용으로 배포할 수 있게 되었습니다.
 
 ### django에서 AWS lambda로 migration
----
+
 ##### 배경
 - 프리티어 내 `EC2`로 `Next.js + django` 를 배포하는 과정에서 램 부족으로 인한 프리징이 자주 발생했습니다. 
 - 또, `Javascript와` `Python`을 사용해야 하는데,` Python`에 대한 이해도가 상대적으로 낮아서 유지 보수에도 시간이 배로 소모되는 이슈도 있었습니다.
@@ -178,7 +192,7 @@
 - V1는 개발 기간이 약 98일, V2는 약 53일 소요 되었습니다. 따라서, `Lambda`로 migration을 통해 약 45%정도 시간을 단축할 수 있었습니다.
 
 ###  API naming 개선
----
+
 - v1에서 API 설계는 다음과 같이 URL이 동사 + 명사 구조로 되어있는 사례가 있었습니다.
 	```
 		GET /users/getstoragesize
@@ -192,7 +206,7 @@
 	```
 
 ###  UI 개선
----
+
 ##### 배경
 - 이전 버전에서 UI/UX를 분석했을때, 전체적으로 사용자가 느끼기에 직관성이 부족하고, 부자연스러웠습니다.
 - 버튼을 예로 들면, 서비스 내 모든 버튼이 단순히 텍스트이기 때문에 버튼이라는 인식을 주기 어려웠습니다.
