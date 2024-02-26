@@ -136,7 +136,7 @@
 
 ![파일 삭제.png](https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%EC%8B%9C%ED%80%80%EC%8A%A4+%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8/%E1%84%91%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AF+%E1%84%89%E1%85%A1%E1%86%A8%E1%84%8C%E1%85%A6.png)
 
-![파일 불러오기.png](https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%EC%8B%9C%ED%80%80%EC%8A%A4+%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8/%E1%84%91%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AF+%E1%84%87%E1%85%AE%E1%86%AF%E1%84%85%E1%85%A5%E1%84%8B%E1%85%A9%E1%84%80%E1%85%B5.png)
+![파일 불러오기.png](https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%EC%8B%9C%ED%80%80%EC%8A%A4+%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8/%E1%84%91%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AF+%E1%84%87%E1%85%AE%E1%86%AF%E1%84%85%E1%85%A5%E1%84%8B%E1%85%A9%E1%84%80%E1%85%B5+%E1%84%87%E1%85%A7%E1%86%AB%E1%84%80%E1%85%A7%E1%86%BC%E1%84%92%E1%85%AE.png)
 
 # Lighthouse 보고서
 
@@ -168,6 +168,13 @@
 | ---- | ---- | ---- |
 | 실제 응답시간(평균) | 212ms | 100ms |
 | 시간 감소 비율 | 0% | 53% |
+
+- 파일 불러오기 개선 전/후 시퀀스 다이어그램
+
+<div>
+	<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%EC%8B%9C%ED%80%80%EC%8A%A4+%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8/%E1%84%91%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AF+%E1%84%87%E1%85%AE%E1%86%AF%E1%84%85%E1%85%A5%E1%84%8B%E1%85%A9%E1%84%80%E1%85%B5.png"  height="300px"/>
+	<img src="https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%EC%8B%9C%ED%80%80%EC%8A%A4+%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8/%E1%84%91%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AF+%E1%84%87%E1%85%AE%E1%86%AF%E1%84%85%E1%85%A5%E1%84%8B%E1%85%A9%E1%84%80%E1%85%B5+%E1%84%87%E1%85%A7%E1%86%AB%E1%84%80%E1%85%A7%E1%86%BC%E1%84%92%E1%85%AE.png"  height="300px"/>
+</div>
 
 ---
 ## V1 -> V2 변경점
