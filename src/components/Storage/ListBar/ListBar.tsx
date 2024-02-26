@@ -19,7 +19,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
 import { useEffect, useRef, useState } from "react";
-import { useDirectoryArray } from "@/hooks/useDirectory.hook";
+import { useDirectory } from "@/hooks/useDirectory.hook";
 import { convertFileSize } from "@/utils/parseFileSize";
 import { downloadFile } from "@/utils/download";
 
@@ -62,7 +62,7 @@ const ListBar = ({
   const [ref, hovering] = useHover();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const directoryArray = useDirectoryArray();
+  const directory = useDirectory();
   const [isClickedMore, setClickedMore] = useState<boolean>(false);
   const [isVisible, setVisible] = useState<boolean>(false);
   const [fileTitle, setFileTitle] = useState<string>(title);
@@ -84,12 +84,12 @@ const ListBar = ({
           fileId: fileId,
           fileSize: fileSize,
           fileType: fileIcon,
-          directory: `/${directoryArray.join("/")}`,
+          directory: `/${directory}`,
         },
       }),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["item", { path: directoryArray }],
+        queryKey: ["item", { path: directory }],
       });
       queryClient.invalidateQueries({
         queryKey: ["volume",],
