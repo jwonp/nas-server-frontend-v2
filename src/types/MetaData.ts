@@ -23,9 +23,3 @@ export const fileTypes = {
 export type FileType = (typeof fileTypes)[keyof typeof fileTypes];
 
 
-export type ItemResponse = {
-  id:string,
-  username:string,
-  image:string,
-  files:Omit<MetaData,"ownerId">[]
-}

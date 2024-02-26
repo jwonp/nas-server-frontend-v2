@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useMemo } from "react";
-import { ItemResponse } from "@/types/MetaData";
+import { ItemResponse } from "@/types/Responses";
 import { getTimeString } from "@/utils/parseTime";
 import { ErrorResponse } from "@/types/Responses";
 import ListBar from "@/components/Storage/ListBar/ListBar";
@@ -47,17 +47,17 @@ const StoragePage = (
   const warningSnackBar = useAppSelector(getWarningSnackBar);
   const progressPercent = useAppSelector(getProgressPercent);
   const fileAmount = useAppSelector(getFileAmount);
-  const directoryItemCache = useDirectoryItemCache<
-    ItemResponse | ErrorResponse
-  >(["item", { path: directory }]);
   const ItemQuery = useQuery<ItemResponse | ErrorResponse>({
     queryKey: ["item", { path: directory }],
     queryFn: async () =>
       axios
         .get(`/api/storage/item/${directory}`)
-        .then((response) => response.data),
+        .then((res: AxiosResponse<ItemResponse>) => res.data)
+        .catch(
+          (err: AxiosError<ErrorResponse>) =>
+            err.response?.data as ErrorResponse
+        ),
     initialData: items,
-    enabled: (directoryItemCache as ItemResponse)?.id ? true : false,
     throwOnError: false,
   });
 
@@ -78,8 +78,8 @@ const StoragePage = (
     if (Object.keys(ItemQuery.data).includes(ERROR_RESPONSE.msg)) {
       return <InvaildDirectoryAlert />;
     }
-    const items = ItemQuery.data as ItemResponse;
-    if (ItemQuery.data && items.files.length === 0) {
+    const items = (ItemQuery.data as ItemResponse)?.items;
+    if (items && items.files.length === 0) {
       return <NofilesAlert />;
     }
 

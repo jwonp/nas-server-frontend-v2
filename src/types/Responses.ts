@@ -16,14 +16,16 @@ type DisplayHistory = {
   key: string;
   title: string;
 };
-export type DisplayHistoryResponse = {
-  historys: DisplayHistory[];
-};
-export type ItemResponse = {
+
+type Item = {
   id: string;
   username: string;
   image: string;
   files: Omit<MetaData, "ownerId">[];
+};
+export type ItemResponse = {
+  histories: DisplayHistory[];
+  items: Item;
 };
 export type MetaUploadResponse = {
   meta: MetaData[];

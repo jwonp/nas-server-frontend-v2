@@ -92,7 +92,7 @@ const ListBar = ({
         queryKey: ["item", { path: directory }],
       });
       queryClient.invalidateQueries({
-        queryKey: ["volume",],
+        queryKey: ["volume"],
       });
     },
   });
@@ -122,7 +122,7 @@ const ListBar = ({
     }
     setVisible(true);
   }, [hovering]);
- 
+
   return (
     <div ref={$listBar}>
       <div
@@ -197,10 +197,11 @@ const ListBar = ({
         </article>
 
         <section
-          className={`col-span-3 flex justify-between ${
-            !isClickedMore ? "max-lg:ml-auto" : "lg:justify-between"
+          className={`col-span-3 max-file:col-span-5 max-mobile:col-span-6 flex justify-between w-full ${
+            !isClickedMore ? "max-lg:ml-auto" : ""
           } ${!isVisible ? "lg:hidden" : ""}`}>
-          <div className={`${!isClickedMore ? "max-lg:hidden" : ""}  flex`}>
+          <div className={`${isClickedMore ? " max-lg:hidden" : ""} lg:hidden`}></div>
+          <div className={`flex${!isClickedMore ? " max-lg:hidden" : ""}`}>
             <article className="flex gap-1">
               {fileIcon !== "folder" && (
                 <figure className="my-auto w-9 h-9 lg:hover:bg-slate-500 rounded-full">
