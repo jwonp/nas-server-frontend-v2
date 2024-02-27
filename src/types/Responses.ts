@@ -12,7 +12,7 @@ export interface ErrorResponse extends BasicResponse {
   msg: string;
 }
 
-type DisplayHistory = {
+export type DisplayHistory = {
   key: string;
   title: string;
 };

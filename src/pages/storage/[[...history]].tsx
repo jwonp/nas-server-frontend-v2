@@ -34,7 +34,6 @@ import { authOptions } from "../api/auth/[...nextauth]";
 import { request } from "@/utils/request";
 import { ERROR_RESPONSE } from "@/utils/strings";
 import InvaildDirectoryAlert from "@/components/Storage/Exception/InvaildDirectoryAlert";
-import useDirectoryItemCache from "@/hooks/useDirectoryItemCache";
 
 // ItemQuery.data -> itemList -> itemElements => render
 const StoragePage = (
@@ -109,7 +108,7 @@ const StoragePage = (
       <div className="w-full h-full min-w-[360px] max-w-[1440px]">
         <div className="grid grid-cols-12 mt-5">
           <div className="col-span-10 max-md:col-span-9">
-            <DirectoryHistory />
+            <DirectoryHistory histories={(items as ItemResponse)?.histories} />
           </div>
           <div className="col-span-2 max-md:col-span-3">
             <AddButtonList />
@@ -157,7 +156,7 @@ export const getServerSideProps = (async (
     return { props: { status: 403, msg: "Unauthorized" } };
   }
 
-  let history = "";
+  let history = "/";
 
   if (context.query.history) {
     history = `/${(context.query.history as string[]).join("/")}`;

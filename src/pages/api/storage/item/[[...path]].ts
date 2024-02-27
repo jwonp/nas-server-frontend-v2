@@ -18,7 +18,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const result = await request(session?.user)
       .get(
-        `/storage/item?path=${path ? `/${(path as string[]).join("/")}` : ""}`
+        `/storage/item?path=${path ? `/${(path as string[]).join("/")}` : "/"}`
       )
       .then((res: AxiosResponse<ItemResponse>) => {
         return { status: res.status, data: res.data };

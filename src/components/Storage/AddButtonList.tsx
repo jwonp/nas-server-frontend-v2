@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import addFolderIcon from "@public/icons/addFolder.png";
 import addFileIcon from "@public/icons/addFile.png";
@@ -7,7 +8,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { MetaData } from "@/types/MetaData";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { useAppDispatch } from "@/redux/hooks";
 import {
   resetFileAmount,
@@ -19,15 +20,33 @@ import {
   setWarningSnackBar,
 } from "@/redux/featrues/snackBarSwitchSlice";
 import { useRef } from "react";
+import { ItemResponse } from "aws-sdk/clients/dynamodb";
+import { ErrorResponse } from "aws-sdk/clients/migrationhubrefactorspaces";
+import { useDirectory } from "@/hooks/useDirectory.hook";
+import { ERROR_RESPONSE } from "@/utils/strings";
 
 const AddIconSize = 38;
 
 const AddButtonList = () => {
+  const [isEnableButtons, setIsEnableButtons] = useState<boolean>(false);
   const router = useRouter();
   const { data: session } = useSession();
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
   const $fileUploadInput = useRef<HTMLInputElement>(null);
+  const directory = useDirectory();
+  const ItemQuery = useQuery<ItemResponse | ErrorResponse>({
+    queryKey: ["item", { path: directory }],
+    queryFn: async () =>
+      axios
+        .get(`/api/storage/item/${directory}`)
+        .then((res: AxiosResponse<ItemResponse>) => res.data)
+        .catch(
+          (err: AxiosError<ErrorResponse>) =>
+            err.response?.data as ErrorResponse
+        ),
+    throwOnError: false,
+  });
   const volumeQuery = useQuery({
     queryKey: ["volume"],
     queryFn: (): Promise<VolumeSize> =>
@@ -53,6 +72,9 @@ const AddButtonList = () => {
   const handleChangeFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
+    if (isEnableButtons) {
+      return;
+    }
     const files = e.target.files;
     if (!files || !session?.user.id) {
       return;
@@ -93,6 +115,9 @@ const AddButtonList = () => {
     addMetas.mutate(filterdMetas);
   };
   const handleClickAddFolder = () => {
+    if (isEnableButtons) {
+      return;
+    }
     if (!session?.user.id) {
       return;
     }
@@ -111,11 +136,21 @@ const AddButtonList = () => {
     };
     addMetas.mutate([folderMeta]);
   };
-
+  useEffect(() => {
+    if (
+      Object.keys(ItemQuery.data as ErrorResponse).includes(ERROR_RESPONSE.msg)
+    ) {
+      return setIsEnableButtons(() => false);
+    }
+    setIsEnableButtons(true);
+  }, [ItemQuery.data]);
   return (
-    <div className="grid grid-cols-2 select-none">
+    <div
+      className={`grid grid-cols-2 select-none ${
+        isEnableButtons ? "cursor-pointer" : "opacity-50 cursor-not-allowed"
+      }`}>
       <div
-        className="cursor-pointer col-span-1 py-1 flex rounded-l-lg border-l border-r border-t border-b"
+        className={`col-span-1 py-1 flex rounded-l-lg border-l border-r border-t border-b`}
         onClick={handleClickAddFolder}>
         <div className="mx-auto">
           <Image
@@ -127,8 +162,11 @@ const AddButtonList = () => {
         </div>
       </div>
       <div
-        className="cursor-pointer col-span-1 py-1 flex rounded-r-lg border-r border-t border-b"
+        className={`col-span-1 py-1 flex rounded-r-lg border-r border-t border-b`}
         onClick={() => {
+          if (isEnableButtons) {
+            return;
+          }
           if (!$fileUploadInput.current) {
             return;
           }
