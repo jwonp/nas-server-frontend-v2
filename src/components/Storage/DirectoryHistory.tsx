@@ -1,5 +1,9 @@
 import { DisplayHistory, Item } from "@/types/Responses";
-import { ERROR_RESPONSE } from "@/utils/strings";
+import {
+  ERROR_RESPONSE,
+  HISTORY_BLOCKS_FAIL_TO_LOAD_HISTORIES,
+  ROOT_DISPLAY_DIRECTORY,
+} from "@/utils/strings";
 import Link from "next/link";
 import { useMemo } from "react";
 type DirectoryHistoryProps = {
@@ -61,23 +65,25 @@ const DirectoryHistory = ({
   const historyBlocks = useMemo(() => {
     const isRootDirectory = !rowHistories || rowHistories.length === 0;
     const isNoHistories = histories === undefined;
-
+    const isNoInitHistories = initHistories === undefined;
     if (items && Object.keys(items).includes(ERROR_RESPONSE.msg)) {
-      return <div>히스토리를 불러오는 과정에서 오류가 발생했습니다.</div>;
+      return <div>{HISTORY_BLOCKS_FAIL_TO_LOAD_HISTORIES}</div>;
     }
 
+    if (isLoading === true && isNoInitHistories === false) {
+      const displayHistoryMap = createDisplayHistoryMap(initHistories);
+      const displayHistories = matchHistory(rowHistories, displayHistoryMap);
+      return generateHistoryBlock(displayHistories);
+    }
+    
     if (isRootDirectory || isNoHistories) {
       return (
         <Link
           id={"0"}
-          href={`/storage`}>{`/ 내 드라이브`}</Link>
+          href={`/storage`}>
+          {ROOT_DISPLAY_DIRECTORY}
+        </Link>
       );
-    }
-
-    if (isLoading === true && initHistories !== undefined) {
-      const displayHistoryMap = createDisplayHistoryMap(initHistories);
-      const displayHistories = matchHistory(rowHistories, displayHistoryMap);
-      return generateHistoryBlock(displayHistories);
     }
 
     const displayHistoryMap = createDisplayHistoryMap(histories);
