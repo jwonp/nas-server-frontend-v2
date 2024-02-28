@@ -1,67 +1,44 @@
-import { useDirectory } from "@/hooks/useDirectory.hook";
-import { DisplayHistory, ErrorResponse, ItemResponse } from "@/types/Responses";
+import { DisplayHistory, Item } from "@/types/Responses";
 import { ERROR_RESPONSE } from "@/utils/strings";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosError, AxiosResponse } from "axios";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 type DirectoryHistoryProps = {
-  histories: DisplayHistory[];
+  rowHistories: string[];
+  initHistories?: DisplayHistory[];
+  histories?: DisplayHistory[];
+  items?: Item;
+
+  isLoading: boolean;
 };
-const DirectoryHistory = ({ histories }: DirectoryHistoryProps) => {
-  const router = useRouter();
-  const directory = useDirectory();
-  const queryClient = useQueryClient();
-  const historyQuery = useQuery<ItemResponse | ErrorResponse>({
-    queryKey: ["item", { path: directory }],
-    queryFn: (): Promise<ItemResponse | ErrorResponse> =>
-      axios
-        .get(`/api/storage/item/${directory}`)
-        .then((res: AxiosResponse<ItemResponse>) => res.data)
-        .catch(
-          (err: AxiosError<ErrorResponse>) =>
-            err.response?.data as ErrorResponse
-        ),
-    throwOnError: false,
-  });
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: ["item", { path: directory }],
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query]);
-  const historyBlocks = useMemo(() => {
-    const isExistInitialData = historyQuery.isLoading && histories;
-    if (isExistInitialData === false) {
-      if (!router.query.history || router.query.history.length === 0) {
-        return (
-          <Link
-            id={"0"}
-            href={`/storage`}>{`/ 내 드라이브`}</Link>
-        );
-      }
-      if (historyQuery.isLoading || !historyQuery.data) {
-        return <div>/</div>;
-      }
-
-      if (Object.keys(historyQuery.data).includes(ERROR_RESPONSE.msg)) {
-        return <div></div>;
-      }
-    }
-    const historyList = router.query.history as string[];
+const DirectoryHistory = ({
+  rowHistories,
+  initHistories,
+  histories,
+  isLoading,
+  items,
+}: DirectoryHistoryProps) => {
+  const createDisplayHistoryMap = (historyData: DisplayHistory[]) => {
     const displayHistoryMap = new Map<string, string>();
-    const historyData = isExistInitialData
-      ? histories
-      : (historyQuery.data as ItemResponse).histories;
     historyData.forEach((history) => {
       displayHistoryMap.set(history.key.split("folder$")[1], history.title);
     });
-    const displayHistories = (router.query.history as string[]).map((hisotry) =>
-      displayHistoryMap.get(hisotry)
-    );
-
+    return displayHistoryMap;
+  };
+  const matchHistory = (
+    rowHistories: string[],
+    displayHistoryMap: Map<string, string>
+  ) => {
+    return rowHistories
+      .map<string>((history) => {
+        const historyValue = displayHistoryMap.get(history);
+        if (historyValue !== undefined) {
+          return historyValue;
+        }
+        return "";
+      })
+      .filter((history) => history !== "");
+  };
+  const generateHistoryBlock = (displayHistories: string[]) => {
     return ["내 드라이브", ...displayHistories].map((history, index) => {
       if (index === 0) {
         return (
@@ -75,14 +52,40 @@ const DirectoryHistory = ({ histories }: DirectoryHistoryProps) => {
         <Link
           id={`${index}`}
           key={index}
-          href={`/storage/${historyList
+          href={`/storage/${(rowHistories ?? [])
             .slice(0, index)
             .join("/")}`}>{`/ ${history}`}</Link>
       );
     });
+  };
+  const historyBlocks = useMemo(() => {
+    const isRootDirectory = !rowHistories || rowHistories.length === 0;
+    const isNoHistories = histories === undefined;
+
+    if (items && Object.keys(items).includes(ERROR_RESPONSE.msg)) {
+      return <div>히스토리를 불러오는 과정에서 오류가 발생했습니다.</div>;
+    }
+
+    if (isRootDirectory || isNoHistories) {
+      return (
+        <Link
+          id={"0"}
+          href={`/storage`}>{`/ 내 드라이브`}</Link>
+      );
+    }
+
+    if (isLoading === true && initHistories !== undefined) {
+      const displayHistoryMap = createDisplayHistoryMap(initHistories);
+      const displayHistories = matchHistory(rowHistories, displayHistoryMap);
+      return generateHistoryBlock(displayHistories);
+    }
+
+    const displayHistoryMap = createDisplayHistoryMap(histories);
+    const displayHistories = matchHistory(rowHistories, displayHistoryMap);
+    return generateHistoryBlock(displayHistories);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [historyQuery.data]);
+  }, [histories]);
 
   return (
     <div className="p-2 text-white text-2xl font-semibold font-['Inter']">
