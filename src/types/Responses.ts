@@ -17,7 +17,7 @@ export type DisplayHistory = {
   title: string;
 };
 
-type Item = {
+export type Item = {
   id: string;
   username: string;
   image: string;
