@@ -1,30 +1,22 @@
 import { MetaData } from "@/types/MetaData";
-import { MutateOptions, UseMutationResult } from "@tanstack/react-query";
-import { AxiosResponse } from "axios";
-
 import Image from "next/image";
 import addFolderIcon from "@public/icons/addFolder.png";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect } from "react";
+import { useMetaMutation } from "@/hooks/useMetaMutation.hook";
 type FolderAddButtonProps = {
   userId?: string;
   history?: string[];
-  mutate: (
-    variables: MetaData[],
-    options?:
-      | MutateOptions<AxiosResponse<any, any>, Error, MetaData[], unknown>
-      | undefined
-  ) => void;
   AddIconSize: number;
   isEnableButtons: boolean;
 };
 const FolderAddButton = ({
   userId,
   history,
-  mutate,
   AddIconSize,
   isEnableButtons,
 }: FolderAddButtonProps) => {
+  const addMetas = useMetaMutation();
   useEffect(() => {
     console.log(userId, history, AddIconSize, isEnableButtons);
   }, [userId, history, AddIconSize, isEnableButtons]);
@@ -50,7 +42,7 @@ const FolderAddButton = ({
       key: key,
       size: 0,
     };
-    mutate([folderMeta]);
+    addMetas.mutate([folderMeta]);
   };
   return (
     <div

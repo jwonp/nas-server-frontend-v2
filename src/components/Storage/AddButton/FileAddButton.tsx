@@ -12,29 +12,24 @@ import {
   setWarningSnackBar,
 } from "@/redux/featrues/snackBarSwitchSlice";
 import { useRef } from "react";
-import axios, { AxiosResponse } from "axios";
-import { MutateOptions, useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 import { MetaData } from "@/types/MetaData";
+import { useMetaMutation } from "@/hooks/useMetaMutation.hook";
 type FileAddButtonProps = {
   userId?: string;
   history?: string[];
-  mutate: (
-    variables: MetaData[],
-    options?:
-      | MutateOptions<AxiosResponse<any, any>, Error, MetaData[], unknown>
-      | undefined
-  ) => void;
   AddIconSize: number;
   isEnableButtons: boolean;
 };
 const FileAddButton = ({
   userId,
   history,
-  mutate,
   AddIconSize,
   isEnableButtons,
 }: FileAddButtonProps) => {
   const dispatch = useAppDispatch();
+  const addMetas = useMetaMutation();
   const $fileUploadInput = useRef<HTMLInputElement>(null);
   const volumeQuery = useQuery({
     queryKey: ["volume"],
@@ -86,7 +81,7 @@ const FileAddButton = ({
     }
     dispatch(resetProgressPercent());
     dispatch(resetFileAmount());
-    mutate(filterdMetas);
+    addMetas.mutate(filterdMetas);
   };
   return (
     <div
