@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import {  useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { useDirectory } from "@/hooks/useDirectory.hook";
 import { ERROR_RESPONSE } from "@/utils/strings";
 import { ErrorResponse, ItemResponse } from "@/types/Responses";
-import FolderAddButton from "../../Storage/AddButton/FolderAddButton";
-import FileAddButton from "../../Storage/AddButton/FileAddButton";
+import FolderAddButton from "./FolderAddButton";
+import FileAddButton from "./FileAddButton";
 type AddButtonListProps = {
   histories?: string[];
 };

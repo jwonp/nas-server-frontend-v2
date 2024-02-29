@@ -23,7 +23,7 @@ test("Display root history block when it is root directory", () => {
   render(
     <DirectoryHistory
       rowHistories={[]}
-      histories={[{ key: "folder$abc", title: "bcd" }]}
+      histories={[]}
       isLoading={false}
     />
   );
@@ -58,7 +58,8 @@ test("Loading and provided init histories", () => {
   expect(screen.getByText("/ folderC")).toBeDefined();
   cleanup();
 });
-test("In noraml case", () => {
+
+test("In normal case", () => {
   render(
     <DirectoryHistory
       rowHistories={["a", "b", "c"]}

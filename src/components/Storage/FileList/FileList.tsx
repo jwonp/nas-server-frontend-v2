@@ -2,7 +2,7 @@ import { getTimeString } from "@/utils/parseTime";
 
 import { useMemo } from "react";
 
-import NofilesAlert from "../Storage/Exception/NofilesAlert";
+import NofilesAlert from "../Exception/NofilesAlert";
 import ListBar from "./ListBar/ListBar";
 import { Item } from "@/types/Responses";
 type FileListProps = {

@@ -1,6 +1,5 @@
-
 import DirectoryHistory from "@/components/Storage/DirectoryHistory";
-import AddButtonList from "@/components/FileList/ListBar/AddButtonList";
+import AddButtonList from "@/components/Storage/AddButton/AddButtonList";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { ItemResponse } from "@/types/Responses";
 import { ErrorResponse } from "@/types/Responses";
@@ -19,7 +18,7 @@ import { useEffect } from "react";
 import WarningSnackBar from "@/components/Storage/SnackBar/WarningSnackBar";
 import ProgressSnackBar from "@/components/Storage/SnackBar/ProgressSnackBar";
 
-import FilelistContainer from "@/components/FileList/FileListContainer";
+import FilelistContainer from "@/components/Storage/FileList/FileListContainer";
 
 // ItemQuery.data -> itemList -> itemElements => render
 const StoragePage = (
@@ -67,7 +66,7 @@ const StoragePage = (
             />
           </div>
         </div>
-       
+
         <FilelistContainer
           isLoading={ItemQuery.isLoading}
           initItems={initItems}

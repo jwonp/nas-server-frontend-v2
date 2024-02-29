@@ -1,11 +1,11 @@
-import FileList from "@/components/FileList/FileList";
+import FileList from "@/components/Storage/FileList/FileList";
 import { ERROR_RESPONSE, ITEM_RESPONSE } from "@/utils/strings";
 import { useEffect, useMemo, useState } from "react";
-import InvaildDirectoryAlert from "../Storage/Exception/InvaildDirectoryAlert";
-import LoadingErrorAlert from "../Storage/Exception/LoadingErrorAlert";
-import LoadingFiles from "../Storage/Exception/LoadingFiles";
+import InvaildDirectoryAlert from "../Exception/InvaildDirectoryAlert";
+import LoadingErrorAlert from "../Exception/LoadingErrorAlert";
+import LoadingFiles from "../Exception/LoadingFiles";
 import { ErrorResponse, ItemResponse } from "@/types/Responses";
-import ListColumnBar from "@/components/FileList/ListBar/FileListColumnBar";
+import ListColumnBar from "@/components/Storage/FileList/ListBar/FileListColumnBar";
 type FileListContainerProps = {
   isLoading: boolean;
   initItems: ItemResponse | ErrorResponse;
