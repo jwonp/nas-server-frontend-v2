@@ -6,6 +6,7 @@ import LoadingErrorAlert from "../Exception/LoadingErrorAlert";
 import LoadingFiles from "../Exception/LoadingFiles";
 import { ErrorResponse, ItemResponse } from "@/types/Responses";
 import ListColumnBar from "@/components/Storage/FileList/ListBar/FileListColumnBar";
+import NofilesAlert from "../Exception/NofilesAlert";
 type FileListContainerProps = {
   isLoading: boolean;
   initItems: ItemResponse | ErrorResponse;
@@ -16,34 +17,37 @@ const FilelistContainer = ({
   data,
   initItems,
 }: FileListContainerProps) => {
-  const [items, setItems] = useState<ItemResponse>();
+  const [items, setItems] = useState<ItemResponse | ErrorResponse | undefined>(
+    undefined
+  );
   useEffect(() => {
-    const isItemQueryGotItems =
-      data && Object.keys(data as ItemResponse).includes(ITEM_RESPONSE.items);
+    const isExistInitItem = initItems !== undefined;
+    const isItemQueryGotItems = data !== undefined;
 
-    const isExistInitItem = Object.keys(initItems as ItemResponse).includes(
-      ITEM_RESPONSE.items
-    );
     if (isExistInitItem === true && isItemQueryGotItems === false) {
-      return setItems(() => initItems as ItemResponse);
+      return setItems(() => initItems);
     }
-    if (isItemQueryGotItems) {
-      return setItems(() => data as ItemResponse);
+    if (isItemQueryGotItems === true) {
+      return setItems(() => data);
     }
+
     return setItems(() => undefined);
   }, [initItems, data]);
   const ItemElements = useMemo(() => {
     if (isLoading) {
       return <LoadingFiles />;
     }
-    if (items === undefined) {
+    if (data === undefined) {
       return <LoadingErrorAlert />;
     }
     if (Object.keys(initItems).includes(ERROR_RESPONSE.msg)) {
       return <InvaildDirectoryAlert />;
     }
-    return <FileList items={items.items} />;
-  }, [isLoading, items, initItems]);
+    if (items === undefined) {
+      return <NofilesAlert />;
+    }
+    return <FileList items={(items as ItemResponse).items} />;
+  }, [isLoading, data, initItems, items]);
   return (
     <>
       <ListColumnBar />

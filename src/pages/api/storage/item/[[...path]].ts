@@ -13,7 +13,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { path } = req.query;
   if (req.method === "GET") {
     if (!session || !session.user) {
-      return res.status(403).json({ error: "Unauthorized" });
+      return res.status(403).json({ status: 403, msg: "Unauthorized" });
     }
 
     const result = await request(session?.user)

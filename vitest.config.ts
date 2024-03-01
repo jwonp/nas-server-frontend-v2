@@ -4,10 +4,9 @@ import path from "path";
 export default defineConfig({
   plugins: [react()],
   test: {
+    environment: "jsdom",
     globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./src/components/Storage/AddButton/__test__/AddButtonSetup.ts'],
-    pool: 'forks',
+    setupFiles: ["./src/components/Storage/FileList/__test__/FileListSetup.ts"],
   },
   resolve: {
     alias: {
