@@ -87,7 +87,7 @@ const ListBar = ({
           directory: `/${directory}`,
         },
       }),
-    onSuccess: (data, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["item", { path: directory }],
       });
