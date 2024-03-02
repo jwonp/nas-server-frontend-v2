@@ -14,3 +14,5 @@ export const ROOT_DISPLAY_DIRECTORY = "/ 내 드라이브";
 export const FILE_LIST_LOADING = "불러오는 중..."
 export const FILE_LIST_ERROR_LOAD_FILES  = "파일을 불러오는데 실패했습니다."
 export const FILE_LIST_INVAILD_DIRECTORY = "존재하지 않는 폴더입니다."
+
+export const STORAGE_SIZE_LOADING = "불러오는 중..."

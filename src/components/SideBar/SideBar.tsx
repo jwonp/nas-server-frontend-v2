@@ -2,8 +2,20 @@ import RemainingStorageSize from "./RemainingStorageSize";
 import SideListBar from "./SideListBar";
 import { getVisibleSideBar } from "@/redux/featrues/sideBarVisibleSlice";
 import { useAppSelector } from "@/redux/hooks";
+import { VolumeSize } from "@/types/Volume";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+
 const SideBar = () => {
   const isVisibleSidebar = useAppSelector(getVisibleSideBar);
+  const { data: session } = useSession();
+  const volumeQuery = useQuery({
+    queryKey: ["volume"],
+    queryFn: (): Promise<VolumeSize> =>
+      axios.get("/api/user/volume").then((res) => res.data),
+    enabled: session?.user.id ? true : false,
+  });
   return (
     <aside
       className={`lg:col-span-1 lg:block lg:static ${
@@ -24,7 +36,10 @@ const SideBar = () => {
         <SideListBar />
         <SideListBar />
       </div> */}
-        <RemainingStorageSize />
+        <RemainingStorageSize
+          isLoading={volumeQuery.isLoading}
+          volume={volumeQuery.data}
+        />
       </div>
     </aside>
   );
