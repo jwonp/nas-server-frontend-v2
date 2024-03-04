@@ -1,3 +1,4 @@
+import { SIGNIN_PASSWORD_REGEX_PATTERN } from "@/utils/strings";
 import { randomBytes } from "crypto";
 import type {
   GetServerSidePropsContext,
@@ -79,7 +80,7 @@ export default function SignIn({
                     required
                     minLength={8}
                     autoComplete="on"
-                    pattern="^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[_!@#$%^*+=-])[a-zA-Z_!@#$%^*+=0-9]{8,32}$"
+                    pattern={SIGNIN_PASSWORD_REGEX_PATTERN}
                     placeholder={`${
                       error === "CredentialsSignin"
                         ? "아이디 혹은 비밀번호를 확인해주세요."
