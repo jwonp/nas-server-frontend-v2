@@ -17,10 +17,6 @@ const FolderAddButton = ({
   isEnableButtons,
 }: FolderAddButtonProps) => {
   const addMetas = useMetaMutation();
-  useEffect(() => {
-    console.log(userId, history, AddIconSize, isEnableButtons);
-  }, [userId, history, AddIconSize, isEnableButtons]);
-
   const handleClickAddFolder = () => {
     if (!isEnableButtons) {
       return;
