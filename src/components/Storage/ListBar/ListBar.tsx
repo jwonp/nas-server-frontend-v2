@@ -240,7 +240,7 @@ const ListBar = ({
           <div
             className="m-1 w-7 h-7 "
             onClick={() => {
-              deleteFile.mutate(fileId);
+             
             }}>
             <Image
               src={ShareIcon}
