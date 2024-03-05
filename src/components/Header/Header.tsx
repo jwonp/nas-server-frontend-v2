@@ -22,7 +22,7 @@ const Header = () => {
   const handleMenuClick = (e: React.MouseEvent<HTMLDivElement>) => {
     dispatch(setVisibleSideBar(!isVisibleSidebar));
   };
-  const handleLoginOutClick = session ? () => signOut() :()=> signIn();
+  const handleLoginOutClick = session ? () => signOut() : () => signIn();
 
   const { data, error, isLoading } = useQuery({
     queryKey: ["profileIcon"],
@@ -43,7 +43,7 @@ const Header = () => {
   }, [data, isLoading]);
 
   return (
-    <div className="grid lg:grid-cols-2 grid-cols-3  w-screen min-w-[360px] h-14 p-3  border-b border-zinc-100 select-none">
+    <header className="sticky grid lg:grid-cols-2 grid-cols-3  w-screen min-w-[360px] h-14 p-3  border-b border-zinc-100 select-none">
       <div
         className="lg:hidden cursor-pointer"
         onClick={handleMenuClick}>
@@ -103,7 +103,7 @@ const Header = () => {
           )}
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 

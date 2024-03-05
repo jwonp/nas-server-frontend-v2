@@ -12,20 +12,26 @@ export interface ErrorResponse extends BasicResponse {
   msg: string;
 }
 
-export type IsExistDirectoryResponse = {
-  isExistDirectory: boolean;
-};
-export type DisplayHistoryResponse = {
+export type DisplayHistory = {
   key: string;
   title: string;
 };
-export type ItemResponse = {
+
+export type Item = {
   id: string;
   username: string;
   image: string;
   files: Omit<MetaData, "ownerId">[];
 };
+export type ItemResponse = {
+  histories: DisplayHistory[];
+  items: Item;
+};
 export type MetaUploadResponse = {
   meta: MetaData[];
   volume: VolumeSize;
 };
+
+export type FavoriteResponse ={
+  
+}

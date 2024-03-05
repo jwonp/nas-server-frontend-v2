@@ -21,15 +21,16 @@ export const getTimeString = (dateTime: number): string => {
     minute: date.getMinutes(),
     second: date.getSeconds(),
   };
+
   if (today.getDate() === uploadTime.date) {
     return `${uploadTime.hour.toString().padStart(2, "0")}:${uploadTime.minute
       .toString()
       .padStart(2, "0")}`;
   }
   if (today.getFullYear() === uploadTime.year) {
-    return `${uploadTime.year}.${uploadTime.month
+    return `${uploadTime.month.toString().padStart(2, "0")}.${uploadTime.date
       .toString()
-      .padStart(2, "0")}.${uploadTime.date.toString().padStart(2, "0")} `;
+      .padStart(2, "0")} `;
   }
 
   //2024-01-20T01:32:54.806Z
@@ -37,4 +38,3 @@ export const getTimeString = (dateTime: number): string => {
     .toString()
     .padStart(2, "0")}.${uploadTime.date.toString().padStart(2, "0")}`;
 };
-

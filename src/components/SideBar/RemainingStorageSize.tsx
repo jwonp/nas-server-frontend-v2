@@ -1,25 +1,22 @@
 import { VolumeSize } from "@/types/Volume";
 import { convertFileSize } from "@/utils/parseFileSize";
-import { useQuery } from "@tanstack/react-query";
-
-import axios from "axios";
-import { useSession } from "next-auth/react";
+import { STORAGE_SIZE_LOADING } from "@/utils/strings";
 import { useEffect, useState } from "react";
+type RemainingStorageSizeProps = {
+  isLoading: boolean;
+  volume?: VolumeSize;
+};
+const RemainingStorageSize = ({
+  isLoading,
+  volume,
+}: RemainingStorageSizeProps) => {
+  const [now, setNow] = useState<number>(0);
+  const [max, setMax] = useState<number>(1);
 
-const RemainingStorageSize = () => {
-  const { data: session } = useSession();
-  const [volume, setVolume] = useState<VolumeSize>({ max: -1, now: -1 });
-  const volumeQuery = useQuery({
-    queryKey: ["volume"],
-    queryFn: (): Promise<VolumeSize> =>
-      axios.get("/api/user/volume").then((res) => res.data),
-    enabled: session?.user.id ? true : false,
-  });
   useEffect(() => {
-    if (volumeQuery && volumeQuery.data) {
-      setVolume(() => volumeQuery.data);
-    }
-  }, [volumeQuery]);
+    setNow(() => volume?.now ?? 0);
+    setMax(() => volume?.max ?? 1);
+  }, [volume]);
   return (
     <div className="w-full mt-4">
       <div className="indent-2 text-white text-xl font-normal  font-['Inter']">
@@ -29,21 +26,20 @@ const RemainingStorageSize = () => {
         <div
           className="bg-green-500 h-1"
           style={{
-            width: `${Math.floor((volume.now / volume.max) * 100)}%`,
+            width: `${Math.floor((now / max) * 100)}%`,
           }}></div>
       </div>
-      {volumeQuery.isLoading ? (
-        <div>불러오는 중...</div>
+      {isLoading ? (
+        <div>{STORAGE_SIZE_LOADING}</div>
       ) : (
-        <div className="indent-2 text-white text-base font-normal font-['Inter']">
-          {`${convertFileSize(volume.max)} 중 ${convertFileSize(
-            volume.now,
-            true
-          )} ${
-            volume.max > 0 &&
-            `(${((volume.now / volume.max) * 100).toFixed(2)}%)`
-          } 사용중 `}
-        </div>
+        <article className="">
+          <p className="indent-2 text-white text-base font-normal font-['Inter']">
+            {`${convertFileSize(max)} 중 ${convertFileSize(now, true)} `}
+          </p>
+          <p className="indent-2 text-white text-base font-normal font-['Inter']">
+            {`${max > 0 && `(${((now / max) * 100).toFixed(2)}%)`} 사용중 `}
+          </p>
+        </article>
       )}
     </div>
   );

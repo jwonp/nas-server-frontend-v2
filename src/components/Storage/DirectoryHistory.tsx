@@ -1,55 +1,48 @@
-import { DisplayHistoryResponse } from "@/types/Responses";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { DisplayHistory, Item } from "@/types/Responses";
+import {
+  ERROR_RESPONSE,
+  HISTORY_BLOCKS_FAIL_TO_LOAD_HISTORIES,
+  ROOT_DISPLAY_DIRECTORY,
+} from "@/utils/strings";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
+type DirectoryHistoryProps = {
+  rowHistories: string[];
+  initHistories?: DisplayHistory[];
+  histories?: DisplayHistory[];
+  items?: Item;
 
-const DirectoryHistory = () => {
-  const router = useRouter();
-  const queryClient = useQueryClient();
-  const historyQuery = useQuery({
-    queryKey: ["history", { query: (router.query.history as string[]) ?? [] }],
-    queryFn: (): Promise<DisplayHistoryResponse[]> =>
-      axios
-        .get(
-          `/api/storage/directory/history?path=${
-            "/" + (router.query.history as string[])?.join("/")
-          }`
-        )
-        .then((res) => res.data),
-    enabled: (router.query.history as string[]) ? true : false,
-  });
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [
-        "history",
-        { query: (router.query.history as string[]) ?? [] },
-      ],
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query]);
-  const historyBlocks = useMemo(() => {
-    if (!router.query.history || router.query.history.length === 0) {
-      return (
-        <Link
-          id={"0"}
-          href={`/storage`}>{`/ 내 드라이브`}</Link>
-      );
-    }
-    if (historyQuery.isLoading) {
-      return <div>/</div>;
-    }
-    const historyList = router.query.history as string[];
+  isLoading: boolean;
+};
+const DirectoryHistory = ({
+  rowHistories,
+  initHistories,
+  histories,
+  isLoading,
+  items,
+}: DirectoryHistoryProps) => {
+  const createDisplayHistoryMap = (historyData: DisplayHistory[]) => {
     const displayHistoryMap = new Map<string, string>();
-    historyQuery.data?.forEach((history) => {
+    historyData.forEach((history) => {
       displayHistoryMap.set(history.key.split("folder$")[1], history.title);
     });
-    const displayHistories = (router.query.history as string[]).map((hisotry) =>
-      displayHistoryMap.get(hisotry)
-    );
-
-
+    return displayHistoryMap;
+  };
+  const matchHistory = (
+    rowHistories: string[],
+    displayHistoryMap: Map<string, string>
+  ) => {
+    return rowHistories
+      .map<string>((history) => {
+        const historyValue = displayHistoryMap.get(history);
+        if (historyValue !== undefined) {
+          return historyValue;
+        }
+        return "";
+      })
+      .filter((history) => history !== "");
+  };
+  const generateHistoryBlock = (displayHistories: string[]) => {
     return ["내 드라이브", ...displayHistories].map((history, index) => {
       if (index === 0) {
         return (
@@ -63,14 +56,42 @@ const DirectoryHistory = () => {
         <Link
           id={`${index}`}
           key={index}
-          href={`/storage/${historyList
+          href={`/storage/${(rowHistories ?? [])
             .slice(0, index)
             .join("/")}`}>{`/ ${history}`}</Link>
       );
     });
+  };
+  const historyBlocks = useMemo(() => {
+    const isRootDirectory = !rowHistories || rowHistories.length === 0;
+    const isNoHistories = histories === undefined;
+    const isNoInitHistories = initHistories === undefined;
+    if (items && Object.keys(items).includes(ERROR_RESPONSE.msg)) {
+      return <div>{HISTORY_BLOCKS_FAIL_TO_LOAD_HISTORIES}</div>;
+    }
+
+    if (isLoading === true && isNoInitHistories === false) {
+      const displayHistoryMap = createDisplayHistoryMap(initHistories);
+      const displayHistories = matchHistory(rowHistories, displayHistoryMap);
+      return generateHistoryBlock(displayHistories);
+    }
+    
+    if (isRootDirectory || isNoHistories) {
+      return (
+        <Link
+          id={"0"}
+          href={`/storage`}>
+          {ROOT_DISPLAY_DIRECTORY}
+        </Link>
+      );
+    }
+
+    const displayHistoryMap = createDisplayHistoryMap(histories);
+    const displayHistories = matchHistory(rowHistories, displayHistoryMap);
+    return generateHistoryBlock(displayHistories);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [historyQuery.data]);
+  }, [histories]);
 
   return (
     <div className="p-2 text-white text-2xl font-semibold font-['Inter']">

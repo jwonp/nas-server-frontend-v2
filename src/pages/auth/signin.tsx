@@ -1,3 +1,4 @@
+import { SIGNIN_PASSWORD_REGEX_PATTERN } from "@/utils/strings";
 import { randomBytes } from "crypto";
 import type {
   GetServerSidePropsContext,
@@ -38,7 +39,7 @@ export default function SignIn({
                 type="hidden"
                 defaultValue={csrfToken}
               />
-              <div className="text-2xl text-center mb-2">Sign in</div>
+              <div className="text-2xl text-center mb-2">로그인</div>
               {error && (
                 <div className="text-red-500 text-center">
                   로그인 정보가 올바르지 않습니다.
@@ -46,7 +47,7 @@ export default function SignIn({
               )}
               <div className="mb-2">
                 <div>
-                  <label className="text-xl">ID</label>
+                  <label className="text-xl">아이디</label>
                 </div>
                 <div>
                   <input
@@ -68,7 +69,7 @@ export default function SignIn({
               </div>
               <div className="mb-2">
                 <div>
-                  <label className="text-xl">Password</label>
+                  <label className="text-xl">비밀번호</label>
                 </div>
                 <div>
                   <input
@@ -79,7 +80,7 @@ export default function SignIn({
                     required
                     minLength={8}
                     autoComplete="on"
-                    pattern="^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[_!@#$%^*+=-])[a-zA-Z_!@#$%^*+=0-9]{8,32}$"
+                    pattern={SIGNIN_PASSWORD_REGEX_PATTERN}
                     placeholder={`${
                       error === "CredentialsSignin"
                         ? "아이디 혹은 비밀번호를 확인해주세요."
@@ -92,7 +93,7 @@ export default function SignIn({
               <button
                 type="submit"
                 className="mb-1 mt-4 text-xl rounded-lg border w-full py-1">
-                Sign in
+                로그인
               </button>
             </form>
             <form
@@ -112,7 +113,7 @@ export default function SignIn({
                 type="button"
                 className="mb-1 mt-4 text-xl rounded-lg border w-full py-1"
                 onClick={handleClickSignUp}>
-                Sign up
+                회원가입
               </button>
             </form>
           </div>

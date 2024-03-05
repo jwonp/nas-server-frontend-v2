@@ -31,6 +31,7 @@ const config: Config = {
       },
       gridTemplateColumns: {
         "16": "repeat(16,minmax(0,1fr))",
+        "layout":"240px 1fr",
         "listBarTitle": "40px 1fr",
       },
       lineHeight: {

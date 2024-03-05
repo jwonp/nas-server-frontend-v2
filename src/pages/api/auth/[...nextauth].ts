@@ -29,12 +29,12 @@ export const authOptions: AuthOptions = {
         /** if sign up
          * {
                 csrfToken: '52ff7143053a22b3a310cfd2ee8e7a164f31465e2466051957cb06f343502236',
-                username: 'tkdel222@gmail.com',
+                username: 'username@gmail.com',
                 password: '123qweasd!@',
                 name: '박주원',
-                'profile-icon': '【PC版】2022年6月メンバー限定壁紙.jpg',
+                'profile-icon': 'icon.jpg',
                 icon: '66682ca6-f912-4986-95a9-41bb9a9197e3.jpeg',
-                phone: '01012312312'
+                phone: '01012345678'
             }
          */
         const dumySession: UserSession = {
@@ -120,7 +120,7 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
 
-      if (user.username && user.name && user.icon && user.phone) {
+      if (user.username && user.name && user.icon !== undefined && user.phone) {
         return true;
       }
       return false;
