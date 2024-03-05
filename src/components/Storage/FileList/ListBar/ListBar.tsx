@@ -17,9 +17,7 @@ import { useHover } from "@uidotdev/usehooks";
 import axios from "axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-
 import { useEffect, useRef, useState } from "react";
-import { useDirectory } from "@/hooks/useDirectory.hook";
 import { convertFileSize } from "@/utils/parseFileSize";
 import { downloadFile } from "@/utils/download";
 
@@ -36,58 +34,65 @@ const fileIcons = {
 type fileIconType = keyof typeof fileIcons;
 
 export type ListBarType = {
-  fileId: string;
-  title: string;
-  owner: string;
+  directory: string;
+  userId: string;
+  metas: {
+    fileId: string;
+    title: string;
+    owner: string;
 
-  ownerImage: string | StaticImport | null | undefined;
-  uploadTime: string | null;
-  fileIcon: fileIconType;
-  fileSize: number;
+    ownerImage: string | StaticImport | null | undefined;
+    uploadTime: string | null;
+    fileIcon: fileIconType;
+    fileSize: number;
+  };
 };
 
 const FileTypeIconSize = 40;
 const ButtonIconSize = 28;
 const WIDTH_ON_LG = 1007;
-const ListBar = ({
-  title,
-  owner,
-  ownerImage,
-  fileId,
-  uploadTime,
-  fileIcon,
-  fileSize,
-}: ListBarType) => {
+const ListBar = ({ directory, userId, metas }: ListBarType) => {
   const $listBar = useRef<HTMLDivElement>(null);
   const [ref, hovering] = useHover();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const directory = useDirectory();
   const [isClickedMore, setClickedMore] = useState<boolean>(false);
   const [isVisible, setVisible] = useState<boolean>(false);
-  const [fileTitle, setFileTitle] = useState<string>(title);
+  const [fileTitle, setFileTitle] = useState<string>(metas.title);
   const [isEditTitle, setEditTitle] = useState<boolean>(false);
   const [editSkipFlag, setEditSkipFlag] = useState<boolean>(true);
+  const [isFolder, setIsFolder] = useState<boolean>(false);
   const iconQuery = useQuery({
-    queryKey: ["icon", { source: ownerImage }],
+    queryKey: ["icon", { source: metas.ownerImage }],
     queryFn: (): Promise<{ url: string }> =>
       axios
-        .get(`/api/storage/download?key=${ownerImage}`)
+        .get(`/api/storage/download?key=${metas.ownerImage}`)
         .then((res) => res.data),
-    enabled: ownerImage ? true : false,
+    enabled: metas.ownerImage ? true : false,
   });
-
+  const addFavorite = useMutation({
+    mutationFn: (variables: { userId: string; directory: string }) =>
+      axios.post("/api/user/favorite", {
+        userId: variables.userId,
+        directory: variables.directory,
+      }),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["favorite", variables.userId],
+      });
+    },
+  });
   const deleteFile = useMutation({
     mutationFn: (fileId: string) =>
       axios.delete("/api/storage/item", {
         data: {
           fileId: fileId,
-          fileSize: fileSize,
+          fileSize: metas.fileSize,
           fileType: fileIcon,
           directory: `/${directory}`,
         },
       }),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["item", { path: directory }],
       });
@@ -97,8 +102,8 @@ const ListBar = ({
     },
   });
   useEffect(() => {
-    setFileTitle(title);
-  }, [title]);
+    setFileTitle(metas.title);
+  }, [metas.title]);
   useEffect(() => {
     if (editSkipFlag) {
       setEditSkipFlag(false);
@@ -106,7 +111,7 @@ const ListBar = ({
     }
     if (!isEditTitle) {
       axios.patch(`/api/storage/meta/title`, {
-        fileId: fileId,
+        fileId: metas.fileId,
         title: fileTitle,
       });
     }
@@ -122,7 +127,9 @@ const ListBar = ({
     }
     setVisible(true);
   }, [hovering]);
-
+  useEffect(() => {
+    setIsFolder(() => !isEditTitle && metas.fileIcon === "folder");
+  }, [isEditTitle, metas.fileIcon]);
   return (
     <div ref={$listBar}>
       <div
@@ -132,14 +139,16 @@ const ListBar = ({
           <div
             className="grid grid-cols-listBarTitle gap-2"
             onClick={() => {
-              if (!isEditTitle && fileIcon === "folder") {
-                router.push(`${router.asPath}/${fileId.split("folder$")[1]}`);
+              if (isFolder) {
+                router.push(
+                  `${router.asPath}/${metas.fileId.split("folder$")[1]}`
+                );
               }
             }}>
             <div className="my-auto w-10 h-10">
               <Image
                 className="w-10 h-10"
-                src={fileIcons[fileIcon]}
+                src={fileIcons[metas.fileIcon]}
                 alt=""
                 width={FileTypeIconSize}
                 height={FileTypeIconSize}
@@ -149,6 +158,10 @@ const ListBar = ({
               <input
                 className="text-white truncate leading-12 text-lg font-semibold font-['Inter'] bg-neutral-700 focus:outline-none focus:border-0"
                 value={fileTitle}
+                onBlur={(e) => {
+                  e.preventDefault();
+                  setEditTitle((prev) => !prev);
+                }}
                 onChange={(e) => {
                   setFileTitle(() => e.target.value);
                 }}
@@ -183,32 +196,35 @@ const ListBar = ({
                   />
                 </div>
                 <div className=" text-white truncate leading-12 text-lg font-semibold font-['Inter']">
-                  {owner ?? "-"}
+                  {metas.owner ?? "-"}
                 </div>
               </div>
             </div>
           </div>
         </article>
         <article className="col-span-2 max-md:col-span-3 max-file:col-span-3 max-mobile:hidden text-center truncate leading-12 text-white text-lg font-semibold font-['Inter']">
-          {`${uploadTime ?? "-"}`}
+          {`${metas.uploadTime ?? "-"}`}
         </article>
         <article className="col-span-2 max-md:col-span-3  max-file:hidden text-center leading-12 text-white text-lg font-semibold font-['Inter']">
-          {`${convertFileSize(fileSize) ?? "-"}`}
+          {`${convertFileSize(metas.fileSize) ?? "-"}`}
         </article>
 
         <section
           className={`col-span-3 max-file:col-span-5 max-mobile:col-span-6 flex justify-between w-full ${
             !isClickedMore ? "max-lg:ml-auto" : ""
           } ${!isVisible ? "lg:hidden" : ""}`}>
-          <div className={`${isClickedMore ? " max-lg:hidden" : ""} lg:hidden`}></div>
+          <div
+            className={`${
+              isClickedMore ? " max-lg:hidden" : ""
+            } lg:hidden`}></div>
           <div className={`flex${!isClickedMore ? " max-lg:hidden" : ""}`}>
             <article className="flex gap-1">
-              {fileIcon !== "folder" && (
+              {metas.fileIcon !== "folder" && (
                 <figure className="my-auto w-9 h-9 lg:hover:bg-slate-500 rounded-full">
                   <div
                     className="m-1 w-7 h-7 "
                     onClick={() => {
-                      downloadFile(fileId, title);
+                      downloadFile(metas.fileId, metas.title);
                     }}>
                     <Image
                       src={downloadIcon}
@@ -231,23 +247,34 @@ const ListBar = ({
                   />
                 </div>
               </figure>
-              {/* {fileIcon === "folder" && (
-          <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
-            <div className="m-1 w-7 h-7 ">
-              <Image
-                src={favoriteIcon}
-                alt=""
-                width={ButtonIconSize}
-                height={ButtonIconSize}
-              />
-            </div>
-          </div>
-        )} */}
+              {/* {metas.fileIcon === "folder" && (
+                <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
+                  <div
+                    className="m-1 w-7 h-7 "
+                    onClick={() => {
+                     
+                      const favoriteDirectory = `${directory}/${
+                        metas.fileId.split("folder$")[1]
+                      }`;
+                      addFavorite.mutate({
+                        userId: userId,
+                        directory: favoriteDirectory,
+                      });
+                    }}>
+                    <Image
+                      src={favoriteIcon}
+                      alt=""
+                      width={ButtonIconSize}
+                      height={ButtonIconSize}
+                    />
+                  </div>
+                </div>
+              )} */}
               <figure className="my-auto w-9 h-9 lg:hover:bg-slate-500  rounded-full">
                 <div
                   className="m-1 w-7 h-7 "
                   onClick={() => {
-                    deleteFile.mutate(fileId);
+                    deleteFile.mutate(metas.fileId);
                   }}>
                   <Image
                     src={deleteIcon}

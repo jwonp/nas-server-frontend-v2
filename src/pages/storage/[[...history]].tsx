@@ -19,6 +19,7 @@ import WarningSnackBar from "@/components/Storage/SnackBar/WarningSnackBar";
 import ProgressSnackBar from "@/components/Storage/SnackBar/ProgressSnackBar";
 
 import FilelistContainer from "@/components/Storage/FileList/FileListContainer";
+import { useSession } from "next-auth/react";
 
 // ItemQuery.data -> itemList -> itemElements => render
 const StoragePage = (
@@ -27,7 +28,7 @@ const StoragePage = (
   const router = useRouter();
   const directory = useDirectory();
   const queryClient = useQueryClient();
-
+  const { data: session } = useSession();
   const ItemQuery = useQuery<ItemResponse | ErrorResponse>({
     queryKey: ["item", { path: directory }],
     queryFn: async () =>
@@ -71,6 +72,8 @@ const StoragePage = (
           isLoading={ItemQuery.isLoading}
           initItems={initItems}
           data={ItemQuery.data}
+          userId={session?.user.id}
+          directory={directory}
         />
         <ProgressSnackBar />
         <WarningSnackBar />

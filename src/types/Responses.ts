@@ -31,3 +31,7 @@ export type MetaUploadResponse = {
   meta: MetaData[];
   volume: VolumeSize;
 };
+
+export type FavoriteResponse ={
+  
+}

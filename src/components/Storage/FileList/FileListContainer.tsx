@@ -11,11 +11,15 @@ type FileListContainerProps = {
   isLoading: boolean;
   initItems: ItemResponse | ErrorResponse;
   data: ItemResponse | ErrorResponse | undefined;
+  userId: string;
+  directory: string;
 };
 const FilelistContainer = ({
   isLoading,
   data,
   initItems,
+  userId,
+  directory,
 }: FileListContainerProps) => {
   const [items, setItems] = useState<ItemResponse | ErrorResponse | undefined>(
     undefined
@@ -46,8 +50,14 @@ const FilelistContainer = ({
     if (items === undefined) {
       return <NofilesAlert />;
     }
-    return <FileList items={(items as ItemResponse).items} />;
-  }, [isLoading, data, initItems, items]);
+    return (
+      <FileList
+        userId={userId}
+        items={(items as ItemResponse).items}
+        directory={directory}
+      />
+    );
+  }, [isLoading, data, initItems, directory, userId, items]);
   return (
     <>
       <ListColumnBar />

@@ -10,6 +10,12 @@ import { useSession } from "next-auth/react";
 const SideBar = () => {
   const isVisibleSidebar = useAppSelector(getVisibleSideBar);
   const { data: session } = useSession();
+  const favoriteQuery = useQuery({
+    queryKey: ["favorite", session?.user.id],
+    queryFn: (): Promise<VolumeSize> =>
+      axios.get("/api/user/favorite").then((res) => res.data),
+    enabled: session?.user.id ? true : false,
+  });
   const volumeQuery = useQuery({
     queryKey: ["volume"],
     queryFn: (): Promise<VolumeSize> =>
