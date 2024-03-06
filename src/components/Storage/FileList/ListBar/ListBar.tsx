@@ -9,6 +9,7 @@ import videoIcon from "@public/icons/video.png";
 import userIcon from "@public/icons/userCircle.png";
 import deleteIcon from "@public/icons/delete.png";
 import favoriteIcon from "@public/icons/star.png";
+import ShareIcon from "@public/icons/share.png";
 import MoreIcon from "@public/icons/more.svg";
 import editTitleIcon from "@public/icons/edit.png";
 import downloadIcon from "@public/icons/download.png";
@@ -210,7 +211,7 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
         </article>
 
         <section
-          className={`col-span-3 max-file:col-span-5 max-mobile:col-span-6 flex justify-between w-full ${
+          className={`col-span-3 max-file:col-span-5 max-mobile:col-span-6 flex gap-2 justify-between w-full ${
             !isClickedMore ? "max-lg:ml-auto" : ""
           } ${!isVisible ? "lg:hidden" : ""}`}>
           <div
@@ -278,6 +279,18 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
                   }}>
                   <Image
                     src={deleteIcon}
+                    alt=""
+                    width={ButtonIconSize}
+                    height={ButtonIconSize}
+                  />
+                </div>
+              </figure>
+              <figure className="my-auto w-9 h-9 lg:hover:bg-slate-500  rounded-full">
+                <div
+                  className="m-1 w-7 h-7 "
+                  onClick={() => {}}>
+                  <Image
+                    src={ShareIcon}
                     alt=""
                     width={ButtonIconSize}
                     height={ButtonIconSize}
