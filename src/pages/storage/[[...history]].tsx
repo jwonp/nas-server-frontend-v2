@@ -20,6 +20,7 @@ import ProgressSnackBar from "@/components/Storage/SnackBar/ProgressSnackBar";
 
 import FilelistContainer from "@/components/Storage/FileList/FileListContainer";
 import { useSession } from "next-auth/react";
+import ShareModal from "@/components/Storage/ShareModal";
 
 // ItemQuery.data -> itemList -> itemElements => render
 const StoragePage = (
