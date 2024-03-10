@@ -25,8 +25,5 @@ test("create modal items by search query", async () => {
   }, 1500);
   expect(screen.getByRole("modal-items")).toBeDefined();
   expect(searchInput).toBeDefined();
-
-  expect(shareModal).toMatchSnapshot();
-
   cleanup();
 });

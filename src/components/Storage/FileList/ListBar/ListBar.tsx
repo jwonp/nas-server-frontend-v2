@@ -8,7 +8,8 @@ import imageIcon from "@public/icons/photo.png";
 import videoIcon from "@public/icons/video.png";
 import userIcon from "@public/icons/userCircle.png";
 import deleteIcon from "@public/icons/delete.png";
-import favoriteIcon from "@public/icons/star.png";
+import favoriteIcon from "@public/icons/favorite.png";
+import favoritedIcon from "@public/icons/favorited.png";
 import ShareIcon from "@public/icons/share.png";
 import MoreIcon from "@public/icons/more.svg";
 import editTitleIcon from "@public/icons/edit.png";
@@ -21,6 +22,8 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { convertFileSize } from "@/utils/parseFileSize";
 import { downloadFile } from "@/utils/download";
+import { useAppDispatch } from "@/redux/hooks";
+import { turnOnShareModal } from "@/redux/featrues/modalSwitchSlice";
 
 const fileIcons = {
   back: backIcon,
@@ -41,7 +44,7 @@ export type ListBarType = {
     fileId: string;
     title: string;
     owner: string;
-
+    isFavorite: boolean;
     ownerImage: string | StaticImport | null | undefined;
     uploadTime: string | null;
     fileIcon: fileIconType;
@@ -51,8 +54,9 @@ export type ListBarType = {
 
 const FileTypeIconSize = 40;
 const ButtonIconSize = 28;
-const WIDTH_ON_LG = 1007;
+const WIDTH_ON_LG = 767;
 const ListBar = ({ directory, userId, metas }: ListBarType) => {
+  const dispatch = useAppDispatch();
   const $listBar = useRef<HTMLDivElement>(null);
   const [ref, hovering] = useHover();
   const queryClient = useQueryClient();
@@ -72,14 +76,29 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
     enabled: metas.ownerImage ? true : false,
   });
   const addFavorite = useMutation({
-    mutationFn: (variables: { userId: string; directory: string }) =>
-      axios.post("/api/user/favorite", {
-        userId: variables.userId,
+    mutationFn: (variables: { directory: string; folder: string }) =>
+      axios.post("/api/storage/favorite", {
         directory: variables.directory,
+        folder: variables.folder,
       }),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["favorite", variables.userId],
+        queryKey: ["favorite", userId],
+      });
+    },
+  });
+  const renameFile = useMutation({
+    mutationFn: (variables: { fileId: string; title: string }) =>
+      axios.patch(`/api/storage/meta/title`, {
+        fileId: variables.fileId,
+        title: variables.title,
+      }),
+    onSuccess: () => {
+      if (metas.isFavorite) {
+        queryClient.invalidateQueries({ queryKey: ["favorite", userId] });
+      }
+      queryClient.invalidateQueries({
+        queryKey: ["item", { path: directory }],
       });
     },
   });
@@ -89,8 +108,8 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
         data: {
           fileId: fileId,
           fileSize: metas.fileSize,
-          fileType: fileIcon,
-          directory: `/${directory}`,
+          fileType: metas.fileIcon,
+          directory: directory !== "" ? "/" + directory : "",
         },
       }),
     onSuccess: (_, variables) => {
@@ -111,26 +130,31 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
       return;
     }
     if (!isEditTitle) {
-      axios.patch(`/api/storage/meta/title`, {
+      renameFile.mutate({
         fileId: metas.fileId,
         title: fileTitle,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditTitle]);
+
   useEffect(() => {
-    const isHoveringOnLandscape =
-      hovering === false &&
+    const isHovering = hovering;
+    const isOnLandScape =
       $listBar.current?.offsetWidth &&
       $listBar.current?.offsetWidth > WIDTH_ON_LG;
+    const isHoveringOnLandscape = isHovering && isOnLandScape;
+
     if (isHoveringOnLandscape) {
-      return setVisible(false);
+      return setVisible(true);
     }
-    setVisible(true);
+    setVisible(false);
   }, [hovering]);
+
   useEffect(() => {
     setIsFolder(() => !isEditTitle && metas.fileIcon === "folder");
   }, [isEditTitle, metas.fileIcon]);
+
   return (
     <div ref={$listBar}>
       <div
@@ -211,9 +235,13 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
         </article>
 
         <section
-          className={`col-span-3 max-file:col-span-5 max-mobile:col-span-6 flex gap-2 justify-between w-full ${
+          className={`col-span-3 max-file:col-span-5 max-mobile:col-span-6 flex  justify-between w-full ${
             !isClickedMore ? "max-lg:ml-auto" : ""
-          } ${!isVisible ? "lg:hidden" : ""}`}>
+          } ${
+            !isVisible
+              ? "lg:hidden"
+              : "transition-opacity  duration-1000 ease-in"
+          }`}>
           <div
             className={`${
               isClickedMore ? " max-lg:hidden" : ""
@@ -248,29 +276,25 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
                   />
                 </div>
               </figure>
-              {/* {metas.fileIcon === "folder" && (
-                <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
-                  <div
-                    className="m-1 w-7 h-7 "
-                    onClick={() => {
-                     
-                      const favoriteDirectory = `${directory}/${
-                        metas.fileId.split("folder$")[1]
-                      }`;
-                      addFavorite.mutate({
-                        userId: userId,
-                        directory: favoriteDirectory,
-                      });
-                    }}>
-                    <Image
-                      src={favoriteIcon}
-                      alt=""
-                      width={ButtonIconSize}
-                      height={ButtonIconSize}
-                    />
-                  </div>
+              {/* {metas.fileIcon === "folder" && ( )} */}
+              <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
+                <div
+                  className="m-1 w-7 h-7 "
+                  onClick={() => {
+                    addFavorite.mutate({
+                      directory: directory,
+                      folder: metas.fileId,
+                    });
+                  }}>
+                  <Image
+                    src={metas.isFavorite ? favoritedIcon : favoriteIcon}
+                    alt=""
+                    width={ButtonIconSize}
+                    height={ButtonIconSize}
+                  />
                 </div>
-              )} */}
+              </div>
+
               <figure className="my-auto w-9 h-9 lg:hover:bg-slate-500  rounded-full">
                 <div
                   className="m-1 w-7 h-7 "
@@ -288,7 +312,9 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
               <figure className="my-auto w-9 h-9 lg:hover:bg-slate-500  rounded-full">
                 <div
                   className="m-1 w-7 h-7 "
-                  onClick={() => {}}>
+                  onClick={() => {
+                    dispatch(turnOnShareModal(metas.title));
+                  }}>
                   <Image
                     src={ShareIcon}
                     alt=""

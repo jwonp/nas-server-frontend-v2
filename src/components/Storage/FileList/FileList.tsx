@@ -7,10 +7,10 @@ import ListBar from "./ListBar/ListBar";
 import { Item } from "@/types/Responses";
 type FileListProps = {
   items: Item;
-  userId:string;
+  userId: string;
   directory: string;
 };
-const FileList = ({ items, userId,directory }: FileListProps) => {
+const FileList = ({ items, userId, directory }: FileListProps) => {
   const itemElements = useMemo(() => {
     if (items && items.files.length === 0) {
       return <NofilesAlert />;
@@ -25,6 +25,7 @@ const FileList = ({ items, userId,directory }: FileListProps) => {
         ownerImage: items.image,
         fileIcon: meta.type,
         fileSize: meta.size,
+        isFavorite: meta.isFavorite,
       };
       return (
         <ListBar

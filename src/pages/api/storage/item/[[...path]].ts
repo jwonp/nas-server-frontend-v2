@@ -37,6 +37,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
   if (req.method === "DELETE") {
     const { fileId, fileSize, fileType, directory } = req.body;
+    
     const result = await request(session?.user)
       .delete(
         fileType === "folder" ? `/storage/item/folder` : `/storage/item`,

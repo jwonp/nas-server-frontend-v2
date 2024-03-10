@@ -1,7 +1,9 @@
 import Image from "next/image";
 import folderIcon from "@public/icons/folder.png";
-const SideListBar = () => {
-    
+type SideFolderBarProps = {
+  title: string;
+};
+const SideFolderBar = ({ title }: SideFolderBarProps) => {
   return (
     <div className="flex w-full h-12  p-2 select-none cursor-pointer">
       <Image
@@ -11,10 +13,10 @@ const SideListBar = () => {
         height={32}
       />
       <div className="px-2 leading-9 text-white text-l font-semibold font-['Inter']">
-        폴더 제목
+        {title}
       </div>
     </div>
   );
 };
 
-export default SideListBar;
+export default SideFolderBar;

@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
-
+import { Provider } from "react-redux";
+import { store } from "@/redux/store";
 import FileListContainer from "../FileListContainer";
 import { MetaData } from "@/types/MetaData";
 import {
@@ -71,6 +72,8 @@ test("When loading", () => {
       isLoading={true}
       initItems={initItems}
       data={undefined}
+      userId={"userId"}
+      directory={"/a/b/c"}
     />
   );
   expect(screen.getByText(FILE_LIST_LOADING)).toBeDefined();
@@ -85,6 +88,8 @@ test("When erorr to load file list", () => {
         isLoading={false}
         initItems={initItems}
         data={undefined}
+        userId={"userId"}
+        directory={"/a/b/c"}
       />
     </QueryClientProvider>
   );
@@ -98,6 +103,8 @@ test("When invaild directory", () => {
       isLoading={false}
       initItems={initError}
       data={initError}
+      userId={"userId"}
+      directory={"/a/b/c"}
     />
   );
   expect(screen.getByText(FILE_LIST_INVAILD_DIRECTORY)).toBeDefined();
@@ -108,11 +115,15 @@ test("In normal case", () => {
   const queryClient = new QueryClient();
   render(
     <QueryClientProvider client={queryClient}>
-      <FileListContainer
-        isLoading={false}
-        initItems={initItems}
-        data={data}
-      />
+      <Provider store={store}>
+        <FileListContainer
+          isLoading={false}
+          initItems={initItems}
+          data={data}
+          userId={"userId"}
+          directory={"/a/b/c"}
+        />
+      </Provider>
     </QueryClientProvider>
   );
   expect(screen.getByText("image.png")).toBeDefined();

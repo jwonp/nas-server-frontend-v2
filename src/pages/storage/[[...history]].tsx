@@ -20,6 +20,7 @@ import ProgressSnackBar from "@/components/Storage/SnackBar/ProgressSnackBar";
 
 import FilelistContainer from "@/components/Storage/FileList/FileListContainer";
 import { useSession } from "next-auth/react";
+import ShareModal from "@/components/Storage/Modal/ShareModal";
 
 
 // ItemQuery.data -> itemList -> itemElements => render
@@ -32,7 +33,7 @@ const StoragePage = (
   const { data: session } = useSession();
   const ItemQuery = useQuery<ItemResponse | ErrorResponse>({
     queryKey: ["item", { path: directory }],
-    queryFn: async () =>
+    queryFn: () =>
       axios
         .get(`/api/storage/item/${directory}`)
         .then((res: AxiosResponse<ItemResponse>) => res.data)
@@ -80,7 +81,7 @@ const StoragePage = (
         <WarningSnackBar />
       </div>
 
-      
+      <ShareModal/>
     </div>
   );
 };
