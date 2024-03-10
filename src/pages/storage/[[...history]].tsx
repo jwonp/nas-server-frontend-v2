@@ -22,7 +22,6 @@ import FilelistContainer from "@/components/Storage/FileList/FileListContainer";
 import { useSession } from "next-auth/react";
 import ShareModal from "@/components/Storage/Modal/ShareModal";
 
-
 // ItemQuery.data -> itemList -> itemElements => render
 const StoragePage = (
   initItems: InferGetServerSidePropsType<typeof getServerSideProps>
@@ -82,6 +81,7 @@ const StoragePage = (
       </div>
 
       <ShareModal/>
+
     </div>
   );
 };
