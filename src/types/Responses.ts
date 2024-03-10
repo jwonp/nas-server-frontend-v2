@@ -1,4 +1,4 @@
-import { MetaData } from "./MetaData";
+import { FileType, MetaData } from "./MetaData";
 import { VolumeSize } from "./Volume";
 
 interface BasicResponse {
@@ -32,6 +32,22 @@ export type MetaUploadResponse = {
   volume: VolumeSize;
 };
 
-export type FavoriteResponse ={
-  
-}
+export type SideFolder = {
+  type: FileType;
+  directory: string;
+  key: string;
+  fileName: string;
+};
+export type FavoriteResponse = {
+  favorites: SideFolder[];
+};
+
+export type SearchedUser = {
+  iconURL: string;
+  userId: string;
+  username: string;
+  email: string;
+};
+export type UserSearchResponse = {
+  searchedUsers: SearchedUser[];
+};

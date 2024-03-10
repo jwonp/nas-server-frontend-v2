@@ -7,30 +7,34 @@ import { request } from "@/utils/request";
 import { AxiosError } from "axios";
 import {
   ErrorResponse,
-  FavoriteResponse,
   SuccessResponse,
+  UserSearchResponse,
 } from "@/types/Responses";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { userId, directory } = req.body;
+  const { query } = req.query;
   const session = await getServerSession(req, res, authOptions);
   if (!session) {
     return res.status(403).json({ error: "Unauthorized" });
   }
+  if (!query || query === "") {
+    return res.status(204);
+  }
   const result = await request(session?.user)
-    .post("/user/favorite", { userId, directory })
+    .get(`/user/search?query=${query}`)
     .then((res) => {
       return { status: res.status, data: res.data };
     })
     .catch((err: AxiosError) => {
       return { status: err.status ?? 400, msg: err.message };
     });
+
   const responseData =
     result.status / 100 < 4
-      ? ((result as SuccessResponse).data as FavoriteResponse)
+      ? ((result as SuccessResponse).data as UserSearchResponse)
       : (result as ErrorResponse);
   res.status(result.status).json(responseData);
 }

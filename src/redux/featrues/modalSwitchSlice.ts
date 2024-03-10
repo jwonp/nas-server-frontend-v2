@@ -1,23 +1,24 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 export type ModalSwitch = {
-  isVisibleShareModal: boolean;
+  [key: string]: { isVisible: boolean; title: string };
 };
 
 const initialState: ModalSwitch = {
-  isVisibleShareModal: false,
+  share: { isVisible: false, title: "" },
 };
 
 export const modalSwitchSlice = createSlice({
   name: "modalSwitch",
   initialState,
   reducers: {
-    turnOnShareModal: (state) => {
-      state.isVisibleShareModal = true;
+    turnOnShareModal: (state, action: PayloadAction<string>) => {
+      state.share.isVisible = true;
+      state.share.title = action.payload;
     },
     turnOffShareModal: (state) => {
-      state.isVisibleShareModal = false;
+      state.share.isVisible = false;
+      state.share.title = "";
     },
   },
 });
@@ -25,6 +26,6 @@ export const modalSwitchSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const { turnOnShareModal, turnOffShareModal } = modalSwitchSlice.actions;
 export const getShareModalSwitch = (state: RootState) =>
-  state.modalSwitch.isVisibleShareModal;
+  state.modalSwitch.share;
 
 export default modalSwitchSlice.reducer;

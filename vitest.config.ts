@@ -6,7 +6,10 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     globals: true,
-    setupFiles: ["./src/components/Storage/FileList/__test__/FileListSetup.ts"],
+    setupFiles: [
+      "./src/components/Storage/FileList/__test__/FileListSetup.ts",
+      "src/components/Storage/Modal/__test__/ShareModal/ShareModalSetup.ts",
+    ],
   },
   resolve: {
     alias: {
