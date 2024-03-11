@@ -29,7 +29,7 @@ const FolderAddButton = ({
       history && history.length > 0 ? `/${history.join("/")}` : "";
     const key = `folder$${uuidv4()}`;
 
-    const folderMeta: MetaData = {
+    const folderMeta: Omit<MetaData,"isFavorite">  = {
       ownerId: userId,
       uploadTime: Date.now(),
       fileName: "새 폴더",
