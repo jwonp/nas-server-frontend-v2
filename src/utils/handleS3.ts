@@ -38,10 +38,10 @@ export const getSignedUrlParams = (
 
 const uploadFile = async (
   file: File | null,
-  meta: Omit<MetaData, "key" | "uploadTime" | "size" | "fileName" | "type">,
+  meta: Omit<MetaData, "key" | "uploadTime" | "size" | "fileName" | "type"| "isFavorite">,
   progressDispatch?: ThunkDispatch<any, undefined, UnknownAction> &
     Dispatch<any>
-): Promise<Nullable<MetaData>> => {
+): Promise<Nullable<Omit<MetaData,"isFavorite"> >> => {
   if (!file) {
     return null;
   }
@@ -71,7 +71,7 @@ const uploadFile = async (
   });
   console.log(res);
 
-  const uploadedMeta: MetaData = {
+  const uploadedMeta: Omit<MetaData,"isFavorite"> = {
     directory: meta.directory,
     fileName: file.name,
     ownerId: meta.ownerId,
@@ -117,7 +117,10 @@ export const uploadProfileIconToS3 = async (file: File) => {
 export const uploadFilesToS3ByFileList = async (
   fileList: FileList,
   volume: VolumeSize,
-  meta: Omit<MetaData, "key" | "uploadTime" | "size" | "fileName" | "type">,
+  meta: Omit<
+    MetaData,
+    "key" | "uploadTime" | "size" | "fileName" | "type" | "isFavorite"
+  >,
   progressDispatch: ThunkDispatch<any, undefined, UnknownAction> & Dispatch<any>
 ) => {
   if (volume.max < 0 || volume.now < 0) {
@@ -131,8 +134,8 @@ export const uploadFilesToS3ByFileList = async (
   if (volume.now + totalFileSize > volume.max) {
     return;
   }
-  const storedMetas = new Promise<Nullable<MetaData>[]>((resolve, reject) => {
-    let metas: Nullable<MetaData>[] = [];
+  const storedMetas = new Promise<Nullable<Omit<MetaData,"isFavorite"> >[]>((resolve, reject) => {
+    let metas: Nullable<Omit<MetaData,"isFavorite"> >[] = [];
     if (progressDispatch) {
       progressDispatch(setFileAmount(files.length));
     }

@@ -53,7 +53,7 @@ const FileAddButton = ({
     const directory = history && history.length > 0 ? `/${history.join("/")}` : "";
     const meta: Omit<
       MetaData,
-      "key" | "uploadTime" | "size" | "fileName" | "type"
+      "key" | "uploadTime" | "size" | "fileName" | "type"|"isFavorite"
     > = {
       directory: directory,
       ownerId: userId,
@@ -73,7 +73,7 @@ const FileAddButton = ({
       dispatch(setWarningSnackBar(warningSnackBarProps));
       return;
     }
-    const filterdMetas: MetaData[] = [];
+    const filterdMetas: Omit<MetaData,"isFavorite"> [] = [];
     for (let meta of storedMetas) {
       if (meta) {
         filterdMetas.push(meta);
