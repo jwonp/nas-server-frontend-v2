@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 
 import CancelIcon from "@public/icons/close-white.svg";
@@ -76,9 +76,7 @@ const ShareModal = ({}: ShareModalProps) => {
     setSelectedUsers(() => []);
     dispatch(turnOffShareModal());
   };
-  useEffect(() => {
-    console.log(selectedUsers.map((item) => item.email));
-  }, [selectedUsers]);
+
   const modalItems = useMemo(() => {
     if (userSearchquery === "") {
       return <div></div>;
@@ -155,15 +153,15 @@ const ShareModal = ({}: ShareModalProps) => {
   }
   return (
     <Modal>
-      <section className="w-full h-full bg-slate-500 rounded-lg max-lg:rounded-none p-5">
-        <section className="h-20">
+      <section className="w-full h-full bg-slate-500 rounded-lg max-lg:rounded-none p-5 grid grid-rows-modal">
+        <section>
           <p className="text-xl mb-2">{`"${shareModalSwitch.title}" 공유`}</p>
           <article className="w-full mb-2 h-10 relative">
             <input
               ref={$searchInput}
               className="w-full p-2 rounded-lg text-stone-950 h-full"
               type="text"
-              placeholder="공유할 사용자의 이메일 또는 전화번호를 입력하세요."
+              placeholder="공유할 사용자의 이메일 또는 전화번호로 검색"
               onChange={handleChangeQuery}
             />
             <button
@@ -181,38 +179,37 @@ const ShareModal = ({}: ShareModalProps) => {
             </button>
           </article>
         </section>
-        <section className="flex gap-2 snap-x  overflow-x-scroll">
+        <section className="flex gap-2 snap-x py-2 overflow-x-scroll">
           {selectedModalItems}
         </section>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-          }}>
-          <fieldset className="mb-auto">
-            <legend className="text-xl my-2">검색 결과</legend>
-            <div
-              role="modal-items"
-              className="col-span-1 mb-3 overflow-y-scroll h-auto select-none">
-              {modalItems}
-            </div>
-          </fieldset>
 
-          <fieldset className="float-right h-10">
-            <div className="flex gap-4">
-              <button
-                className="leading-10"
-                type="reset"
-                onClick={handleClickToResetSelection}>
-                취소
-              </button>
-              <button
-                className="bg-blue-600 py-2 px-5 rounded-xl"
-                type="submit">
-                공유
-              </button>
-            </div>
-          </fieldset>
-        </form>
+        <fieldset className="h-full overflow-y-scroll">
+          <legend className="text-xl my-2">{`검색 결과`}</legend>
+          <div
+            role="modal-items"
+            className="col-span-1 mb-3  h-full select-none">
+            {modalItems}
+          </div>
+        </fieldset>
+
+        <fieldset className="h-10 mt-2 ">
+          <div className="flex gap-4 float-right">
+            <button
+              className="hover:bg-slate-400 py-2 px-5 rounded-xl"
+              type="reset"
+              onClick={handleClickToResetSelection}>
+              취소
+            </button>
+            <button
+              className="hover:bg-blue-500 bg-blue-600 py-2 px-5 rounded-xl"
+              type="submit"
+              onClick={(e) => {
+                e.preventDefault();
+              }}>
+              공유
+            </button>
+          </div>
+        </fieldset>
       </section>
     </Modal>
   );
