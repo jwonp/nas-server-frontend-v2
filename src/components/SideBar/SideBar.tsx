@@ -8,7 +8,9 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import FavoriteFolder from "./FavoriteFolder";
-
+import Link from "next/link";
+import AddUserIcon from "@public/icons/addUser-white.svg";
+import Image from "next/image";
 const SideBar = () => {
   const isVisibleSidebar = useAppSelector(getVisibleSideBar);
   const { data: session } = useSession();
@@ -40,7 +42,23 @@ const SideBar = () => {
             volume={volumeQuery.data}
           />
         </section>
-        <section></section>
+        <section>
+          <Link href="/share/user">
+            <div className="flex rounded-lg w-3/4 text-center border-2 p-2 mx-auto my-2 ">
+              <div className="flex mx-2 gap-2">
+                <figure>
+                  <Image
+                    src={AddUserIcon}
+                    alt=""
+                    width={24}
+                    height={24}
+                  />
+                </figure>
+                <p>공유 대상 관리</p>
+              </div>
+            </div>
+          </Link>
+        </section>
       </div>
     </aside>
   );
