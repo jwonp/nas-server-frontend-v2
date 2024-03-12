@@ -1,20 +1,30 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  async redirects(){
-return [{
-  source:"/",
-  destination:"/storage",
-  permanent:true
-},{
-  source:"/api/auth/error",
-  destination:"/auth/signin",
-  has:[{
-   type:"query",
-   key:"error" 
-  }],
-  permanent:true
-}]
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/storage",
+        permanent: true,
+      },
+      {
+        source: "/share",
+        destination: "/share/user",
+        permanent: true,
+      },
+      {
+        source: "/api/auth/error",
+        destination: "/auth/signin",
+        has: [
+          {
+            type: "query",
+            key: "error",
+          },
+        ],
+        permanent: true,
+      },
+    ];
   },
   images: {
     remotePatterns: [
@@ -32,6 +42,6 @@ return [{
       },
     ],
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

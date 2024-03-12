@@ -15,7 +15,7 @@ export default function App({
 }: AppProps) {
   const [queryClient] = React.useState(() => new QueryClient());
   const router = useRouter();
-
+  console.log(router.pathname)
   return (
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>
@@ -37,12 +37,12 @@ export default function App({
               href="/favicon.ico"
             />
           </Head>
-          {router.pathname.startsWith("/storage") ? (
+          {router.pathname === "" ? (
+            <Component {...pageProps} />
+          ) : (
             <Layout>
               <Component {...pageProps} />
             </Layout>
-          ) : (
-            <Component {...pageProps} />
           )}
         </Provider>
       </QueryClientProvider>
