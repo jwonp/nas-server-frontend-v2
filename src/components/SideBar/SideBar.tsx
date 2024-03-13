@@ -43,7 +43,7 @@ const SideBar = () => {
           />
         </section>
         <section>
-          <Link href="/share/user">
+          {/* <Link href="/share/user">
             <div className="flex rounded-lg w-3/4 text-center border-2 p-2 mx-auto my-2 ">
               <div className="flex mx-2 gap-2">
                 <figure>
@@ -57,7 +57,7 @@ const SideBar = () => {
                 <p>공유 대상 관리</p>
               </div>
             </div>
-          </Link>
+          </Link> */}
         </section>
       </div>
     </aside>
