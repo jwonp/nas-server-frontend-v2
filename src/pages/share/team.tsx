@@ -15,8 +15,30 @@ const TeamShareList = () => {
   };
   return (
     <section className="max-w-[1440px] w-full mx-auto p-4">
-      <header className="w-1/3 mb-4">
-        <ShareNavigator page={router.pathname} />
+      <header className="w-full mb-4">
+        <section className="w-full px-10 py-4 bg-slate-600 rounded-lg mb-4">
+          <ul className="list-outside list-disc">
+            <li>
+              <p className="text-lg">
+                {`새로운 팀을 생성하려면 입력창에 팀 이름을 입력하신 후에, 입력창 아래 "[사용자 지정 팀 이름]으로 팀 생성" 을 선택해주세요.`}
+              </p>
+            </li>
+            <li>
+              <p className="text-lg">
+                {`다른 팀에 들어가는 것은 횟수 제한이 없지만, 생성할 수 있는 팀의 갯수를 제한되어 있습니다.`}
+              </p>
+            </li>
+            <li>
+              <p className="text-lg">
+                {`다른 팀의 초대 코드를 입력하면 초대한 팀을 확인할 수 있습니다.`}
+              </p>
+            </li>
+          </ul>
+        </section>
+
+        <section className="w-1/3 mb-4">
+          <ShareNavigator page={router.pathname} />
+        </section>
       </header>
 
       <nav>
@@ -25,7 +47,7 @@ const TeamShareList = () => {
             //   ref={$searchInput}
             className="w-full py-2 px-3 rounded-lg text-stone-950 h-full"
             type="text"
-            placeholder="팀명 또는 팀에 소속된 사용자의 이메일이나 전화번호로 검색"
+            placeholder="팀 생성 및 검색"
             onChange={handleChangeQuery}
           />
           <button
@@ -62,6 +84,13 @@ const TeamShareList = () => {
             </div>
           </button>
         )}
+        <article className="col-span-4 w-full min-w-[244px] h-14 p-2  border-white">
+          <div>
+            <p className="leading-10 text-xl">
+              {"소속되어 있는 팀이 없습니다."}
+            </p>
+          </div>
+        </article>
         <article className="cursor-pointer flex justify-between w-full min-w-[244px] h-14 p-2 border-b-2 border-white">
           <div className="flex gap-2">
             <figure className="min-w-[40px] min-h-[40px] rounded-full overflow-hidden ">

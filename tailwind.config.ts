@@ -23,6 +23,13 @@ const config: Config = {
 
       "login": "650px",
     },
+    listStyleType: {
+      none: "none",
+      disc: "disc",
+      decimal: "decimal",
+      square: "square",
+      roman: "upper-roman",
+    },
     extend: {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -34,7 +41,7 @@ const config: Config = {
         "layout": "240px 1fr",
         "listBarTitle": "40px 1fr",
       },
-      gridTemplateRows:{
+      gridTemplateRows: {
         "modal": "80px 56px 1fr 48px",
       },
       lineHeight: {

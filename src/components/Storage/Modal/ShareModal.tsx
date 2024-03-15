@@ -161,7 +161,7 @@ const ShareModal = ({}: ShareModalProps) => {
               ref={$searchInput}
               className="w-full p-2 rounded-lg text-stone-950 h-full"
               type="text"
-              placeholder="공유할 사용자의 이메일 또는 전화번호로 검색"
+              placeholder="공유할 사용자의 이메일로 검색"
               onChange={handleChangeQuery}
             />
             <button
