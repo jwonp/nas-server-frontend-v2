@@ -34,10 +34,10 @@ export default async function handler(
         : (result as ErrorResponse);
     return res.status(result.status).json(responseData);
   }
-  if (req.method === "POST") {
+  if (req.method === "PUT") {
     const { folder, directory } = req.body;
     const result = await request(session?.user)
-      .post("/storage/item/favorite", { directory, folder })
+      .put("/storage/item/favorite", { directory, folder })
       .then((res) => {
         return { status: res.status, data: res.data };
       })

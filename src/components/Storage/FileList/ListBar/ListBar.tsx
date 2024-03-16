@@ -75,15 +75,18 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
         .then((res) => res.data),
     enabled: metas.ownerImage ? true : false,
   });
-  const addFavorite = useMutation({
+  const changeFavorite = useMutation({
     mutationFn: (variables: { directory: string; folder: string }) =>
-      axios.post("/api/storage/favorite", {
+      axios.put("/api/storage/favorite", {
         directory: variables.directory,
         folder: variables.folder,
       }),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["favorite", userId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["item", { path: directory }],
       });
     },
   });
@@ -281,7 +284,7 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
                 <div
                   className="m-1 w-7 h-7 "
                   onClick={() => {
-                    addFavorite.mutate({
+                    changeFavorite.mutate({
                       directory: directory,
                       folder: metas.fileId,
                     });
