@@ -1,6 +1,6 @@
 import { ChangeEvent, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-
+import LeftAllowIcon from "@public/icons/arrowLeft.png";
 import CancelIcon from "@public/icons/close-white.svg";
 import DarkCancelIcon from "@public/icons/close.svg";
 import ModalItem from "./ModalItem";
@@ -155,7 +155,19 @@ const ShareModal = ({}: ShareModalProps) => {
     <Modal>
       <section className="w-full h-full bg-slate-500 rounded-lg max-lg:rounded-none p-5 grid grid-rows-modal">
         <section>
-          <p className="text-xl mb-2">{`"${shareModalSwitch.title}" 공유`}</p>
+          <div className="flex gap-2">
+            <figure
+              className="hidden max-mobile:block"
+              onClick={handleClickToResetSelection}>
+              <Image
+                src={LeftAllowIcon}
+                alt={""}
+                width={30}
+                height={30}
+              />
+            </figure>
+            <p className="text-xl mb-2">{`"${shareModalSwitch.title}" 공유`}</p>{" "}
+          </div>
           <article className="w-full mb-2 h-10 relative">
             <input
               ref={$searchInput}

@@ -53,14 +53,14 @@ const SignUp = ({
                 type="hidden"
                 defaultValue={csrfToken}
               />
-              <div className="text-2xl text-center mb-2">회원가입</div>
+              <div className="text-white text-2xl text-center mb-2">회원가입</div>
               <div className="mb-2">
                 <div>
-                  <label className="text-xl">아이디</label>
+                  <label className="text-white text-xl">아이디</label>
                 </div>
                 <div>
                   <input
-                    className={`rounded-lg leading-10 indent-3 w-full bg-slate-900  ${
+                    className={`text-white rounded-lg leading-10 indent-3 w-full bg-slate-900  ${
                       isInputVaild.username ? "text-white" : "text-red-600"
                     }`}
                     name="username"
@@ -86,15 +86,15 @@ const SignUp = ({
               </div>
               <div className="mb-2">
                 <label className="flex justify-between">
-                  <div className="text-xl">비밀번호</div>
-                  <div className="text-xs leading-7 align-bottom">
+                  <div className="text-white text-xl">비밀번호</div>
+                  <div className="text-white text-xs leading-7 align-bottom">
                     커서를 가져가면 비밀번호가 표시됩니다
                   </div>
                 </label>
                 <div>
                   <input
                     ref={ref}
-                    className={`rounded-lg leading-10 indent-3 w-full bg-slate-900 ${
+                    className={`text-white rounded-lg leading-10 indent-3 w-full bg-slate-900 ${
                       isInputVaild.password ? "text-white" : "text-red-600"
                     }`}
                     name="password"
@@ -121,11 +121,11 @@ const SignUp = ({
               <div className="flex justify-between mb-2 gap-2">
                 <div className="w-4/5">
                   <div>
-                    <label className="text-xl">이름</label>
+                    <label className="text-white text-xl">이름</label>
                   </div>
                   <div>
                     <input
-                      className={`rounded-lg leading-10 indent-3 w-full focus:outline-none border- bg-slate-900 ${
+                      className={`text-white rounded-lg leading-10 indent-3 w-full focus:outline-none border- bg-slate-900 ${
                         isInputVaild.name
                           ? "focus:border-slate-500"
                           : "focus:text-red-600"
@@ -159,7 +159,7 @@ const SignUp = ({
                   </label>
                   <div>
                     <input
-                      className={`hidden rounded-lg leading-10 indent-3 w-full bg-slate-900 `}
+                      className={`text-white hidden rounded-lg leading-10 indent-3 w-full bg-slate-900 `}
                       id="profile-icon"
                       name="profile-icon"
                       type="file"
@@ -186,7 +186,7 @@ const SignUp = ({
               </div>
               <div className="mb-2">
                 <div>
-                  <label className="text-xl">전화번호</label>
+                  <label className="text-white text-xl">전화번호</label>
                 </div>
                 <div>
                   <input
@@ -218,7 +218,7 @@ const SignUp = ({
 
               <button
                 type="submit"
-                className={`mb-1 mt-4 text-xl rounded-lg border w-full py-1 cursor-pointer ${
+                className={`text-white mb-1 mt-4 text-xl rounded-lg border w-full py-1 cursor-pointer ${
                   Object.values(isInputVaild).includes(false) &&
                   "opacity-50 cursor-default"
                 }`}

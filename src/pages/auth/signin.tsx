@@ -39,7 +39,7 @@ export default function SignIn({
                 type="hidden"
                 defaultValue={csrfToken}
               />
-              <div className="text-2xl text-center mb-2">로그인</div>
+              <div className="text-white text-2xl text-center mb-2">로그인</div>
               {error && (
                 <div className="text-red-500 text-center">
                   로그인 정보가 올바르지 않습니다.
@@ -47,11 +47,11 @@ export default function SignIn({
               )}
               <div className="mb-2">
                 <div>
-                  <label className="text-xl">아이디</label>
+                  <label className="text-white text-xl">아이디</label>
                 </div>
                 <div>
                   <input
-                    className={`rounded-lg leading-10 indent-3 w-full bg-slate-900 ${
+                    className={`text-white rounded-lg leading-10 indent-3 w-full bg-slate-900 ${
                       error === "CredentialsSignin" && "placeholder-red-600"
                     }`}
                     name="username"
@@ -69,11 +69,11 @@ export default function SignIn({
               </div>
               <div className="mb-2">
                 <div>
-                  <label className="text-xl">비밀번호</label>
+                  <label className="text-white text-xl">비밀번호</label>
                 </div>
                 <div>
                   <input
-                    className={`rounded-lg leading-10 indent-3 w-full bg-slate-900 ${
+                    className={`text-white rounded-lg leading-10 indent-3 w-full bg-slate-900 ${
                       error === "CredentialsSignin" && "placeholder-red-600"
                     }`}
                     name="password"
@@ -92,7 +92,7 @@ export default function SignIn({
               </div>
               <button
                 type="submit"
-                className="mb-1 mt-4 text-xl rounded-lg border w-full py-1">
+                className="text-white mb-1 mt-4 text-xl rounded-lg border w-full py-1">
                 로그인
               </button>
             </form>
@@ -111,7 +111,7 @@ export default function SignIn({
               />
               <button
                 type="button"
-                className="mb-1 mt-4 text-xl rounded-lg border w-full py-1"
+                className="text-white mb-1 mt-4 text-xl rounded-lg border w-full py-1"
                 onClick={handleClickSignUp}>
                 회원가입
               </button>
