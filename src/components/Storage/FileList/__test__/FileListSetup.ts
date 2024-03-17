@@ -1,4 +1,4 @@
-import { beforeAll, vi } from "vitest";
+import { beforeAll, jest } from "@jest/globals";
 beforeAll(() => {
-  vi.mock("next/router", () => require("next-router-mock"));
+  jest.mock("next/router", () => require("next-router-mock"));
 })
