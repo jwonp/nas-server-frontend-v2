@@ -1,4 +1,4 @@
-import { expect, test, vi } from "vitest";
+import { expect, test } from "@jest/globals";
 
 import { SearchedUser } from "@/types/Responses";
 import { addObjectElementOnArray, deleteObjectElementOnArray } from "../array";

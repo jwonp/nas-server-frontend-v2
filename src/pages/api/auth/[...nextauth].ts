@@ -2,11 +2,67 @@ import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { randomBytes, randomUUID } from "crypto";
 
-import { encryptCredentials } from "@/utils/encrypt";
+import { encryptCredentials } from "@/utils/crypto";
 import { request } from "@/utils/request";
 import { UserSession } from "@/types/UserSession";
 import { AxiosError } from "axios";
 import { ErrorResponse, SuccessResponse } from "@/types/Responses";
+import { UserCredentials } from "@/types/UserCredentials";
+
+const dumySession: UserSession = {
+  id: "",
+  username: "",
+  name: "",
+  icon: "",
+  image: "",
+  phone: "",
+};
+const signUp = async (credentials: UserCredentials) => {
+  const encryptedCredentials = await encryptCredentials(credentials);
+  if (encryptedCredentials) {
+    const encryptedUserDetail = {
+      username: encryptedCredentials.username,
+      password: encryptedCredentials.password,
+      name: encryptedCredentials.name,
+      icon: encryptedCredentials.icon,
+      phone: encryptedCredentials.phone,
+    };
+    const res = await request(dumySession)
+      .post(`/user/signup`, encryptedUserDetail)
+      .then((res) => {
+        return { status: res.status, data: res.data };
+      })
+      .catch((err: AxiosError) => {
+        return { status: err.status, msg: err.message };
+      });
+
+    return res.status === 200
+      ? (res as SuccessResponse).data
+      : (res as ErrorResponse);
+  }
+  return null;
+};
+const signIn = async (credentials: UserCredentials) => {
+  const encryptedCredentials = await encryptCredentials(credentials);
+
+  const res = await request(dumySession)
+    .post(`/user/signin`, encryptedCredentials)
+    .then((res) => {
+      return { data: res.data, status: res.status };
+    })
+    .catch((err: AxiosError) => {
+      return { status: err.status, msg: err.message };
+    });
+  const user = (res as SuccessResponse).data;
+  console.log("get user");
+  console.log(user);
+  // If no error and we have user data, return it
+  if (res.status === 200 && user) {
+    return user;
+  }
+  // Return null if user data could not be retrieved
+  return null;
+};
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -23,7 +79,9 @@ export const authOptions: AuthOptions = {
       },
       type: "credentials",
       async authorize(credentials, req) {
-        if (!credentials?.username || !credentials?.password) {
+        const isInvaildCredentials =
+          !credentials?.username || !credentials?.password;
+        if (isInvaildCredentials) {
           return null;
         }
         /** if sign up
@@ -45,51 +103,11 @@ export const authOptions: AuthOptions = {
           image: "",
           phone: "",
         };
-        if (credentials?.phone && credentials?.name) {
-          const encryptedCredentials = await encryptCredentials(credentials);
-          if (encryptedCredentials) {
-            const encryptedUserDetail = {
-              username: encryptedCredentials.username,
-              password: encryptedCredentials.password,
-              name: encryptedCredentials.name,
-              icon: encryptedCredentials.icon,
-              phone: encryptedCredentials.phone,
-            };
-            const res = await request(dumySession)
-              .post(`/user/signup`, encryptedUserDetail)
-              .then((res) => {
-                return { status: res.status, data: res.data };
-              })
-              .catch((err: AxiosError) => {
-                return { status: err.status, msg: err.message };
-              });
-
-            return res.status === 200
-              ? (res as SuccessResponse).data
-              : (res as ErrorResponse);
-          }
-          return null;
+        const isSignUp = credentials?.phone && credentials?.name;
+        if (isSignUp) {
+          return await signUp(credentials);
         }
-
-        const encryptedCredentials = await encryptCredentials(credentials);
-
-        const res = await request(dumySession)
-          .post(`/user/signin`, encryptedCredentials)
-          .then((res) => {
-            return { data: res.data, status: res.status };
-          })
-          .catch((err: AxiosError) => {
-            return { status: err.status, msg: err.message };
-          });
-        const user = (res as SuccessResponse).data;
-        console.log("get user");
-        console.log(user);
-        // If no error and we have user data, return it
-        if (res.status === 200 && user) {
-          return user;
-        }
-        // Return null if user data could not be retrieved
-        return null;
+        return await signIn(credentials);
       },
     }),
   ],
@@ -119,7 +137,6 @@ export const authOptions: AuthOptions = {
 
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-
       if (user.username && user.name && user.icon !== undefined && user.phone) {
         return true;
       }

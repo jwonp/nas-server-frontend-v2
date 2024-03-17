@@ -170,6 +170,7 @@ const ShareModal = ({}: ShareModalProps) => {
           </div>
           <article className="w-full mb-2 h-10 relative">
             <input
+              data-testid="share-modal-search-input"
               ref={$searchInput}
               className="w-full p-2 rounded-lg text-stone-950 h-full"
               type="text"

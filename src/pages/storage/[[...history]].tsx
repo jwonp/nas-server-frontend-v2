@@ -26,6 +26,7 @@ import ShareModal from "@/components/Storage/Modal/ShareModal";
 const StoragePage = (
   initItems: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
+  useEffect(()=>{console.log(JSON.stringify(initItems))},[initItems])
   const router = useRouter();
   const directory = useDirectory();
   const queryClient = useQueryClient();

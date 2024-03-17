@@ -1,4 +1,4 @@
-import { expect, test } from "vitest";
+import { expect, test } from "@jest/globals";
 import { render, screen, cleanup } from "@testing-library/react";
 import DirectoryHistory from "../DirectoryHistory";
 import {
