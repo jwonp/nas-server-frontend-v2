@@ -29,6 +29,7 @@ yarn-error.log*
 .env
 .env*.local
 .env.production
+.env.test
 .envs
 # vercel
 .vercel
@@ -40,3 +41,4 @@ firebase-admin-key.json
 
 bugfix.txt
 todolist.txt
+/deprecated/**
