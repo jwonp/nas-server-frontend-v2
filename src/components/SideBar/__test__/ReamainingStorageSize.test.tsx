@@ -1,4 +1,4 @@
-import { expect, test } from "@jest/globals";
+import { expect, test } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import RemainingStorageSize from "../RemainingStorageSize";
 import { VolumeSize } from "@/types/Volume";

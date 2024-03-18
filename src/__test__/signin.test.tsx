@@ -1,4 +1,4 @@
-import { expect, test } from "@jest/globals";
+import { expect, test } from "vitest";
 // import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 import { SIGNIN_PASSWORD_REGEX_PATTERN } from "@/utils/strings";
 

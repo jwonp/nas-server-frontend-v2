@@ -1,6 +1,6 @@
-import { afterAll, afterEach, beforeAll } from "@jest/globals";
+import { afterAll, afterEach, beforeAll } from "vitest";
 import { setupServer } from "msw/node";
-import { rest } from "msw";
+import { HttpResponse, graphql, http } from "msw";
 import { UserSearchResponse } from "@/types/Responses";
 
 const userSearchResponse: UserSearchResponse = {
@@ -15,10 +15,8 @@ const userSearchResponse: UserSearchResponse = {
 };
 
 export const restHandlers = [
-  rest.get(`/api/user/search`, (req, res, ctx) => {
-    const query = req.url.searchParams.get("query");
-    if (query === "user@test.com") return res(ctx.json(userSearchResponse));
-    return res(ctx.json({ searchedUsers: [] }));
+  http.get(`/api/user/search?query=user@test.com`, () => {
+    return HttpResponse.json(userSearchResponse);
   }),
 ];
 
