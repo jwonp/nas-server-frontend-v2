@@ -1,9 +1,11 @@
 import Header from "@/components/Header/Header";
+import { UserCredentials } from "@/types/UserCredentials";
+import { encryptObject } from "@/utils/crypto";
 import { SIGNIN_PASSWORD_REGEX_PATTERN } from "@/utils/strings";
 import { useRef } from "react";
 
-import { UserCredentials } from "@/types/UserCredentials";
-import { encryptCredentials, encryptObject } from "@/utils/crypto";
+
+
 
 const AdminIndexPage = () => {
   const $name = useRef<HTMLInputElement>(null);
@@ -56,7 +58,7 @@ const AdminIndexPage = () => {
   };
   return (
     <div>
-      <Header isAdminPage />
+      <Header isInvisibleSideBarButton />
       <main className="grid grid-cols-7 p-4 gap-2">
         <section className="col-span-2  p-6 bg-slate-800 rounded-lg">
           <h1 className="text-xl font-bold indent-2">임시 계정 생성</h1>

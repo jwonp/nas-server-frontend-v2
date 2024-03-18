@@ -37,7 +37,9 @@ export default function App({
               href="/favicon.ico"
             />
           </Head>
-          {router.pathname.startsWith("/auth") || router.pathname === "" ? (
+          {router.pathname.startsWith("/auth") ||
+          router.pathname.startsWith("/admin") ||
+          router.pathname === "/" ? (
             <Component {...pageProps} />
           ) : (
             <Layout>

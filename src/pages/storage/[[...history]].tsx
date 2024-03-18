@@ -80,8 +80,7 @@ const StoragePage = (
         <WarningSnackBar />
       </div>
 
-      <ShareModal/>
-
+      <ShareModal />
     </div>
   );
 };

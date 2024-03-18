@@ -13,10 +13,10 @@ import {
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-type HeaderProps= {
-  isAdminPage?:boolean
-}
-const Header = ({isAdminPage}:HeaderProps) => {
+type HeaderProps = {
+  isInvisibleSideBarButton?: boolean;
+};
+const Header = ({ isInvisibleSideBarButton }: HeaderProps) => {
   const { data: session, status: sessionStatus } = useSession();
 
   const dispatch = useAppDispatch();
@@ -46,20 +46,24 @@ const Header = ({isAdminPage}:HeaderProps) => {
 
   return (
     <header className="sticky grid lg:grid-cols-2 grid-cols-3  w-screen min-w-[360px] h-14 p-3  border-b border-zinc-100 select-none">
-      <div
-        className="lg:hidden cursor-pointer"
-        onClick={handleMenuClick}>
-        <Image
-          src={MenuIcon}
-          alt={""}
-          width={28}
-          height={28}
-        />
-      </div>
-      <div className="lg:m-0 mx-auto">
+      <section className="lg:hidden">
+        <div className={`${isInvisibleSideBarButton ? "hidden" : "block"}`}>
+          <div
+            className=" cursor-pointer"
+            onClick={handleMenuClick}>
+            <Image
+              src={MenuIcon}
+              alt={""}
+              width={28}
+              height={28}
+            />
+          </div>
+        </div>
+      </section>
+      <section className="lg:m-0 mx-auto">
         <Logo />
-      </div>
-      <div className="ml-auto">
+      </section>
+      <section className="ml-auto">
         <div className="grid grid-cols-2 gap-5">
           {session?.user?.name ? (
             <div className="flex">
@@ -104,7 +108,7 @@ const Header = ({isAdminPage}:HeaderProps) => {
             </div>
           )}
         </div>
-      </div>
+      </section>
     </header>
   );
 };
