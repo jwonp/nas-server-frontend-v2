@@ -13,8 +13,10 @@ import {
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-
-const Header = () => {
+type HeaderProps= {
+  isAdminPage?:boolean
+}
+const Header = ({isAdminPage}:HeaderProps) => {
   const { data: session, status: sessionStatus } = useSession();
 
   const dispatch = useAppDispatch();

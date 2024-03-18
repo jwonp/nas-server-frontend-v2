@@ -15,7 +15,7 @@ export default function App({
 }: AppProps) {
   const [queryClient] = React.useState(() => new QueryClient());
   const router = useRouter();
-  console.log(router.pathname)
+  console.log(router.pathname);
   return (
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>
@@ -37,7 +37,7 @@ export default function App({
               href="/favicon.ico"
             />
           </Head>
-          {router.pathname === "" ? (
+          {router.pathname.startsWith("/auth") || router.pathname === "" ? (
             <Component {...pageProps} />
           ) : (
             <Layout>
