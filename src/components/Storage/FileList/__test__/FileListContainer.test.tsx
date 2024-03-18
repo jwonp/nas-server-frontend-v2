@@ -25,6 +25,7 @@ const metas: Omit<MetaData, "ownerId">[] = [
     uploadTime: 1709129585257,
     type: "file",
     size: 331226,
+    isFavorite:false
   },
   {
     directory: "/a/b/c",
@@ -33,6 +34,7 @@ const metas: Omit<MetaData, "ownerId">[] = [
     uploadTime: 1709129585258,
     type: "image",
     size: 131226,
+    isFavorite:false
   },
   {
     directory: "/a/b/c",
@@ -41,6 +43,7 @@ const metas: Omit<MetaData, "ownerId">[] = [
     uploadTime: 1709129585259,
     type: "video",
     size: 1331226,
+    isFavorite:false
   },
 ];
 const initItems: ItemResponse = {

@@ -1,8 +1,11 @@
 import Image from "next/image";
 import logoIcon from "@public/icons/logo.png";
+import Link from "next/link";
 const Logo = () => {
   return (
-    <div className="w-fit flex gap-4">
+    <Link
+      href={"/storage"}
+      className="w-fit flex gap-4">
       <Image
         className="max-mobile:hidden w-8 h-8 rounded-3xl"
         src={logoIcon}
@@ -13,7 +16,7 @@ const Logo = () => {
       <div className=" align-middle leading-8 text-white text-xl font-semibold font-['Inter']">
         File cloud
       </div>
-    </div>
+    </Link>
   );
 };
 export default Logo;
