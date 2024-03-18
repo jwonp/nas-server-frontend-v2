@@ -27,7 +27,7 @@ const Header = ({ isInvisibleSideBarButton }: HeaderProps) => {
   const handleLoginOutClick = session ? () => signOut() : () => signIn();
 
   const { data, error, isLoading } = useQuery({
-    queryKey: ["profileIcon"],
+    queryKey: ["icon", { source: session?.user.image }],
     queryFn: (): Promise<{ url: string }> =>
       axios
         .get(`/api/storage/download?key=${session?.user.image}`)

@@ -1,6 +1,6 @@
 import { expect, test, vi } from "vitest";
 
-import { SearchedUser } from "@/types/Responses";
+import { SearchedUser } from "@/types/ComponentTypes";
 import { addObjectElementOnArray, deleteObjectElementOnArray } from "../array";
 const searchusers: SearchedUser[] = [
   {

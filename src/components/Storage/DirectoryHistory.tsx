@@ -1,4 +1,4 @@
-import { DisplayHistory, Item } from "@/types/Responses";
+import { DisplayHistory, Item } from "@/types/ComponentTypes";
 import {
   ERROR_RESPONSE,
   HISTORY_BLOCKS_FAIL_TO_LOAD_HISTORIES,

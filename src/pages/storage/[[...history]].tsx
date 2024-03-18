@@ -1,8 +1,8 @@
 import DirectoryHistory from "@/components/Storage/DirectoryHistory";
 import AddButtonList from "@/components/Storage/AddButton/AddButtonList";
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { ItemResponse } from "@/types/Responses";
-import { ErrorResponse } from "@/types/Responses";
+import { ItemResponse,ErrorResponse} from "@/types/Responses";
+
 import {
   GetServerSideProps,
   GetServerSidePropsContext,

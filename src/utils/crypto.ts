@@ -68,7 +68,7 @@ export const encryptObject = <T extends object>(object: T): string | null => {
     .concat(cipher.final("base64"));
   return cipherText;
 };
-export const decryptObject = (cipherText: string): string | null => {
+export const decryptObject = (cipherText: string): object | null => {
   if (
     process.env.NEXT_PUBLIC_AES_256_CBC_ALGORITHM === undefined ||
     process.env.NEXT_PUBLIC_AES_256_CBC_KEY === undefined ||

@@ -31,11 +31,14 @@ const config: Config = {
       },
       gridTemplateColumns: {
         "16": "repeat(16,minmax(0,1fr))",
+        "20": "repeat(20,minmax(0,1fr))",
         "layout": "240px 1fr",
         "listBarTitle": "40px 1fr",
+        "adminTemporaryAccount":"360px 1fr"
       },
       gridTemplateRows:{
         "modal": "80px 56px 1fr 48px",
+
       },
       lineHeight: {
         "12": "3rem",

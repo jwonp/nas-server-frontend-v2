@@ -6,7 +6,8 @@ import DarkCancelIcon from "@public/icons/close.svg";
 import ModalItem from "./ModalItem";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
-import { SearchedUser, UserSearchResponse } from "@/types/Responses";
+import { UserSearchResponse } from "@/types/Responses";
+import { SearchedUser } from "@/types/ComponentTypes";
 import {
   SHARE_MODAL_ERROR_TO_LOAD_SEARCH_RESULT,
   SHARE_MODAL_LOADING_SEARCH_RESULT,

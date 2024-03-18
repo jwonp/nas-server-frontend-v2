@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 import NofilesAlert from "../Exception/NofilesAlert";
 import ListBar from "./ListBar/ListBar";
-import { Item } from "@/types/Responses";
+import { Item } from "@/types/ComponentTypes";
 type FileListProps = {
   items: Item;
   userId: string;
