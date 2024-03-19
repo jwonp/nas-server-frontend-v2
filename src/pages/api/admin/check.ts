@@ -21,14 +21,16 @@ export default async function handler(
     return res.status(403).json({ error: "Unauthorized" });
   }
 
-
   const result = await request(session?.user)
     .get(`/admin/check`)
     .then((res) => {
       return { status: res.status, data: res.data };
     })
     .catch((err: AxiosError) => {
-      return { status: err.status ?? 400, msg: err.message };
+      return {
+        status: (err.response?.data as ErrorResponse).status ?? 400,
+        msg: (err.response?.data as ErrorResponse).msg ?? "",
+      };
     });
 
   const responseData =

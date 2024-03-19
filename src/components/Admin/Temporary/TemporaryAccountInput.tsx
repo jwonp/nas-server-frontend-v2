@@ -39,10 +39,10 @@ const TemporaryAccountInput = () => {
       queryClient.invalidateQueries({ queryKey: ["temporary", "account"] });
     },
   });
-  const getRandomPhone = (): string => {
-    const phone = `010${Math.floor(Math.random() * Math.pow(10, 8))}`;
-    return phone;
-  };
+  // const getRandomPhone = (): string => {
+  //   const phone = `010${Math.floor(Math.random() * Math.pow(10, 8))}`;
+  //   return phone;
+  // };
   const getRandomPassword = (): string => {
     const possibleCharaacters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_!@#$.%`^)(*+=-";
@@ -82,10 +82,7 @@ const TemporaryAccountInput = () => {
             ? `${$name.current.value}@ikiningyou.com`
             : `${$domain.current.value}@ikiningyou.com`,
         password: $password.current.value,
-        phone:
-          $phone.current.value.length === 0
-            ? getRandomPhone()
-            : $phone.current.value,
+        phone: $phone.current.value,
         icon: iconUrl,
         expireIn: Number($expireIn.current.value),
       };

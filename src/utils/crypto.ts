@@ -81,9 +81,58 @@ export const decryptObject = (cipherText: string): object | null => {
     Buffer.from(process.env.NEXT_PUBLIC_AES_256_CBC_KEY, "hex"),
     Buffer.from(process.env.NEXT_PUBLIC_AES_256_CBC_IV, "hex")
   );
-  const plainText = decipher
-    .update(cipherText, "base64", "utf8")
-    .concat(decipher.final("utf8"));
 
-  return JSON.parse(plainText);
+  try {
+    const plainText = decipher
+      .update(cipherText, "base64", "utf8")
+      .concat(decipher.final("utf8"));
+    return JSON.parse(plainText);
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+export const encryptString = (plainText: string): string | null => {
+  if (
+    process.env.AES_256_CBC_ALGORITHM === undefined ||
+    process.env.AES_256_CBC_KEY === undefined ||
+    process.env.AES_256_CBC_IV === undefined
+  ) {
+    return `algorithm ${process.env.AES_256_CBC_ALGORITHM} | key ${process.env.AES_256_CBC_KEY} | iv ${process.env.AES_256_CBC_IV}`;
+  }
+
+  const cipher = createCipheriv(
+    process.env.AES_256_CBC_ALGORITHM,
+    Buffer.from(process.env.AES_256_CBC_KEY, "hex"),
+    Buffer.from(process.env.AES_256_CBC_IV, "hex")
+  );
+  const cipherText = cipher
+    .update(plainText, "utf8", "base64")
+    .concat(cipher.final("base64"));
+  return cipherText;
+};
+
+export const decryptString = (cipherText: string): string | null => {
+  if (
+    process.env.AES_256_CBC_ALGORITHM === undefined ||
+    process.env.AES_256_CBC_KEY === undefined ||
+    process.env.AES_256_CBC_IV === undefined
+  ) {
+    return null;
+  }
+  const decipher = createDecipheriv(
+    process.env.AES_256_CBC_ALGORITHM,
+    Buffer.from(process.env.AES_256_CBC_KEY, "hex"),
+    Buffer.from(process.env.AES_256_CBC_IV, "hex")
+  );
+  try {
+    const plainText = decipher
+      .update(cipherText, "base64", "utf8")
+      .concat(decipher.final("utf8"));
+    return plainText;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
 };

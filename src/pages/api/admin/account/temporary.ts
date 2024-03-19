@@ -26,7 +26,10 @@ export default async function handler(
         return { status: res.status, data: res.data };
       })
       .catch((err: AxiosError) => {
-        return { status: err.status ?? 400, msg: err.message };
+        return {
+          status: (err.response?.data as ErrorResponse).status ?? 400,
+          msg: (err.response?.data as ErrorResponse).msg ?? "",
+        };
       });
     const responseData =
       result.status / 100 < 4

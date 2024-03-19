@@ -37,14 +37,13 @@ export default function App({
               href="/favicon.ico"
             />
           </Head>
-          {router.pathname.startsWith("/auth") ||
-          router.pathname.startsWith("/admin") ||
-          router.pathname === "/" ? (
-            <Component {...pageProps} />
-          ) : (
+          {router.pathname.startsWith("/storage") ||
+          router.pathname.startsWith("/share") ? (
             <Layout>
               <Component {...pageProps} />
             </Layout>
+          ) : (
+            <Component {...pageProps} />
           )}
         </Provider>
       </QueryClientProvider>

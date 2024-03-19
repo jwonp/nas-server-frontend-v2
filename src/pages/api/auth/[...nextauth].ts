@@ -9,7 +9,7 @@ import { AxiosError } from "axios";
 import { ErrorResponse, SuccessResponse } from "@/types/Responses";
 import { UserCredentials } from "@/types/UserCredentials";
 
-const dumySession: UserSession = {
+export const dumySession: UserSession = {
   id: "",
   username: "",
   name: "",
@@ -137,7 +137,7 @@ export const authOptions: AuthOptions = {
 
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      if (user.username && user.name && user.icon !== undefined && user.phone) {
+      if (user.username && user.name && user.icon !== undefined) {
         return true;
       }
       return false;
