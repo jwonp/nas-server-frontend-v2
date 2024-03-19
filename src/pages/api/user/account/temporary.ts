@@ -1,8 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { authOptions, dumySession } from "@/pages/api/auth/[...nextauth]";
-import { getServerSession } from "next-auth";
+import { dumySession } from "@/pages/api/auth/[...nextauth]";
+
 import { request } from "@/utils/request";
 import { AxiosError } from "axios";
 import {
@@ -45,7 +45,10 @@ export default async function handler(
       expireIn: expireIn,
     })
     .then((res) => {
-      return { status: res.status, data: res.data };
+      return {
+        status: res.status,
+        data: { userDetail: res.data.userDetail, name: userCredentials.name },
+      };
     })
     .catch((err: AxiosError) => {
       return {
@@ -56,7 +59,10 @@ export default async function handler(
 
   const responseData =
     result.status / 100 < 4
-      ? ((result as SuccessResponse).data as UserSearchResponse)
+      ? ((result as SuccessResponse).data as {
+          userDetail: string;
+          name: string;
+        })
       : (result as ErrorResponse);
   res.status(result.status).json(responseData);
 }

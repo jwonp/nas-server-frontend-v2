@@ -36,7 +36,7 @@ export default function SignIn({
       ) {
         $usernameInput.current.value = guest.username;
         $passwordInput.current.value = guest.password;
-        // $submitButton.current.click();
+        $submitButton.current.click();
       }
     }
   }, []);

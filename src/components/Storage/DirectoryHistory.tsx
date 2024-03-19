@@ -95,9 +95,9 @@ const DirectoryHistory = ({
 
   return (
     <div className="p-2 text-white text-2xl font-semibold font-['Inter']">
-      <div className="flex gap-2">{historyBlocks}</div>
+      <div className="flex flex-wrap gap-2">{historyBlocks}</div>
     </div>
   );
 };
-// 네 알겠습니다!
+
 export default DirectoryHistory;

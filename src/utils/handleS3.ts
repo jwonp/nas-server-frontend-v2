@@ -38,10 +38,13 @@ export const getSignedUrlParams = (
 
 const uploadFile = async (
   file: File | null,
-  meta: Omit<MetaData, "key" | "uploadTime" | "size" | "fileName" | "type"| "isFavorite">,
+  meta: Omit<
+    MetaData,
+    "key" | "uploadTime" | "size" | "fileName" | "type" | "isFavorite"
+  >,
   progressDispatch?: ThunkDispatch<any, undefined, UnknownAction> &
     Dispatch<any>
-): Promise<Nullable<Omit<MetaData,"isFavorite"> >> => {
+): Promise<Nullable<Omit<MetaData, "isFavorite">>> => {
   if (!file) {
     return null;
   }
@@ -71,7 +74,7 @@ const uploadFile = async (
   });
   console.log(res);
 
-  const uploadedMeta: Omit<MetaData,"isFavorite"> = {
+  const uploadedMeta: Omit<MetaData, "isFavorite"> = {
     directory: meta.directory,
     fileName: file.name,
     ownerId: meta.ownerId,
@@ -134,25 +137,27 @@ export const uploadFilesToS3ByFileList = async (
   if (volume.now + totalFileSize > volume.max) {
     return;
   }
-  const storedMetas = new Promise<Nullable<Omit<MetaData,"isFavorite"> >[]>((resolve, reject) => {
-    let metas: Nullable<Omit<MetaData,"isFavorite"> >[] = [];
-    if (progressDispatch) {
-      progressDispatch(setFileAmount(files.length));
-    }
-    files.forEach(async (file, index) => {
-      const storedMeta = await uploadFile(file, meta, progressDispatch);
-      metas.push(storedMeta);
+  const storedMetas = new Promise<Nullable<Omit<MetaData, "isFavorite">>[]>(
+    (resolve, reject) => {
+      let metas: Nullable<Omit<MetaData, "isFavorite">>[] = [];
       if (progressDispatch) {
-        progressDispatch(increaseFileAmount());
+        progressDispatch(setFileAmount(files.length));
       }
-      if (metas.length === files.length) {
-        return resolve(metas);
+      files.forEach(async (file, index) => {
+        const storedMeta = await uploadFile(file, meta, progressDispatch);
+        metas.push(storedMeta);
+        if (progressDispatch) {
+          progressDispatch(increaseFileAmount());
+        }
+        if (metas.length === files.length) {
+          return resolve(metas);
+        }
+      });
+      if (files.length < 1) {
+        return reject([]);
       }
-    });
-    if (files.length < 1) {
-      return reject([]);
     }
-  });
+  );
 
   return storedMetas;
 };

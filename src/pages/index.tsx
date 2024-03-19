@@ -1,17 +1,17 @@
 import { Inter } from "next/font/google";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { signIn } from "next-auth/react";
 import Header from "@/components/Header/Header";
 import { useRouter } from "next/router";
 import axios from "axios";
 
-
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const router = useRouter();
-
+  const [isReadyAccount, setReadyAccount] = useState<boolean>(false);
+  const [guestName, setGusetName] = useState<string>("");
   useEffect(() => {
     if (router.isReady && window.localStorage && router.query.code) {
       window.localStorage.setItem("accountCode", router.query.code as string);
@@ -26,8 +26,10 @@ export default function Home() {
         const code = decodeURIComponent(accountCode);
         axios.post("/api/user/account/temporary", { code }).then((res) => {
           const userDetail = res.data.userDetail as string;
+          const name = res.data.name as string;
           window.localStorage.setItem("guest", userDetail);
-          signIn();
+          setReadyAccount(() => (userDetail ? true : false));
+          setGusetName(() => name ?? "");
         });
       }
     }
@@ -36,8 +38,22 @@ export default function Home() {
     <div className="w-screen h-screen">
       <Header isInvisibleSideBarButton />
       <main className="flex w-1/2 h-full mx-auto my-5">
-        <section className="w-full ">
-          <p className="text-white text-xl font-bold">{`{게스트} `} </p>
+        <section className="w-full">
+          <div className="mx-auto w-full bg-slate-800 py-10 rounded-xl">
+            <p className="text-white text-xl text-center font-bold mb-2">{`${
+              guestName ? `${guestName}님` : ""
+            } 방문해주셔서 감사합니다`}</p>
+            <p className="text-white text-center font-bold">{`${
+              isReadyAccount ? `게스트 계정이 준비되었으니` : ""
+            }아래 로그인 버튼을 클릭해서 로그인 해주세요`}</p>
+            <div className="flex mt-5 cursor-pointer">
+              <button
+                className="mx-auto text-white font-bold bg-blue-700 hover:bg-blue-600 px-5 py-2 rounded-xl"
+                onClick={() => signIn()}>
+                로그인
+              </button>
+            </div>
+          </div>
         </section>
       </main>
     </div>
