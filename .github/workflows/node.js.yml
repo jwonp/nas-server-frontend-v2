@@ -51,6 +51,14 @@ jobs:
         echo BUCKET_NAME=${{ secrets.BUCKET_NAME }} >> .env
         echo BUCKET_HOSTNAME=${{ secrets.BUCKET_HOSTNAME }} >> .env
         echo ECCRYPTO_PUBLIC_KEY=${{ secrets.ECCRYPTO_PUBLIC_KEY }} >> .env
+        
+        echo NEXT_PUBLIC_AES_256_CBC_ALGORITHM=${{ secrets.NEXT_PUBLIC_AES_256_CBC_ALGORITHM }} >> .env
+        echo NEXT_PUBLIC_AES_256_CBC_KEY=${{ secrets.NEXT_PUBLIC_AES_256_CBC_KEY }} >> .env
+        echo NEXT_PUBLIC_AES_256_CBC_IV=${{ secrets.NEXT_PUBLIC_AES_256_CBC_IV }} >> .env
+        echo AES_256_CBC_ALGORITHM=${{ secrets.AES_256_CBC_ALGORITHM }} >> .env
+        echo AES_256_CBC_KEY=${{ secrets.AES_256_CBC_KEY }} >> .env
+        echo AES_256_CBC_IV=${{ secrets.AES_256_CBC_IV }} >> .env
+        
         echo FIREBASE_CONFIG_API_KEY=${{ secrets.FIREBASE_CONFIG_API_KEY }} >> .env
         echo FIREBASE_CONFIG_AUTH_DOMAIN=${{ secrets.FIREBASE_CONFIG_AUTH_DOMAIN }} >> .env
         echo FIREBASE_CONFIG_PROJECT_ID=${{ secrets.FIREBASE_CONFIG_PROJECT_ID }} >> .env
@@ -61,6 +69,7 @@ jobs:
         echo JWT_SIGN_KEY=${{ secrets.JWT_SIGN_KEY }} >> .env
         echo BACKEND_ENDPOINT=${{ secrets.BACKEND_ENDPOINT }} >> .env
         echo FRONTEND_ENDPOINT=${{ secrets.FRONTEND_ENDPOINT }} >> .env
+        echo NEXT_PUBLIC_FRONTEND_ENDPOINT=${{ secrets.NEXT_PUBLIC_FRONTEND_ENDPOINT }} >> .env
         echo NEXT_SHARP_PATH=${{ secrets.NEXT_SHARP_PATH }} >> .env
         
     # - run: pm2 kill
