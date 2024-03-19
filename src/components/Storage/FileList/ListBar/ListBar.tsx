@@ -77,7 +77,7 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
   });
   const addFavorite = useMutation({
     mutationFn: (variables: { directory: string; folder: string }) =>
-      axios.post("/api/storage/favorite", {
+      axios.put("/api/storage/favorite", {
         directory: variables.directory,
         folder: variables.folder,
       }),
