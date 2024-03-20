@@ -14,18 +14,20 @@ import { request } from "@/utils/request";
 import { useRouter } from "next/router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDirectory } from "@/hooks/useDirectory.hook";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import WarningSnackBar from "@/components/Storage/SnackBar/WarningSnackBar";
 import ProgressSnackBar from "@/components/Storage/SnackBar/ProgressSnackBar";
 
 import FilelistContainer from "@/components/Storage/FileList/FileListContainer";
 import { useSession } from "next-auth/react";
 import ShareModal from "@/components/Storage/Modal/ShareModal";
+import VideoPlayer from "@/components/Video/VideoPlayer";
 
 // ItemQuery.data -> itemList -> itemElements => render
 const StoragePage = (
   initItems: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
+  
   const router = useRouter();
   const directory = useDirectory();
   const queryClient = useQueryClient();
@@ -81,6 +83,7 @@ const StoragePage = (
       </div>
 
       <ShareModal />
+      <VideoPlayer/>
     </div>
   );
 };

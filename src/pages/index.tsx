@@ -5,11 +5,23 @@ import { signIn } from "next-auth/react";
 import Header from "@/components/Header/Header";
 import { useRouter } from "next/router";
 import axios from "axios";
+import {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+} from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 const inter = Inter({ subsets: ["latin"] });
-
-export default function Home() {
+type HomeProps = {
+  isSignedIn: boolean;
+};
+export default function Home({
+  isSignedIn,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
+
   const [isReadyAccount, setReadyAccount] = useState<boolean>(false);
   const [guestName, setGusetName] = useState<string>("");
   useEffect(() => {
@@ -34,6 +46,14 @@ export default function Home() {
       }
     }
   }, [router.isReady]);
+  useEffect(() => {
+    if (isSignedIn) {
+      router.push("/storage");
+    }
+  }, [isSignedIn, router]);
+  if (isSignedIn) {
+    return <div></div>;
+  }
   return (
     <div className="w-screen h-screen">
       <Header isInvisibleSideBarButton />
@@ -59,3 +79,12 @@ export default function Home() {
     </div>
   );
 }
+
+export const getServerSideProps = (async (
+  context: GetServerSidePropsContext
+) => {
+  const session = await getServerSession(context.req, context.res, authOptions);
+  const isSignedIn = session && session.user;
+
+  return { props: { isSignedIn: isSignedIn } };
+}) satisfies GetServerSideProps<HomeProps>;

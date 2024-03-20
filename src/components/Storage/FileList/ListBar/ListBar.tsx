@@ -18,8 +18,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { convertFileSize } from "@/utils/parseFileSize";
-import { downloadFile } from "@/utils/download";
+import { downloadFile, getDownloadMediaUrl } from "@/utils/download";
 import { useAppDispatch } from "@/redux/hooks";
+import { setVideoMedia } from "@/redux/featrues/mediaSlice";
 
 const fileIcons = {
   back: backIcon,
@@ -183,7 +184,12 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
                 }}
               />
             ) : (
-              <div className="text-white truncate leading-12 text-lg font-semibold font-['Inter']">
+              <div
+                className={`text-white truncate leading-12 text-lg font-semibold font-['Inter']`}
+                onClick={async () => {
+                  const url = await getDownloadMediaUrl(metas.fileId);
+                  dispatch(setVideoMedia({ src: url, title: fileTitle }));
+                }}>
                 {fileTitle}
               </div>
             )}
@@ -262,7 +268,6 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
                 </div>
               </figure>
 
-
               <figure className="my-auto w-9 h-9 lg:hover:bg-slate-500  rounded-full">
                 <div
                   className="m-1 w-7 h-7 "
@@ -277,7 +282,6 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
                   />
                 </div>
               </figure>
-
             </article>
           </div>
           <figure

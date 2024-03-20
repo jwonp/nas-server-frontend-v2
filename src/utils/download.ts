@@ -18,3 +18,11 @@ export const downloadFile = async (key: string, fileName: string) => {
   document.body.removeChild(anchorElement);
   window.URL.revokeObjectURL(downloadUrl);
 };
+
+export const getDownloadMediaUrl = async (key: string): Promise<string> => {
+  const url = await axios
+    .get(`/api/storage/download?key=${key}`)
+    .then((res) => res.data.url);
+
+  return url;
+};
