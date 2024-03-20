@@ -1,6 +1,6 @@
 import { UserCredentials } from "@/types/UserCredentials";
 import { decryptObject, encryptObject } from "@/utils/crypto";
-import { SIGNIN_PASSWORD_REGEX_PATTERN } from "@/utils/strings";
+
 import axios, { AxiosResponse } from "axios";
 import { useRef, useState } from "react";
 import Image from "next/image";
@@ -8,6 +8,7 @@ import userCircleIcon from "@public/icons/userCircle.png";
 import { uploadProfileIconToS3 } from "@/utils/handleS3";
 import { TemporaryAccountPostResponse } from "@/types/Responses";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getRandomPassword } from "@/utils/admin/strings";
 
 const ERROR_ON_GENERATE_TEMPORARY_ACCOUNT =
   "계정 생성 과정 중 오류가 발생했습니다.";
@@ -39,21 +40,6 @@ const TemporaryAccountInput = () => {
       queryClient.invalidateQueries({ queryKey: ["temporary", "account"] });
     },
   });
-  // const getRandomPhone = (): string => {
-  //   const phone = `010${Math.floor(Math.random() * Math.pow(10, 8))}`;
-  //   return phone;
-  // };
-  const getRandomPassword = (): string => {
-    const possibleCharaacters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_!@#$.%`^)(*+=-";
-    const password = Array.from(Array(16), () =>
-      possibleCharaacters.charAt(
-        Math.floor(Math.random() * possibleCharaacters.length)
-      )
-    ).join("");
-    const passwordRegEx = new RegExp(SIGNIN_PASSWORD_REGEX_PATTERN);
-    return passwordRegEx.exec(password) ? password : getRandomPassword();
-  };
 
   const handleSubmitTemporayAccount = async (
     e: React.FormEvent<HTMLFormElement>

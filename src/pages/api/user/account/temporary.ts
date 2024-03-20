@@ -33,7 +33,7 @@ export default async function handler(
   };
 
   if (expireIn < Date.now()) {
-    return res.status(400).json({ error: "This code is expired" });
+    return res.status(403).json({ error: "This code is expired" });
   }
 
   const encryptedCredentials = await encryptCredentials(userCredentials);
