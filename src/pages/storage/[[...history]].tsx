@@ -1,7 +1,11 @@
 import DirectoryHistory from "@/components/Storage/DirectoryHistory";
 import AddButtonList from "@/components/Storage/AddButton/AddButtonList";
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { ItemResponse,ErrorResponse} from "@/types/Responses";
+import {
+  ItemResponse,
+  ErrorResponse,
+  AdminCheckResponse,
+} from "@/types/Responses";
 
 import {
   GetServerSideProps,
@@ -21,11 +25,16 @@ import ProgressSnackBar from "@/components/Storage/SnackBar/ProgressSnackBar";
 import FilelistContainer from "@/components/Storage/FileList/FileListContainer";
 import { useSession } from "next-auth/react";
 import ShareModal from "@/components/Storage/Modal/ShareModal";
-
+import Link from "next/link";
+type StoragePageProps = {
+  initItems: ItemResponse | ErrorResponse;
+  isAdmin: AdminCheckResponse | ErrorResponse;
+};
 // ItemQuery.data -> itemList -> itemElements => render
-const StoragePage = (
-  initItems: InferGetServerSidePropsType<typeof getServerSideProps>
-) => {
+const StoragePage = ({
+  initItems,
+  isAdmin,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const directory = useDirectory();
   const queryClient = useQueryClient();
@@ -48,11 +57,24 @@ const StoragePage = (
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query]);
-
+useEffect(()=>{console.log(isAdmin)},[isAdmin])
   return (
     <div className="mx-auto w-full max-w-[1440px] min-w-[360px]">
       <div className="w-full h-full min-w-[360px] max-w-[1440px]">
-        <div className="grid grid-cols-12 mt-5">
+        {(isAdmin as AdminCheckResponse).isAdmin === true && (
+          <section className="m-2 px-4 py-2 bg-green-700 rounded-lg">
+            <div className="flex">
+              <p className="text-white mr-1">{`관리자 계정으로 로그인했습니다. 이`}</p>
+              <p className="text-white underline underline-offset-1">
+                <Link href={"/admin"}>{`링크`}</Link>
+              </p>
+              <p className="text-white">
+                를 클릭해서 관리자 페이지로 이동할 수 있습니다.
+              </p>
+            </div>
+          </section>
+        )}
+        <section className="grid grid-cols-12 mt-5">
           <div className="col-span-10 max-md:col-span-9">
             <DirectoryHistory
               rowHistories={(router.query.history as string[]) ?? []}
@@ -67,11 +89,11 @@ const StoragePage = (
               histories={(router.query.history as string[]) ?? []}
             />
           </div>
-        </div>
+        </section>
 
         <FilelistContainer
           isLoading={ItemQuery.isLoading}
-          initItems={initItems}
+          initItems={initItems as ItemResponse}
           data={ItemQuery.data}
           userId={session?.user.id}
           directory={directory}
@@ -93,9 +115,14 @@ export const getServerSideProps = (async (
   const session = await getServerSession(context.req, context.res, authOptions);
 
   if (!session || !session.user) {
-    return { props: { status: 403, msg: "Unauthorized" } };
+    return {
+      props: {
+        initItems: { status: 403, msg: "Unauthorized" },
+        isAdmin: { status: 403, msg: "Unauthorized" },
+      },
+    };
   }
-
+  // init items
   let history = "/";
 
   if (context.query.history) {
@@ -117,5 +144,24 @@ export const getServerSideProps = (async (
       return error;
     });
 
-  return { props: { ...itemResponse } };
-}) satisfies GetServerSideProps<ItemResponse | ErrorResponse>;
+  // admin check
+  const adminCheckResponse = await request(session?.user)
+    .get(`${process.env.BACKEND_ENDPOINT}/admin/check`)
+    .then((res: AxiosResponse<AdminCheckResponse>) => {
+      return res.data;
+    })
+    .catch((err: AxiosError<{ error: string }>) => {
+      const error: ErrorResponse = {
+        status: err.status ?? 400,
+        msg: err.response?.data.error ?? "Unknown Error",
+      };
+      return error;
+    });
+
+  return {
+    props: {
+      initItems: { ...itemResponse },
+      isAdmin: { ...adminCheckResponse },
+    },
+  };
+}) satisfies GetServerSideProps<StoragePageProps | ErrorResponse>;
