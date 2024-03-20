@@ -1,7 +1,11 @@
 import { expect, test, vi } from "vitest";
 
 import { SearchedUser } from "@/types/ComponentTypes";
-import { addObjectElementOnArray, deleteObjectElementOnArray } from "../array";
+import {
+  addObjectElementOnArray,
+  deleteObjectElementOnArray,
+  isSameArray,
+} from "../array";
 const searchusers: SearchedUser[] = [
   {
     iconURL: "url-1",
@@ -133,4 +137,25 @@ test("test delete element on array", () => {
   ]);
   // is no change on origin array
   expect(array.map((el) => el.userId)).toStrictEqual(userIds);
+});
+
+test("test method 'isSameArray' ", () => {
+  const arrayA = ["a", "b", "c"];
+  const arrayB = ["a", "b", "c"];
+  const arrayC = ["b", "b", "c"];
+  const arrayD = ["b", "a", "c"];
+  const arrayE = ["a", "b"];
+  const emptyArrayA: string[] = [];
+  const emptyArrayB: string[] = [];
+
+  const testAB = isSameArray(arrayA, arrayB);
+  const testAC = isSameArray(arrayA, arrayC);
+  const testAD = isSameArray(arrayA, arrayD);
+  const testEmptyAB = isSameArray(emptyArrayA, emptyArrayB);
+  const testAEbyDepth1 = isSameArray(arrayA, arrayE, 1);
+  expect(testAB).toBeTruthy();
+  expect(testAC).toBeFalsy();
+  expect(testAD).toBeFalsy();
+  expect(testEmptyAB).toBeTruthy();
+  expect(testAEbyDepth1).toBeTruthy();
 });
