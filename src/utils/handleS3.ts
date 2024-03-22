@@ -1,6 +1,6 @@
 import { MetaData } from "@/types/MetaData";
 import axios from "axios";
-import { randomUUID } from "crypto";
+
 import { getFileType } from "./parseFileType";
 
 import {
@@ -10,22 +10,25 @@ import {
 } from "@/redux/featrues/fileLoadProgressSlice";
 import { Dispatch, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { VolumeSize } from "@/types/Volume";
+import { randomUUID } from "crypto";
 
-type Nullable<T> = T | null;
+export type Nullable<T> = T | null;
 
 /**
  *
  * @param fileType .png와 같은 확장자, . 없이 png 만 사용
- * @param directory ex. /example1/example2
  * @param ownerId user doc id, session.user.id
+ * @param preKey 있는 경우 이걸로 키 설정
  * @returns
  */
 export const getSignedUrlParams = (
   fileType: string,
-  directory: string,
-  ownerId: string
+  ownerId: string,
+  preKey?: string
 ) => {
-  const key = `storage/${ownerId}/${randomUUID()}.${fileType}`;
+  const key = `storage/${ownerId}/${
+    preKey ? preKey : randomUUID()
+  }.${fileType}`;
 
   const params = {
     Bucket: process.env.BUCKET_NAME,
@@ -36,14 +39,15 @@ export const getSignedUrlParams = (
   return { key, params };
 };
 
-const uploadFile = async (
+export const uploadFile = async (
   file: File | null,
   meta: Omit<
     MetaData,
     "key" | "uploadTime" | "size" | "fileName" | "type" | "isFavorite"
   >,
   progressDispatch?: ThunkDispatch<any, undefined, UnknownAction> &
-    Dispatch<any>
+    Dispatch<any>,
+  preKey?: string
 ): Promise<Nullable<Omit<MetaData, "isFavorite">>> => {
   if (!file) {
     return null;
@@ -55,8 +59,8 @@ const uploadFile = async (
   const { data } = await axios.get(`/api/storage/file`, {
     params: {
       fileType: fileType,
-      directory: meta.directory,
       ownerId: meta.ownerId,
+      preKey,
     },
   });
 
@@ -98,23 +102,13 @@ export const uploadProfileIconToS3 = async (file: File) => {
   await axios.put(uploadUrl, file);
   return key;
 };
-/**
- *
- * @param e form 태그에서 onSubmit 함수의 FormEvent 객체
- * @param name Form에서 input 태그 내 name 값
- * @returns S3에 업로드한 파일의 제목
- */
-// export const uploadFileToS3ByFormChangeEvent = async (
-//   file: File,
-//   meta: Omit<MetaData, "key" | "uploadTime" | "size" | "fileName" | "type">
-// ): Promise<Nullable<MetaData>> => {
-//   const storedMeta = await uploadFile(file, meta);
-//   addMeta([storedMeta]);
-//   return storedMeta;
-// };
 
+export const getFileArrayByFileList = (fileList: FileList) => {
+  const indexs = Array.from(Array(fileList.length).keys());
+  const files = indexs.map((index) => fileList[index]);
+  return files;
+};
 /**
- *
  * @param fileList input:type="file" 태그의 FileList
  */
 export const uploadFilesToS3ByFileList = async (
@@ -129,8 +123,8 @@ export const uploadFilesToS3ByFileList = async (
   if (volume.max < 0 || volume.now < 0) {
     return;
   }
-  const indexs = Array.from(Array(fileList.length).keys());
-  const files = indexs.map((index) => fileList[index]);
+
+  const files = getFileArrayByFileList(fileList);
   const totalFileSize = files
     .map((file) => file.size)
     .reduce((acc, cur) => acc + cur, 0);

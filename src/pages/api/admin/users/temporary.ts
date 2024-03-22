@@ -21,7 +21,7 @@ export default async function handler(
 
   if (req.method === "GET") {
     const result = await request(session?.user)
-      .get("/admin/account/temporary")
+      .get("/admin/users/temporary")
       .then((res) => {
         return { status: res.status, data: res.data };
       })
@@ -40,7 +40,7 @@ export default async function handler(
   if (req.method === "POST") {
     const { account } = req.body;
     const result = await request(session?.user)
-      .post("/admin/account/temporary", { account })
+      .post("/admin/users/temporary", { account })
       .then((res) => {
         return { status: res.status, data: res.data };
       })

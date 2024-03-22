@@ -8,10 +8,10 @@ const TemporaryAccountList = () => {
   const temporaryAccountQuery = useQuery<
     TemporaryAccountResponse | ErrorResponse
   >({
-    queryKey: ["temporary", "account"],
+    queryKey: ["temporary", "users"],
     queryFn: () =>
       axios
-        .get("/api/admin/account/temporary")
+        .get("/api/admin/users/temporary")
         .then((res: AxiosResponse<TemporaryAccountResponse>) => res.data)
         .catch(
           (err: AxiosError<ErrorResponse>) =>

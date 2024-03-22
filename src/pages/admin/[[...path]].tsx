@@ -14,6 +14,7 @@ import TemporaryAccount from "@/components/admin/users/temporary/TemporaryAccoun
 import AdminPageNavigator from "@/components/admin/Navigator/AdminPageNavigator";
 import { getPath } from "@/utils/admin/route";
 import AdminUser from "@/components/admin/users/user/AdminUser";
+import TempStorage from "@/components/admin/storages/temp/TempStroage";
 const AdminPage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
@@ -43,6 +44,9 @@ const AdminPage = (
       )}
       {getPath(router.query).join("/") === "users/user" && (
         <AdminUser />
+      )}
+      {getPath(router.query).join("/") === "storages/temp" && (
+        <TempStorage />
       )}
     </main>
   );

@@ -13,7 +13,7 @@ const nextConfig = {
       },
       {
         source: "/admin/storages",
-        destination: "/admin/storages/usage",
+        destination: "/admin/storages/temp",
       },
       {
         source: "/admin/shares",

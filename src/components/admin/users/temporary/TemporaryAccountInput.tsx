@@ -27,7 +27,7 @@ const TemporaryAccountInput = () => {
   const addTemporaryAccount = useMutation({
     mutationFn: (encryptedCredentials: string) =>
       axios
-        .post("/api/admin/account/temporary", {
+        .post("/api/admin/users/temporary", {
           account: encryptedCredentials,
         })
         .then(
@@ -196,7 +196,7 @@ const TemporaryAccountInput = () => {
         <div className="flex mt-5">
           <button
             type="submit"
-            className="ml-auto px-3 py-1 bg-blue-600 rounded-lg h-10 ">
+            className="ml-auto px-3 py-1 hover:bg-blue-500 bg-blue-600 rounded-lg h-10 ">
             <p className="text-center min-w-[84px]  text-white break-keep">
               주소 복사
             </p>

@@ -1,6 +1,6 @@
 import TemporaryAccountInput from "@/components/admin/users/temporary/TemporaryAccountInput";
 import TemporaryAccountList from "@/components/admin/users/temporary/TemporaryAccountList";
-import TempStorage from "./storage/TempStroage";
+
 
 const TemporaryAccount = () => {
   return (
@@ -9,7 +9,6 @@ const TemporaryAccount = () => {
         <TemporaryAccountInput />
         <TemporaryAccountList />
       </section>
-      <TempStorage />
     </div>
   );
 };

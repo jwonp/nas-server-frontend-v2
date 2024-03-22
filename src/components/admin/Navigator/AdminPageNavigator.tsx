@@ -13,9 +13,9 @@ const navigatorItems: {
   users: [
     { title: "임시 계정 관리", linkTo: ["users", "temporary"], depth: 2 },
     { title: "사용자 관리", linkTo: ["users", "user"], depth: 2 },
-
   ],
   storages: [
+    { title: "임시 계정 파일 관리", linkTo: ["storages", "temp"], depth: 2 },
     { title: "S3 사용량", linkTo: ["storages", "usage"], depth: 2 },
     { title: "S3 요금", linkTo: ["storages", "bill"], depth: 2 },
   ],
