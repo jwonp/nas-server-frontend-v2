@@ -18,7 +18,7 @@ import { request } from "@/utils/request";
 import { useRouter } from "next/router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDirectory } from "@/hooks/useDirectory.hook";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import WarningSnackBar from "@/components/Storage/SnackBar/WarningSnackBar";
 import ProgressSnackBar from "@/components/Storage/SnackBar/ProgressSnackBar";
 
@@ -39,6 +39,7 @@ const StoragePage = ({
   const directory = useDirectory();
   const queryClient = useQueryClient();
   const { data: session } = useSession();
+  const [isLoadingTemplate, setLoadingTemplate] = useState<boolean>(false);
   const ItemQuery = useQuery<ItemResponse | ErrorResponse>({
     queryKey: ["item", { path: directory }],
     queryFn: () =>
@@ -50,7 +51,10 @@ const StoragePage = ({
             err.response?.data as ErrorResponse
         ),
     throwOnError: false,
+    refetchInterval:false
   });
+
+  
   useEffect(() => {
     queryClient.invalidateQueries({
       queryKey: ["item", { path: directory }],
@@ -72,6 +76,11 @@ const StoragePage = ({
                 를 클릭해서 관리자 페이지로 이동할 수 있습니다.
               </p>
             </div>
+          </section>
+        )}
+        {isLoadingTemplate && (
+          <section className="m-2 px-4 py-2 bg-green-700 rounded-lg">
+            <p className="text-white">드라이브 템플릿을 불러오고 있습니다.</p>
           </section>
         )}
         <section className="grid grid-cols-12 mt-5">

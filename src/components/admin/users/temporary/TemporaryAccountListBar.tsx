@@ -24,6 +24,7 @@ const TemporaryAccountListBar = ({ account }: TemporaryAccountListBarProps) => {
         .get(`/api/storage/download?key=${account.icon}`)
         .then((res) => res.data),
     enabled: account.icon ? true : false,
+    refetchInterval:false
   });
 
   const handleClickShareButton = () => {

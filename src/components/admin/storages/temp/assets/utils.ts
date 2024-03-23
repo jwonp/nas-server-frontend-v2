@@ -232,7 +232,7 @@ export const convertFolderMetas = (items: TempFileItem[]) => {
 
 export const getRandomIds = async (amount?: number): Promise<string[]> => {
   const { ids } = await axios
-    .get(`/api/admin/storages/temp/id?$amount=${amount ?? 1}`)
+    .get(`/api/admin/storages/temp/id?amount=${amount ?? 1}`)
     .then((res) => res.data);
   return ids;
 };

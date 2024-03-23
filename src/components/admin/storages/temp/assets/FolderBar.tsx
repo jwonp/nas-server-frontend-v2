@@ -48,7 +48,7 @@ const FolderBar = ({
         </figure>
         <p
           id={id}
-          className="indent-2 leading-8">
+          className="indent-2 leading-8  min-w-5">
           {title}
         </p>
         {isSaved === true && (

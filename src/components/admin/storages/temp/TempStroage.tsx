@@ -103,9 +103,6 @@ const TempStorage = () => {
         .catch((err: AxiosError) => {
           return { status: err.status ?? 400, msg: err.message };
         }),
-    onSuccess: (_, vars) => {
-      setItems(() => vars.deletedItems);
-    },
   });
   const handleChangeFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -177,11 +174,7 @@ const TempStorage = () => {
 
     setSelectedItem(() => id);
   };
-  const handleKeyDownToEditFileName = (e: React.KeyboardEvent) => {
-    if (editedFileName.length <= 1 && e.key === "Backspace") {
-      e.preventDefault();
-    }
-  };
+
   const handleChangeEditedFileName = (e: React.ChangeEvent) => {
     e.stopPropagation();
     if (!$fileNameInput.current) {
@@ -357,9 +350,11 @@ const TempStorage = () => {
   }, [tempMetasQuery.data, tempMetasQuery.isError, tempMetasQuery.isSuccess]);
 
   const handleClickDeleteItems = () => {
-    const target = items.find(
-      (item) => item.key === selectedItem.split("%")[2]
-    );
+    const target = items.find((item) => {
+      console.log(item.key, selectedItem.split("%")[2]);
+      return item.key === selectedItem.split("%")[2];
+    });
+    console.log(target);
     if (!target) {
       return;
     }
@@ -400,12 +395,15 @@ const TempStorage = () => {
         deletedItems: deletedItems,
       });
     }
+    setSelectedDirectory(() => "/");
+    setSelectedItem(() => "");
     setItems(() => deletedItems);
   };
 
   return (
     <div className="my-1 mx-4 p-4 rounded-lg bg-slate-800">
       <p className="text-white font-bold text-xl">임시 계정 초기 파일</p>
+
       <section className="bg-slate-900 rounded-lg mt-1 mb-4">
         <div className="flex">
           <article
@@ -419,7 +417,6 @@ const TempStorage = () => {
                   className="bg-slate-600 rounded-lg p-2 indent-1"
                   value={editedFileName}
                   disabled={selectedItem.length === 0}
-                  onKeyDown={handleKeyDownToEditFileName}
                   onChange={handleChangeEditedFileName}
                 />
                 <figure className={`absolute right-2 top-2`}>

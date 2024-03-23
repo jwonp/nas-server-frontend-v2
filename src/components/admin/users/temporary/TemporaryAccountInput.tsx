@@ -37,7 +37,7 @@ const TemporaryAccountInput = () => {
         .catch(() => ""),
     onSuccess: (data) => {
       window.navigator.clipboard.writeText(data);
-      queryClient.invalidateQueries({ queryKey: ["temporary", "account"] });
+      queryClient.invalidateQueries({ queryKey: ["temporary", "users"] });
     },
   });
 

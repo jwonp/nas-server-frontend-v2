@@ -17,7 +17,11 @@ const isWithHeaderPage = (pathname: string) => {
   );
 };
 const isWithSidebarPage = (pathname: string) => {
-  return !(pathname.startsWith("/admin") || pathname === "/");
+  return !(
+    pathname.startsWith("/admin") ||
+    pathname === "/" ||
+    pathname === "/404"
+  );
 };
 const isNotNeedSignInPage = (pathname: string) => {
   return pathname.startsWith("/auth") || pathname === "/";

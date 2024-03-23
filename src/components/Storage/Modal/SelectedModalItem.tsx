@@ -13,6 +13,7 @@ const SelectedModalItem = ({ iconURL, text }: SelectedModalItemProps) => {
     queryFn: (): Promise<{ url: string }> =>
       axios.get(`/api/storage/download?key=${iconURL}`).then((res) => res.data),
     enabled: iconURL ? true : false,
+    refetchInterval:false
   });
   return (
     <article className="flex gap-2 snap-center rounded-full bg-slate-800 min-w-[240px]  h-10 mb-1 py-1 px-2">

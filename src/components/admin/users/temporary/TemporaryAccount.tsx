@@ -1,7 +1,6 @@
 import TemporaryAccountInput from "@/components/admin/users/temporary/TemporaryAccountInput";
 import TemporaryAccountList from "@/components/admin/users/temporary/TemporaryAccountList";
 
-
 const TemporaryAccount = () => {
   return (
     <div>

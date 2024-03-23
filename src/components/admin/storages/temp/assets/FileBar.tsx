@@ -27,7 +27,7 @@ const FileBar = ({
         </figure>
         <p
           id={id}
-          className="leading-8">
+          className="leading-8 min-w-5">
           {title}
         </p>
         {isSaved === true && (

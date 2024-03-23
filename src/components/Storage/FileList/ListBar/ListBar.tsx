@@ -70,6 +70,7 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
         .get(`/api/storage/download?key=${metas.ownerImage}`)
         .then((res) => res.data),
     enabled: metas.ownerImage ? true : false,
+    refetchInterval:false
   });
 
   const renameFile = useMutation({

@@ -9,7 +9,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(403).json({ error: "Unauthorized" });
   }
   const { amount } = req.query;
-  const ids = Array.from(Array(amount).map((_) => randomUUID()));
+  console.log(amount);
+  const ids = Array.from(Array(Number(amount))).map((_) => randomUUID());
   return res.status(200).json({ ids });
 };
 
