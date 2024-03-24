@@ -143,7 +143,7 @@ export const getServerSideProps = (async (
     })
     .catch((err: AxiosError) => {
       return {
-        status: (err.response?.data as ErrorResponse).status ?? 400,
+        status: err.response?.status ?? 400,
         msg: (err.response?.data as ErrorResponse).msg ?? "",
       };
     });
@@ -154,6 +154,7 @@ export const getServerSideProps = (async (
           name: string;
         })
       : (result as ErrorResponse);
+  console.log(responseData);
   return {
     props: responseData,
   };
