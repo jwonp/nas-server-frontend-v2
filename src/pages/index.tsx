@@ -39,6 +39,18 @@ export default function Home(
         <section className="w-full">
           <div className="mx-auto w-full  bg-slate-800 py-10 rounded-xl">
             {status === "unauthenticated" &&
+              !router.query.code &&
+              (props as ErrorResponse).msg !== undefined && (
+                <>
+                  <p className="text-white text-xl text-center font-bold mb-2">
+                    환영합니다.
+                  </p>
+                  <p className="text-white text-xl text-center font-bold mb-2">
+                    이 서비스는 로그인이 필요한 서비스입니다.
+                  </p>
+                </>
+              )}
+            {status === "unauthenticated" &&
               (props as ErrorResponse).msg === undefined && (
                 <>
                   <p className="text-white text-xl text-center font-bold mb-2">{`${
@@ -53,17 +65,18 @@ export default function Home(
                       ? `게스트 계정이 준비되었습니다.`
                       : ""
                   } `}</p>
-                  <p className="text-white text-center font-bold">{`아래 로그인 버튼을 클릭해서 로그인 해주세요`}</p>
+                  <p className="text-white text-center font-bold">{`아래 버튼을 누르시면 자동으로 로그인 됩니다.`}</p>
                   <div className="flex mt-5 cursor-pointer">
                     <button
                       className="mx-auto text-white font-bold bg-blue-700 hover:bg-blue-600 px-5 py-2 rounded-xl"
                       onClick={() => signIn()}>
-                      로그인
+                      자동 로그인
                     </button>
                   </div>
                 </>
               )}
             {status === "unauthenticated" &&
+              router.query.code &&
               (props as ErrorResponse).msg !== undefined && (
                 <>
                   <p className="text-white text-xl text-center font-bold mb-2">
