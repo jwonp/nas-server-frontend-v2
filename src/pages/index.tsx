@@ -76,8 +76,8 @@ export default function Home(
                 </>
               )}
             {status === "unauthenticated" &&
-              router.query.code &&
-              (props as ErrorResponse).msg !== undefined && (
+              (router.query.code as string)?.length > 0 &&
+              (props as ErrorResponse).status >= 400 && (
                 <>
                   <p className="text-white text-xl text-center font-bold mb-2">
                     초대 링크가 만료되었습니다.
