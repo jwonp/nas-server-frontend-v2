@@ -46,6 +46,11 @@ export default function SignIn({
       setError(() => error);
     }
   }, [router]);
+  useEffect(() => {
+    if (error.length > 0 && window.localStorage.getItem("guest")) {
+      window.localStorage.removeItem("guest");
+    }
+  }, [error]);
   const handleClickSignUp = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     router.push("/auth/signup");
