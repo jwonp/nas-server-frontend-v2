@@ -1,10 +1,9 @@
 import { Inter } from "next/font/google";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 
 import { signIn, useSession } from "next-auth/react";
-import Header from "@/components/Header/Header";
 import { useRouter } from "next/router";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import {
   GetServerSidePropsContext,
   GetServerSideProps,

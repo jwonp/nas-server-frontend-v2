@@ -18,7 +18,7 @@ import { request } from "@/utils/request";
 import { useRouter } from "next/router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDirectory } from "@/hooks/useDirectory.hook";
-import { useEffect, useState, useState } from "react";
+import { useEffect } from "react";
 import WarningSnackBar from "@/components/Storage/SnackBar/WarningSnackBar";
 import ProgressSnackBar from "@/components/Storage/SnackBar/ProgressSnackBar";
 
@@ -26,6 +26,8 @@ import FilelistContainer from "@/components/Storage/FileList/FileListContainer";
 import { useSession } from "next-auth/react";
 import ShareModal from "@/components/Storage/Modal/ShareModal";
 import Link from "next/link";
+import VideoPlayerModal from "@/components/Storage/Modal/MediaModal/Video/VideoPlayerModal";
+import ImageViewerModal from "@/components/Storage/Modal/MediaModal/Image/ImageViewerModal";
 type StoragePageProps = {
   initItems: ItemResponse | ErrorResponse;
   isAdmin: AdminCheckResponse | ErrorResponse;
@@ -39,7 +41,7 @@ const StoragePage = ({
   const directory = useDirectory();
   const queryClient = useQueryClient();
   const { data: session } = useSession();
-  const [isLoadingTemplate, setLoadingTemplate] = useState<boolean>(false);
+
   const ItemQuery = useQuery<ItemResponse | ErrorResponse>({
     queryKey: ["item", { path: directory }],
     queryFn: () =>
@@ -51,10 +53,9 @@ const StoragePage = ({
             err.response?.data as ErrorResponse
         ),
     throwOnError: false,
-    refetchInterval:false
+    refetchInterval: false,
   });
 
-  
   useEffect(() => {
     queryClient.invalidateQueries({
       queryKey: ["item", { path: directory }],
@@ -78,11 +79,7 @@ const StoragePage = ({
             </div>
           </section>
         )}
-        {isLoadingTemplate && (
-          <section className="m-2 px-4 py-2 bg-green-700 rounded-lg">
-            <p className="text-white">드라이브 템플릿을 불러오고 있습니다.</p>
-          </section>
-        )}
+
         <section className="grid grid-cols-12 mt-5">
           <div className="col-span-10 max-md:col-span-9">
             <DirectoryHistory
@@ -112,7 +109,8 @@ const StoragePage = ({
       </div>
 
       <ShareModal />
-      <VideoPlayer/>
+      <VideoPlayerModal />
+      <ImageViewerModal />
     </div>
   );
 };

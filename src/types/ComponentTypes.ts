@@ -29,3 +29,7 @@ export type TemporaryAccount = Omit<UserCredentials, "password"> & {
   accountCode:string;
   admin:string;
 };
+export type Size = {
+  width:number;
+  height:number;
+}

@@ -20,7 +20,7 @@ const isWithSidebarPage = (pathname: string) => {
   return !(
     pathname.startsWith("/admin") ||
     pathname === "/" ||
-    pathname === "/404"
+    pathname === "/no-page"
   );
 };
 const isNotNeedSignInPage = (pathname: string) => {

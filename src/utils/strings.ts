@@ -28,3 +28,6 @@ export const SHARE_MODAL_NO_SEARCH_RESULT =
 
 export const SHARE_NAVIGATOR_USER = "/share/user";
 export const SHARE_NAVIGATOR_TEAM = "/share/team";
+
+
+export const MAIN_ID = "layout-main"

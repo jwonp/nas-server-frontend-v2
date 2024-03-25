@@ -1,19 +1,30 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { aC } from "vitest/dist/reporters-MmQN-57K.js";
+
 export type Media = {
-  isVisible: boolean;
   src: string;
   title: string;
+  isVisible: boolean;
 };
 export type ModalSwitch = {
+  isVisibleMediaModal: boolean;
   image: Media;
   video: Media;
 };
-
+const initialImageState: Media = {
+  src: "",
+  title: "",
+  isVisible: false,
+};
+const initialVideoState: Media = {
+  src: "",
+  title: "",
+  isVisible: false,
+};
 const initialState: ModalSwitch = {
-  image: { isVisible: false, src: "", title: "" },
-  video: { isVisible: false, src: "", title: "" },
+  isVisibleMediaModal: false,
+  image: initialImageState,
+  video: initialVideoState,
 };
 
 export const mediaSlice = createSlice({
@@ -21,36 +32,39 @@ export const mediaSlice = createSlice({
   initialState,
   reducers: {
     setImageMedia: (state, action: PayloadAction<Omit<Media, "isVisible">>) => {
+      state.isVisibleMediaModal = true;
+
       state.image.isVisible = true;
       state.image.src = action.payload.src;
       state.image.title = action.payload.title;
     },
     setVideoMedia: (state, action: PayloadAction<Omit<Media, "isVisible">>) => {
+      state.isVisibleMediaModal = true;
+      
       state.video.isVisible = true;
       state.video.src = action.payload.src;
       state.video.title = action.payload.title;
     },
-    resetImageMedia: (state) => {
-      state.image.isVisible = false;
-      state.image.src = "";
-      state.image.title = "";
-    },
-    resetVideoMedia: (state) => {
-      state.video.isVisible = false;
-      state.video.src = "";
-      state.video.title = "";
+    resetMediaModal: (state) => {
+      state.isVisibleMediaModal = false;
+
+      state.image.isVisible = initialImageState.isVisible;
+      state.image.src = initialImageState.src;
+      state.image.title = initialImageState.title;
+
+      state.video.isVisible = initialVideoState.isVisible;
+      state.video.src = initialVideoState.src;
+      state.video.title = initialVideoState.title;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const {
-  setImageMedia,
-  setVideoMedia,
-  resetImageMedia,
-  resetVideoMedia,
-} = mediaSlice.actions;
+export const { setImageMedia, setVideoMedia, resetMediaModal } =
+  mediaSlice.actions;
+export const getVisibleMediaModal = (state: RootState) =>
+  state.media.isVisibleMediaModal;
 export const getImageMedia = (state: RootState) => state.media.image;
 export const getVideoMedia = (state: RootState) => state.media.video;
-
+export const getMedia = (state: RootState) => state.media;
 export default mediaSlice.reducer;

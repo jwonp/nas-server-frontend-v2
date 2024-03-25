@@ -4,12 +4,14 @@ import fileLoadProgressReducer from "./featrues/fileLoadProgressSlice";
 import snackBarSwitchReducer from "./featrues/snackBarSwitchSlice";
 import modalSwitchReducer from "./featrues/modalSwitchSlice";
 import mediaReducer from "./featrues/mediaSlice";
+import windowWidthReducer from "./featrues/windowWidthSlice";
 export const reducer = {
   sideBarVisible: sideBarVisibleReducer,
   fileLoadProgress: fileLoadProgressReducer,
   snackBarSwitch: snackBarSwitchReducer,
   modalSwitch: modalSwitchReducer,
   media: mediaReducer,
+  windowWidth: windowWidthReducer,
 };
 
 export const store = configureStore({

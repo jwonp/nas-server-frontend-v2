@@ -20,7 +20,7 @@ import { useEffect, useRef, useState } from "react";
 import { convertFileSize } from "@/utils/parseFileSize";
 import { downloadFile, getDownloadMediaUrl } from "@/utils/download";
 import { useAppDispatch } from "@/redux/hooks";
-import { setVideoMedia } from "@/redux/featrues/mediaSlice";
+import { setImageMedia, setVideoMedia } from "@/redux/featrues/mediaSlice";
 
 const fileIcons = {
   back: backIcon,
@@ -71,7 +71,7 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
         .get(`/api/storage/download?key=${metas.ownerImage}`)
         .then((res) => res.data),
     enabled: metas.ownerImage ? true : false,
-    refetchInterval:false
+    refetchInterval: false,
   });
 
   const renameFile = useMutation({
@@ -147,7 +147,7 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
       <div
         ref={ref}
         className="grid grid-cols-16 w-full min-w-[360px] h-14 py-1 cursor-pointer select-none border-b">
-        <article className="col-span-7  max-file:col-span-8 max-mobile:col-span-10">
+        <article className="col-span-7 max-file:col-span-8 max-mobile:col-span-10">
           <div
             className="grid grid-cols-listBarTitle gap-2"
             onClick={() => {
@@ -188,8 +188,14 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
               <div
                 className={`text-white truncate leading-12 text-lg font-semibold font-['Inter']`}
                 onClick={async () => {
-                  const url = await getDownloadMediaUrl(metas.fileId);
-                  dispatch(setVideoMedia({ src: url, title: fileTitle }));
+                  if (metas.fileIcon === "video") {
+                    const url = await getDownloadMediaUrl(metas.fileId);
+                    dispatch(setVideoMedia({ src: url, title: fileTitle }));
+                  }
+                  if (metas.fileIcon === "image") {
+                    const url = await getDownloadMediaUrl(metas.fileId);
+                    dispatch(setImageMedia({ src: url, title: fileTitle }));
+                  }
                 }}>
                 {fileTitle}
               </div>

@@ -4,6 +4,11 @@ import SideBar from "./SideBar/SideBar";
 import { useSession } from "next-auth/react";
 import SigninAlert from "./SigninAlert";
 import { useEffect, useMemo, useState } from "react";
+import { useAppDispatch } from "@/redux/hooks";
+import { useRouter } from "next/router";
+import { getWindowWidth } from "@/utils/imageHandler";
+import { setWidth } from "@/redux/featrues/windowWidthSlice";
+import { MAIN_ID } from "@/utils/strings";
 type LayoutProps = {
   isSidebar: boolean;
   isHeader: boolean;
@@ -16,6 +21,8 @@ const Layout = ({
   isOnNotNeedSignInPage,
   children,
 }: LayoutProps) => {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const { data: session, status } = useSession();
   const [isSignedIn, setSignedIn] = useState<boolean>(
     status === "authenticated"
@@ -35,10 +42,26 @@ const Layout = ({
   useEffect(() => {
     setSignedIn(() => status === "authenticated");
   }, [status]);
+  useEffect(() => {
+    if (router.isReady) {
+      if (!document) return;
+      const mainWrapper = document.getElementById(MAIN_ID);
+      if (!mainWrapper) {
+        return;
+      }
+      dispatch(setWidth(getWindowWidth(mainWrapper)));
+      window.addEventListener("resize", () => {
+        dispatch(setWidth(getWindowWidth(mainWrapper)));
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady]);
   return (
     <>
       {isHeader && <Header isInvisibleSideBarButton={!isSidebar} />}
-      <div className="w-screen min-w-[360px] bg-neutral-900 ">
+      <div
+        id={MAIN_ID}
+        className="w-screen min-w-[360px] bg-neutral-900 ">
         <main
           className={`${
             isSignedIn && isSidebar ? "grid lg:grid-cols-layout" : ""
