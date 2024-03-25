@@ -21,13 +21,17 @@ export default async function handler(
   if (!session) {
     return res.status(403).json({ error: "Unauthorized" });
   }
-  const { fileType, directory, ownerId } = req.query;
+  const { fileType, ownerId, preKey } = req.query as {
+    fileType: string;
+    ownerId: string;
+    preKey?: string;
+  };
   let responseData = { uploadUrl: "", key: "" };
   try {
     const { key, params } = getSignedUrlParams(
       fileType as string,
-      directory as string,
-      ownerId as string
+      ownerId as string,
+      preKey
     );
     const uploadUrl = s3.getSignedUrl(`putObject`, params);
     responseData.key = key;

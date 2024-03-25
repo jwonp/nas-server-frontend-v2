@@ -1,8 +1,7 @@
-import Header from "@/components/Header/Header";
 import { AdminCheckResponse, ErrorResponse } from "@/types/Responses";
 import { getServerSession } from "next-auth";
 import { AxiosError, AxiosResponse } from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -11,11 +10,16 @@ import {
 import { authOptions } from "../api/auth/[...nextauth]";
 import { request } from "@/utils/request";
 import { useRouter } from "next/router";
-import TemporaryAccount from "@/components/Admin/Temporary/TemporaryAccount";
-const AdminIndexPage = (
+import TemporaryAccount from "@/components/admin/users/temporary/TemporaryAccount";
+import AdminPageNavigator from "@/components/admin/Navigator/AdminPageNavigator";
+import { getPath } from "@/utils/admin/route";
+import AdminUser from "@/components/admin/users/user/AdminUser";
+import TempStorage from "@/components/admin/storages/temp/TempStroage";
+const AdminPage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
   const router = useRouter();
+  const [path, setPath] = useState<string[]>([]);
   const isOccuerdError = (props as ErrorResponse)?.msg;
   const isNotAdmin = (props as AdminCheckResponse)?.isAdmin === false;
   useEffect(() => {
@@ -24,20 +28,31 @@ const AdminIndexPage = (
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => {
+    setPath(() => getPath(router.query));
+  }, [router.query]);
+
   if (isOccuerdError || isNotAdmin) {
     return <div></div>;
   }
+
   return (
-    <div>
-      <Header isInvisibleSideBarButton />
-      <main >
-        <TemporaryAccount/>
-      </main>
-    </div>
+    <main className="w-full h-full">
+      <AdminPageNavigator path={path} />
+      {getPath(router.query).join("/") === "users/temporary" && (
+        <TemporaryAccount />
+      )}
+      {getPath(router.query).join("/") === "users/user" && (
+        <AdminUser />
+      )}
+      {getPath(router.query).join("/") === "storages/temp" && (
+        <TempStorage />
+      )}
+    </main>
   );
 };
 
-export default AdminIndexPage;
+export default AdminPage;
 
 export const getServerSideProps = (async (
   context: GetServerSidePropsContext

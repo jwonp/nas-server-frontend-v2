@@ -37,6 +37,7 @@ const FileAddButton = ({
       axios.get("/api/user/volume").then((res) => res.data),
     initialData: { max: -1, now: -1 },
     enabled: userId ? true : false,
+    refetchInterval:false
   });
   const handleChangeFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>

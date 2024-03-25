@@ -1,17 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { ErrorResponse, TemporaryAccountResponse } from "@/types/Responses";
 import axios, { AxiosError, AxiosResponse } from "axios";
-import TemporaryAccountListBar from "./TemporaryAccountListBar";
+import TemporaryAccountListBar from "@/components/admin/users/temporary/TemporaryAccountListBar";
 import { useMemo } from "react";
 
 const TemporaryAccountList = () => {
   const temporaryAccountQuery = useQuery<
     TemporaryAccountResponse | ErrorResponse
   >({
-    queryKey: ["temporary", "account"],
+    queryKey: ["temporary", "users"],
     queryFn: () =>
       axios
-        .get("/api/admin/account/temporary")
+        .get("/api/admin/users/temporary")
         .then((res: AxiosResponse<TemporaryAccountResponse>) => res.data)
         .catch(
           (err: AxiosError<ErrorResponse>) =>

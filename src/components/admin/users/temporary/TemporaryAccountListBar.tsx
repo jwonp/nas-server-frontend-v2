@@ -8,9 +8,9 @@ import CheckedIcon from "@public/icons/checked-white.svg";
 import type { TemporaryAccount } from "@/types/ComponentTypes";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { getTimeString } from "@/utils/parseTime";
 import { getPhoneString } from "@/utils/parsePhone";
 import { useState } from "react";
+import { getExpiredString } from "@/utils/admin/strings";
 
 type TemporaryAccountListBarProps = {
   account: TemporaryAccount;
@@ -24,16 +24,21 @@ const TemporaryAccountListBar = ({ account }: TemporaryAccountListBarProps) => {
         .get(`/api/storage/download?key=${account.icon}`)
         .then((res) => res.data),
     enabled: account.icon ? true : false,
+    refetchInterval:false
   });
 
   const handleClickShareButton = () => {
-    window.navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_FRONTEND_ENDPOINT}/?code=${encodeURIComponent(account.accountCode)}`);
+    window.navigator.clipboard.writeText(
+      `${process.env.NEXT_PUBLIC_FRONTEND_ENDPOINT}/?code=${encodeURIComponent(
+        account.accountCode
+      )}`
+    );
     setVisibieCopyToast(() => true);
     setTimeout(() => {
       setVisibieCopyToast(() => false);
     }, 700);
   };
-  
+
   return (
     <div className="grid grid-cols-8 w-full h-14 py-1 border-b-2 border-white">
       <div className="col-span-2 flex gap-2 p-2">
@@ -55,7 +60,7 @@ const TemporaryAccountListBar = ({ account }: TemporaryAccountListBarProps) => {
       <div className="col-span-2">
         <p className=" px-3 text-white text-end ">{`by ${account.admin}`}</p>
         <p className=" px-3 text-white text-end ">
-          {`expire in ${getTimeString(account.expireIn)}`}
+          {getExpiredString(account.expireIn)}
         </p>
       </div>
       <div className="col-span-1 flex ml-auto px-3 py-2">
@@ -95,6 +100,19 @@ const TemporaryAccountListBar = ({ account }: TemporaryAccountListBarProps) => {
             height={32}
           />
         </figure>
+        {/* {isExpired(account.expireIn) === false && (
+          <figure
+            className="hover:bg-slate-500 rounded-full overflow-hidden max-h-8 h-8 w-8 p-1 "
+            onClick={handleClickShareButton}>
+            <Image
+              className="mx-auto"
+              src={ShareIcon}
+              alt={""}
+              width={32}
+              height={32}
+            />
+          </figure>
+        )} */}
         <figure className="hover:bg-slate-500 rounded-full overflow-hidden max-h-8 h-8 w-8 p-1 ">
           <Image
             className="mx-auto"

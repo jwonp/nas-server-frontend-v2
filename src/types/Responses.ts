@@ -1,3 +1,4 @@
+
 import {
   DisplayHistory,
   Item,
@@ -46,4 +47,8 @@ export type TemporaryAccountPostResponse = {
 };
 export type TemporaryAccountResponse = {
   accounts: TemporaryAccount[];
+};
+
+export type TempMetaResponse = {
+  tempMetas: (MetaData & { id: string })[];
 };

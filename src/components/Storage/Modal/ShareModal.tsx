@@ -39,6 +39,7 @@ const ShareModal = ({}: ShareModalProps) => {
         .get(`/api/user/search?query=${userSearchquery}`)
         .then((res: AxiosResponse<UserSearchResponse>) => res.data),
     enabled: userSearchquery !== "" ? true : false,
+    refetchInterval:false
   });
   const addShare = useMutation({
     mutationFn: (selectedUsers: SearchedUser[]) =>
