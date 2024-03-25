@@ -198,7 +198,7 @@ const TemporaryAccountInput = () => {
             type="submit"
             className="ml-auto px-3 py-1 hover:bg-blue-500 bg-blue-600 rounded-lg h-10 ">
             <p className="text-center min-w-[84px]  text-white break-keep">
-              주소 복사
+              계정 코드 발급
             </p>
           </button>
         </div>
