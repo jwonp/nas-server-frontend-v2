@@ -28,10 +28,21 @@ export default function Home(
   const router = useRouter();
 
   useEffect(() => {
+    const isErrored =
+      status === "unauthenticated" &&
+      (router.query.code as string)?.length > 0 &&
+      (props as ErrorResponse).status >= 400;
     if ((props as Guest).userDetail) {
       window.localStorage.setItem("guest", (props as Guest).userDetail);
     }
-  }, [props]);
+    if (isErrored) {
+      const isErroredBefore = window.localStorage.getItem("isErrored");
+      if (isErroredBefore === null) {
+        window.localStorage.setItem("isErroredBefore", "true");
+        router.reload();
+      }
+    }
+  }, [props, router, status]);
 
   return (
     <div className="w-screen h-screen ">
@@ -114,12 +125,17 @@ export const getServerSideProps = (async (
   if (!code) {
     return { props: { status: 201, msg: "No code" } };
   }
-  const { admin, expireIn, ...userCredentials } = decryptObject(
-    code
-  ) as UserCredentials & {
+  console.log(decodeURIComponent(code));
+  const decryptedObject = decryptObject(code) as UserCredentials & {
     admin: string;
     expireIn: number;
   };
+  console.log(decryptedObject);
+  //
+  if (!decryptedObject.expireIn || !decryptedObject.admin) {
+    return { props: { status: 400, msg: "Invaild code" } };
+  }
+  const { admin, expireIn, ...userCredentials } = decryptedObject;
 
   if (expireIn < Date.now()) {
     return { props: { status: 400, msg: "Expired code" } };
@@ -142,10 +158,7 @@ export const getServerSideProps = (async (
       };
     })
     .catch((err: AxiosError) => {
-      return {
-        status: err.response?.status ?? 400,
-        msg: (err.response?.data as ErrorResponse).msg ?? "",
-      };
+      return err.response?.data as ErrorResponse;
     });
   const responseData =
     result.status / 100 < 4

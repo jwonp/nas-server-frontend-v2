@@ -36,8 +36,29 @@ const TemporaryAccountInput = () => {
         )
         .catch(() => ""),
     onSuccess: (data) => {
-      window.navigator.clipboard.writeText(data);
+      const isExistRefs =
+        $name.current &&
+        $domain.current &&
+        $password.current &&
+        $phone.current &&
+        $expireIn.current &&
+        $icon.current;
+      window.navigator.clipboard.writeText(
+        `${
+          process.env.NEXT_PUBLIC_FRONTEND_ENDPOINT
+        }/?code=${encodeURIComponent(data)}`
+      );
       queryClient.invalidateQueries({ queryKey: ["temporary", "users"] });
+
+      if (!isExistRefs) {
+        return;
+      }
+      $name.current.value = "";
+      $domain.current.value = "";
+      $password.current.value = "";
+      $phone.current.value = "";
+      $expireIn.current.value = "30";
+      $icon.current.value = "";
     },
   });
 

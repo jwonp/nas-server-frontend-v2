@@ -17,6 +17,7 @@ const TemporaryAccountList = () => {
           (err: AxiosError<ErrorResponse>) =>
             err.response?.data as ErrorResponse
         ),
+        refetchInterval: false,
   });
   const TemporaryAccountListBars = useMemo(() => {
     if (temporaryAccountQuery.isLoading) {

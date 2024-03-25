@@ -6,7 +6,7 @@ import DeleteIcon from "@public/icons/delete.png";
 import ShareIcon from "@public/icons/share.png";
 import CheckedIcon from "@public/icons/checked-white.svg";
 import type { TemporaryAccount } from "@/types/ComponentTypes";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { getPhoneString } from "@/utils/parsePhone";
 import { useState } from "react";
@@ -16,6 +16,7 @@ type TemporaryAccountListBarProps = {
   account: TemporaryAccount;
 };
 const TemporaryAccountListBar = ({ account }: TemporaryAccountListBarProps) => {
+  const queryClient = useQueryClient();
   const [isVisibieCopyToast, setVisibieCopyToast] = useState<boolean>(false);
   const iconQuery = useQuery({
     queryKey: ["icon", { source: account.icon }],
@@ -24,9 +25,19 @@ const TemporaryAccountListBar = ({ account }: TemporaryAccountListBarProps) => {
         .get(`/api/storage/download?key=${account.icon}`)
         .then((res) => res.data),
     enabled: account.icon ? true : false,
-    refetchInterval:false
+    refetchInterval: false,
   });
-
+  const deleteTemporaryAccount = useMutation({
+    mutationFn: (username: string) =>
+      axios
+        .delete(`/api/admin/users/temporary?user=${username}`)
+        .then((res) => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["temporary", "users"],
+      });
+    },
+  });
   const handleClickShareButton = () => {
     window.navigator.clipboard.writeText(
       `${process.env.NEXT_PUBLIC_FRONTEND_ENDPOINT}/?code=${encodeURIComponent(
@@ -38,7 +49,9 @@ const TemporaryAccountListBar = ({ account }: TemporaryAccountListBarProps) => {
       setVisibieCopyToast(() => false);
     }, 700);
   };
-
+  const handleDeleteTemporaryAccount = () => {
+    deleteTemporaryAccount.mutate(account.username);
+  };
   return (
     <div className="grid grid-cols-8 w-full h-14 py-1 border-b-2 border-white">
       <div className="col-span-2 flex gap-2 p-2">
@@ -113,7 +126,9 @@ const TemporaryAccountListBar = ({ account }: TemporaryAccountListBarProps) => {
             />
           </figure>
         )} */}
-        <figure className="hover:bg-slate-500 rounded-full overflow-hidden max-h-8 h-8 w-8 p-1 ">
+        <figure
+          className="hover:bg-slate-500 rounded-full overflow-hidden max-h-8 h-8 w-8 p-1 "
+          onClick={handleDeleteTemporaryAccount}>
           <Image
             className="mx-auto"
             src={DeleteIcon}
