@@ -26,6 +26,7 @@ const FileList = ({ items, userId, directory }: FileListProps) => {
         fileIcon: meta.type,
         fileSize: meta.size,
         isFavorite: meta.isFavorite,
+        isPending:meta.isPending
       };
       return (
         <ListBar

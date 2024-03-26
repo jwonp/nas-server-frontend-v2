@@ -76,7 +76,6 @@ export const uploadFile = async (
       progressDispatch(setProgressPercent(percentCompleted));
     },
   });
-  console.log(res);
 
   const uploadedMeta: Omit<MetaData, "isFavorite"> = {
     directory: meta.directory,

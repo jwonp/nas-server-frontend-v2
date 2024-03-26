@@ -1,11 +1,10 @@
 import DirectoryHistory from "@/components/Storage/DirectoryHistory";
 import AddButtonList from "@/components/Storage/AddButton/AddButtonList";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios from "axios";
 import {
   ItemResponse,
   ErrorResponse,
   AdminCheckResponse,
-  SuccessResponse,
 } from "@/types/Responses";
 
 import {
@@ -17,9 +16,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { request, response } from "@/utils/request";
 import { useRouter } from "next/router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutationState,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useDirectory } from "@/hooks/useDirectory.hook";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import WarningSnackBar from "@/components/Storage/SnackBar/WarningSnackBar";
 import ProgressSnackBar from "@/components/Storage/SnackBar/ProgressSnackBar";
 
@@ -27,6 +30,8 @@ import FilelistContainer from "@/components/Storage/FileList/FileListContainer";
 import { useSession } from "next-auth/react";
 import ShareModal from "@/components/Storage/Modal/ShareModal";
 import Link from "next/link";
+import { MetaData } from "@/types/MetaData";
+import { DisplayHistory, Item } from "@/types/ComponentTypes";
 type StoragePageProps = {
   // initItems: ItemResponse | ErrorResponse;
   isAdmin: AdminCheckResponse | ErrorResponse;
@@ -40,6 +45,8 @@ const StoragePage = ({
   const directory = useDirectory();
   const queryClient = useQueryClient();
   const { data: session } = useSession();
+  const [items, setItems] = useState<Item | undefined>(undefined);
+  const [histories, setHistories] = useState<DisplayHistory[]>([]);
 
   const ItemQuery = useQuery<ItemResponse>({
     queryKey: ["item", { path: directory }],
@@ -49,6 +56,44 @@ const StoragePage = ({
     retry: 5,
     refetchInterval: false,
   });
+  const itemVariables = useMutationState<Omit<MetaData, "isFavorite">[]>({
+    filters: { mutationKey: ["addMetas"], status: "pending", exact: true },
+    select: (mutation) =>
+      mutation.state.variables as Omit<MetaData, "isFavorite">[],
+  });
+  useEffect(() => {
+    if (!items) {
+      return;
+    }
+
+    setItems((prev) => {
+      const tempItems: Omit<MetaData, "ownerId">[] = [];
+      itemVariables.forEach((vars) => {
+        vars.forEach((v) => {
+          const { ownerId, ...tmpVar } = v;
+          const tmpItem = { ...tmpVar, isFavorite: false, isPending: true };
+          tempItems.push(tmpItem);
+        });
+      });
+
+      const newItems: Item = {
+        ...(prev as Item),
+        files: [...(prev as Item).files, ...tempItems],
+      };
+      return newItems;
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemVariables]);
+
+  useEffect(() => {
+    if (ItemQuery.data) {
+      setItems(() => ItemQuery.data.items);
+      setHistories(() => ItemQuery.data.histories);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ItemQuery.data]);
 
   useEffect(() => {
     queryClient.invalidateQueries({
@@ -79,9 +124,9 @@ const StoragePage = ({
             <DirectoryHistory
               rowHistories={(router.query.history as string[]) ?? []}
               // initHistories={(initItems as ItemResponse)?.histories}
-              histories={(ItemQuery.data as ItemResponse)?.histories}
+              histories={histories}
               isLoading={ItemQuery.isLoading}
-              items={(ItemQuery.data as ItemResponse)?.items}
+              isOnError={ItemQuery.isError}
             />
           </div>
           <div className="col-span-2 max-md:col-span-3">
@@ -94,9 +139,14 @@ const StoragePage = ({
         <FilelistContainer
           isLoading={ItemQuery.isLoading}
           // initItems={initItems as ItemResponse}
-          data={ItemQuery.data as ItemResponse}
+          // data={ItemQuery.data as ItemResponse}
           userId={session?.user.id}
           directory={directory}
+          isOnError={ItemQuery.isError}
+          isInvalidDirectory={
+            (ItemQuery.data as unknown as ErrorResponse)?.status === 404
+          }
+          items={items}
         />
         <ProgressSnackBar />
         <WarningSnackBar />

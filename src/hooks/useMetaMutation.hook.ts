@@ -7,7 +7,8 @@ export const useMetaMutation = () => {
   const queryClient = useQueryClient();
   const directory = useDirectory();
   const addMetas = useMutation({
-    mutationFn: (metas: Omit<MetaData,"isFavorite"> []) =>
+    mutationKey: ["addMetas"],
+    mutationFn: (metas: Omit<MetaData, "isFavorite">[]) =>
       axios.post("/api/storage/meta", { metas: metas }),
     onSuccess: (_, variables) => {
       const mutations = variables.map((item) => {
