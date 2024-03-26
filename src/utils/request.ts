@@ -6,7 +6,7 @@ import { type Error } from "@/types/Responses";
 export const request = (user: Omit<UserSession, "volume">) => {
   const instance = axios.create({
     baseURL: process.env.BACKEND_ENDPOINT,
-    timeout: 3000,
+    timeout: 6000,
     headers: { Authorization: `Bearer ${createJWT(user)}` },
   });
 
