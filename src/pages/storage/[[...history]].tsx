@@ -52,6 +52,8 @@ const StoragePage = ({
     queryKey: ["item", { path: directory }],
     queryFn: () =>
       axios.get(`/api/storage/item/${directory}`).then((res) => res.data),
+    staleTime: 24 * 60 * 60 * 1000,
+    refetchOnWindowFocus: "always",
     throwOnError: false,
     retry: 5,
     refetchInterval: false,
@@ -132,6 +134,8 @@ const StoragePage = ({
           <div className="col-span-2 max-md:col-span-3">
             <AddButtonList
               histories={(router.query.history as string[]) ?? []}
+              isItemFetched={ItemQuery.isSuccess}
+              isOnError={ItemQuery.isError}
             />
           </div>
         </section>

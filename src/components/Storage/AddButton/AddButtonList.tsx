@@ -9,35 +9,28 @@ import FolderAddButton from "./FolderAddButton";
 import FileAddButton from "./FileAddButton";
 type AddButtonListProps = {
   histories?: string[];
+  isItemFetched: boolean;
+  isOnError: boolean;
 };
 const AddIconSize = 38;
 
-const AddButtonList = ({ histories }: AddButtonListProps) => {
+const AddButtonList = ({
+  histories,
+  isItemFetched,
+  isOnError,
+}: AddButtonListProps) => {
   const [isEnableButtons, setIsEnableButtons] = useState<boolean>(false);
   const { data: session } = useSession();
-  const directory = useDirectory();
-  const ItemQuery = useQuery<ItemResponse | ErrorResponse>({
-    queryKey: ["item", { path: directory }],
-    queryFn: async () =>
-      axios
-        .get(`/api/storage/item/${directory}`)
-        .then((res: AxiosResponse<ItemResponse>) => res.data)
-        .catch(
-          (err: AxiosError<ErrorResponse>) =>
-            err.response?.data as ErrorResponse
-        ),
-    throwOnError: false,
-  });
 
   useEffect(() => {
-    if (!ItemQuery.data) {
+    if (!isItemFetched) {
       return setIsEnableButtons(() => false);
     }
-    if (Object.keys(ItemQuery.data).includes(ERROR_RESPONSE.msg)) {
+    if (isOnError) {
       return setIsEnableButtons(() => false);
     }
     setIsEnableButtons(() => true);
-  }, [ItemQuery.data]);
+  }, [isItemFetched, isOnError]);
   return (
     <div
       className={`grid grid-cols-2 select-none ${
