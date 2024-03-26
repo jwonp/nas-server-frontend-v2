@@ -1,15 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-
+import { type Error } from "@/types/Responses";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
-import { request } from "@/utils/request";
-import { AxiosError } from "axios";
-import {
-  ErrorResponse,
-  FavoriteResponse,
-  SuccessResponse,
-} from "@/types/Responses";
+import { request, response } from "@/utils/request";
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,25 +12,15 @@ export default async function handler(
   const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
-    return res.status(403).json({ error: "Unauthorized" });
+    const error: Error = {
+      body: { msg: "Unauthorized" },
+    };
+    return res.status(403).json(error);
   }
 
-  const result = await request(session?.user)
-    .get(`/admin/check`)
-    .then((res) => {
-      return { status: res.status, data: res.data };
-    })
-    .catch((err: AxiosError) => {
-      return {
-        status: (err.response?.data as ErrorResponse).status ?? 400,
-        msg: (err.response?.data as ErrorResponse).msg ?? "",
-      };
-    });
+  const result = await response(request(session?.user).get(`/admin/check`));
 
-  const responseData =
-    result.status / 100 < 4
-      ? ((result as SuccessResponse).data as FavoriteResponse)
-      : (result as ErrorResponse);
-
-  res.status(result.status).json(responseData);
+  const { status, ...body } = result;
+  const data = body.body;
+  res.status(result.status).json(data);
 }

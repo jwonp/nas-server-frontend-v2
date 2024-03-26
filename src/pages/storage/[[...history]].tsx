@@ -14,11 +14,11 @@ import {
 } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
-import { request } from "@/utils/request";
+import { request, response } from "@/utils/request";
 import { useRouter } from "next/router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDirectory } from "@/hooks/useDirectory.hook";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import WarningSnackBar from "@/components/Storage/SnackBar/WarningSnackBar";
 import ProgressSnackBar from "@/components/Storage/SnackBar/ProgressSnackBar";
 
@@ -39,7 +39,7 @@ const StoragePage = ({
   const directory = useDirectory();
   const queryClient = useQueryClient();
   const { data: session } = useSession();
-  const [isLoadingTemplate, setLoadingTemplate] = useState<boolean>(false);
+
   const ItemQuery = useQuery<ItemResponse | ErrorResponse>({
     queryKey: ["item", { path: directory }],
     queryFn: () =>
@@ -51,10 +51,9 @@ const StoragePage = ({
             err.response?.data as ErrorResponse
         ),
     throwOnError: false,
-    refetchInterval:false
+    refetchInterval: false,
   });
 
-  
   useEffect(() => {
     queryClient.invalidateQueries({
       queryKey: ["item", { path: directory }],
@@ -78,11 +77,7 @@ const StoragePage = ({
             </div>
           </section>
         )}
-        {isLoadingTemplate && (
-          <section className="m-2 px-4 py-2 bg-green-700 rounded-lg">
-            <p className="text-white">드라이브 템플릿을 불러오고 있습니다.</p>
-          </section>
-        )}
+
         <section className="grid grid-cols-12 mt-5">
           <div className="col-span-10 max-md:col-span-9">
             <DirectoryHistory
@@ -126,8 +121,8 @@ export const getServerSideProps = (async (
   if (!session || !session.user) {
     return {
       props: {
-        initItems: { status: 403, msg: "Unauthorized" },
-        isAdmin: { status: 403, msg: "Unauthorized" },
+        initItems: { status: 403, body: { msg: "Unauthorized" } },
+        isAdmin: { status: 403, body: { msg: "Unauthorized" } },
       },
     };
   }
@@ -137,40 +132,21 @@ export const getServerSideProps = (async (
   if (context.query.history) {
     history = `/${(context.query.history as string[]).join("/")}`;
   }
-  const itemResponse: ItemResponse | ErrorResponse = await request(
-    session?.user
-  )
-    .get(`${process.env.BACKEND_ENDPOINT}/storage/item?path=${history}`)
-    .then((res: AxiosResponse<ItemResponse>) => {
-      return res.data;
-    })
-    .catch((err: AxiosError<{ error: string }>) => {
-      const error: ErrorResponse = {
-        status: err.status ?? 400,
-        msg: err.response?.data.error ?? "Unknown Error",
-      };
-
-      return error;
-    });
+  const itemResponse = await response<ItemResponse>(
+    request(session?.user).get(
+      `${process.env.BACKEND_ENDPOINT}/storage/item?path=${history}`
+    )
+  );
 
   // admin check
-  const adminCheckResponse = await request(session?.user)
-    .get(`${process.env.BACKEND_ENDPOINT}/admin/check`)
-    .then((res: AxiosResponse<AdminCheckResponse>) => {
-      return res.data;
-    })
-    .catch((err: AxiosError<{ error: string }>) => {
-      const error: ErrorResponse = {
-        status: err.status ?? 400,
-        msg: err.response?.data.error ?? "Unknown Error",
-      };
-      return error;
-    });
+  const adminCheckResponse = await response<AdminCheckResponse>(
+    request(session?.user).get(`${process.env.BACKEND_ENDPOINT}/admin/check`)
+  );
 
   return {
     props: {
-      initItems: { ...itemResponse },
-      isAdmin: { ...adminCheckResponse },
+      initItems: { ...(itemResponse.body as ItemResponse) },
+      isAdmin: { ...(adminCheckResponse.body as AdminCheckResponse) },
     },
   };
 }) satisfies GetServerSideProps<StoragePageProps | ErrorResponse>;

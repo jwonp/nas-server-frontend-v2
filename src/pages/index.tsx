@@ -1,20 +1,20 @@
 import { Inter } from "next/font/google";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 
 import { signIn, useSession } from "next-auth/react";
-import Header from "@/components/Header/Header";
+
 import { useRouter } from "next/router";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import {
   GetServerSidePropsContext,
   GetServerSideProps,
   InferGetServerSidePropsType,
 } from "next";
 import { dumySession } from "./api/auth/[...nextauth]";
-import { request } from "@/utils/request";
+import { request, response } from "@/utils/request";
 import { decryptObject, encryptCredentials } from "@/utils/crypto";
 import { UserCredentials } from "@/types/UserCredentials";
-import { ErrorResponse, SuccessResponse } from "@/types/Responses";
+import { ErrorResponse } from "@/types/Responses";
 
 const inter = Inter({ subsets: ["latin"] });
 type Guest = {
@@ -51,7 +51,7 @@ export default function Home(
           <div className="mx-auto w-full  bg-slate-800 py-10 rounded-xl">
             {status === "unauthenticated" &&
               !router.query.code &&
-              (props as ErrorResponse).msg !== undefined && (
+              (props as ErrorResponse).body.msg !== undefined && (
                 <>
                   <p className="text-white text-xl text-center font-bold mb-2">
                     환영합니다.
@@ -62,7 +62,7 @@ export default function Home(
                 </>
               )}
             {status === "unauthenticated" &&
-              (props as ErrorResponse).msg === undefined && (
+              (props as ErrorResponse).body.msg === undefined && (
                 <>
                   <p className="text-white text-xl text-center font-bold mb-2">{`${
                     (props as { userDetail: string; name: string }).name
@@ -123,7 +123,11 @@ export const getServerSideProps = (async (
 ) => {
   const code = context.query.code as string;
   if (!code) {
-    return { props: { status: 201, msg: "No code" } };
+    const error: ErrorResponse = {
+      status: 201,
+      body: { msg: "No code" },
+    };
+    return { props: error };
   }
   console.log(decodeURIComponent(code));
   const decryptedObject = decryptObject(code) as UserCredentials & {
@@ -133,42 +137,36 @@ export const getServerSideProps = (async (
   console.log(decryptedObject);
   //
   if (!decryptedObject.expireIn || !decryptedObject.admin) {
-    return { props: { status: 400, msg: "Invaild code" } };
+    const error: ErrorResponse = {
+      status: 400,
+      body: { msg: "Invaild code" },
+    };
+    return { props: error };
   }
   const { admin, expireIn, ...userCredentials } = decryptedObject;
 
   if (expireIn < Date.now()) {
-    return { props: { status: 400, msg: "Expired code" } };
+    const error: ErrorResponse = {
+      status: 400,
+      body: { msg: "Expired code" },
+    };
+    return { props: error };
   }
   const encryptedCredentials = await encryptCredentials(userCredentials);
 
-  const result = await request(dumySession)
-    .post(`/user/account/temporary`, {
+  const result = await response<{ userDetail: string }>(
+    request(dumySession).post(`/user/account/temporary`, {
       credentials: encryptedCredentials,
       admin: admin,
       expireIn: expireIn,
     })
-    .then((res) => {
-      return {
-        status: res.status,
-        data: {
-          userDetail: res.data?.userDetail,
-          name: userCredentials.name,
-        },
-      };
-    })
-    .catch((err: AxiosError) => {
-      return err.response?.data as ErrorResponse;
-    });
-  const responseData =
-    result.status / 100 < 4
-      ? ((result as SuccessResponse).data as {
-          userDetail: string;
-          name: string;
-        })
-      : (result as ErrorResponse);
-  console.log(responseData);
+  );
+  const guest: Guest = {
+    userDetail: (result.body as { userDetail: string }).userDetail,
+    name: userCredentials.name,
+  };
+
   return {
-    props: responseData,
+    props: guest,
   };
 }) satisfies GetServerSideProps<Guest | ErrorResponse>;

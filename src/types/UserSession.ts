@@ -5,4 +5,6 @@ export interface UserSession {
   icon: string;
   image: string;
   phone: string;
+  admin?: string;
+  expireIn?: number;
 }
