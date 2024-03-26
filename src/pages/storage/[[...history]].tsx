@@ -56,9 +56,7 @@ const StoragePage = ({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query]);
-  useEffect(() => {
-    console.log(ItemQuery.data);
-  }, [ItemQuery]);
+
   return (
     <div className="mx-auto w-full max-w-[1440px] min-w-[360px]">
       <div className="w-full h-full min-w-[360px] max-w-[1440px]">

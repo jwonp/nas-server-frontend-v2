@@ -1,5 +1,5 @@
 import { UserCredentials } from "@/types/UserCredentials";
-import { decryptObject, encryptObject } from "@/utils/crypto";
+import {  encryptObject } from "@/utils/crypto";
 
 import axios, { AxiosResponse } from "axios";
 import { useRef, useState } from "react";
