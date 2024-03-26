@@ -9,7 +9,7 @@ import ListColumnBar from "@/components/Storage/FileList/ListBar/FileListColumnB
 import NofilesAlert from "../Exception/NofilesAlert";
 type FileListContainerProps = {
   isLoading: boolean;
-  initItems: ItemResponse | ErrorResponse;
+  // initItems: ItemResponse | ErrorResponse;
   data: ItemResponse | ErrorResponse | undefined;
   userId: string;
   directory: string;
@@ -17,7 +17,7 @@ type FileListContainerProps = {
 const FilelistContainer = ({
   isLoading,
   data,
-  initItems,
+  // initItems,
   userId,
   directory,
 }: FileListContainerProps) => {
@@ -25,18 +25,21 @@ const FilelistContainer = ({
     undefined
   );
   useEffect(() => {
-    const isExistInitItem = initItems !== undefined;
+    // const isExistInitItem = initItems !== undefined;
     const isItemQueryGotItems = data !== undefined;
-
-    if (isExistInitItem === true && isItemQueryGotItems === false) {
-      return setItems(() => initItems);
-    }
+    console.log(data);
+    // if (isExistInitItem === true && isItemQueryGotItems === false) {
+    //   return setItems(() => initItems);
+    // }
     if (isItemQueryGotItems === true) {
       return setItems(() => data);
     }
 
     return setItems(() => undefined);
-  }, [initItems, data]);
+  }, [
+    // initItems,
+    data,
+  ]);
   const ItemElements = useMemo(() => {
     if (isLoading) {
       return <LoadingFiles />;
@@ -44,9 +47,9 @@ const FilelistContainer = ({
     if (data === undefined) {
       return <LoadingErrorAlert />;
     }
-    if (Object.keys(initItems).includes(ERROR_RESPONSE.msg)) {
-      return <InvaildDirectoryAlert />;
-    }
+    // if (Object.keys(initItems).includes(ERROR_RESPONSE.msg)) {
+    //   return <InvaildDirectoryAlert />;
+    // }
     if (items === undefined) {
       return <NofilesAlert />;
     }
@@ -57,7 +60,14 @@ const FilelistContainer = ({
         directory={directory}
       />
     );
-  }, [isLoading, data, initItems, directory, userId, items]);
+  }, [
+    isLoading,
+    data,
+    //  initItems,
+    directory,
+    userId,
+    items,
+  ]);
   return (
     <>
       <ListColumnBar />

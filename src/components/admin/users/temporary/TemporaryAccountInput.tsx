@@ -93,7 +93,7 @@ const TemporaryAccountInput = () => {
         icon: iconUrl,
         expireIn: Number($expireIn.current.value),
       };
-      console.log(credentials);
+
 
       const encryptedCredentials = encryptObject(credentials);
       if (!encryptedCredentials) {
@@ -101,8 +101,6 @@ const TemporaryAccountInput = () => {
         return;
       }
       addTemporaryAccount.mutate(encryptedCredentials);
-      console.log(encryptedCredentials);
-      console.log(decryptObject(encryptedCredentials as string));
     }
   };
   return (

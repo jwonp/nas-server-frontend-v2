@@ -5,6 +5,7 @@ import {
   ItemResponse,
   ErrorResponse,
   AdminCheckResponse,
+  SuccessResponse,
 } from "@/types/Responses";
 
 import {
@@ -27,12 +28,12 @@ import { useSession } from "next-auth/react";
 import ShareModal from "@/components/Storage/Modal/ShareModal";
 import Link from "next/link";
 type StoragePageProps = {
-  initItems: ItemResponse | ErrorResponse;
+  // initItems: ItemResponse | ErrorResponse;
   isAdmin: AdminCheckResponse | ErrorResponse;
 };
 // ItemQuery.data -> itemList -> itemElements => render
 const StoragePage = ({
-  initItems,
+  // initItems,
   isAdmin,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
@@ -40,17 +41,12 @@ const StoragePage = ({
   const queryClient = useQueryClient();
   const { data: session } = useSession();
 
-  const ItemQuery = useQuery<ItemResponse | ErrorResponse>({
+  const ItemQuery = useQuery<ItemResponse>({
     queryKey: ["item", { path: directory }],
     queryFn: () =>
-      axios
-        .get(`/api/storage/item/${directory}`)
-        .then((res: AxiosResponse<ItemResponse>) => res.data)
-        .catch(
-          (err: AxiosError<ErrorResponse>) =>
-            err.response?.data as ErrorResponse
-        ),
+      axios.get(`/api/storage/item/${directory}`).then((res) => res.data),
     throwOnError: false,
+    retry: 5,
     refetchInterval: false,
   });
 
@@ -60,7 +56,9 @@ const StoragePage = ({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query]);
-
+  useEffect(() => {
+    console.log(ItemQuery.data);
+  }, [ItemQuery]);
   return (
     <div className="mx-auto w-full max-w-[1440px] min-w-[360px]">
       <div className="w-full h-full min-w-[360px] max-w-[1440px]">
@@ -82,10 +80,10 @@ const StoragePage = ({
           <div className="col-span-10 max-md:col-span-9">
             <DirectoryHistory
               rowHistories={(router.query.history as string[]) ?? []}
-              initHistories={(initItems as ItemResponse)?.histories}
+              // initHistories={(initItems as ItemResponse)?.histories}
               histories={(ItemQuery.data as ItemResponse)?.histories}
               isLoading={ItemQuery.isLoading}
-              items={(initItems as ItemResponse)?.items}
+              items={(ItemQuery.data as ItemResponse)?.items}
             />
           </div>
           <div className="col-span-2 max-md:col-span-3">
@@ -97,8 +95,8 @@ const StoragePage = ({
 
         <FilelistContainer
           isLoading={ItemQuery.isLoading}
-          initItems={initItems as ItemResponse}
-          data={ItemQuery.data}
+          // initItems={initItems as ItemResponse}
+          data={ItemQuery.data as ItemResponse}
           userId={session?.user.id}
           directory={directory}
         />
@@ -121,22 +119,22 @@ export const getServerSideProps = (async (
   if (!session || !session.user) {
     return {
       props: {
-        initItems: { status: 403, body: { msg: "Unauthorized" } },
+        // initItems: { status: 403, body: { msg: "Unauthorized" } },
         isAdmin: { status: 403, body: { msg: "Unauthorized" } },
       },
     };
   }
   // init items
-  let history = "/";
+  // let history = "/";
 
-  if (context.query.history) {
-    history = `/${(context.query.history as string[]).join("/")}`;
-  }
-  const itemResponse = await response<ItemResponse>(
-    request(session?.user).get(
-      `${process.env.BACKEND_ENDPOINT}/storage/item?path=${history}`
-    )
-  );
+  // if (context.query.history) {
+  //   history = `/${(context.query.history as string[]).join("/")}`;
+  // }
+  // const itemResponse = await response<ItemResponse>(
+  //   request(session?.user).get(
+  //     `${process.env.BACKEND_ENDPOINT}/storage/item?path=${history}`
+  //   )
+  // );
 
   // admin check
   const adminCheckResponse = await response<AdminCheckResponse>(
@@ -145,7 +143,7 @@ export const getServerSideProps = (async (
 
   return {
     props: {
-      initItems: { ...(itemResponse.body as ItemResponse) },
+      // initItems: { ...(itemResponse.body as ItemResponse) },
       isAdmin: { ...(adminCheckResponse.body as AdminCheckResponse) },
     },
   };

@@ -25,7 +25,7 @@ import { Nullable, getFileArrayByFileList } from "@/utils/handleS3";
 import ProgressSnackBar from "@/components/Storage/SnackBar/ProgressSnackBar";
 import { useAppDispatch } from "@/redux/hooks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios from "axios";
 import { MetaData } from "@/types/MetaData";
 import {
   resetFileAmount,
