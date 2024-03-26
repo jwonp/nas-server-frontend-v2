@@ -51,7 +51,7 @@ export default function Home(
           <div className="mx-auto w-full  bg-slate-800 py-10 rounded-xl">
             {status === "unauthenticated" &&
               !router.query.code &&
-              (props as ErrorResponse).body.msg !== undefined && (
+              (props as ErrorResponse).body?.msg !== undefined && (
                 <>
                   <p className="text-white text-xl text-center font-bold mb-2">
                     환영합니다.
@@ -62,7 +62,7 @@ export default function Home(
                 </>
               )}
             {status === "unauthenticated" &&
-              (props as ErrorResponse).body.msg === undefined && (
+              (props as ErrorResponse).body?.msg === undefined && (
                 <>
                   <p className="text-white text-xl text-center font-bold mb-2">{`${
                     (props as { userDetail: string; name: string }).name
