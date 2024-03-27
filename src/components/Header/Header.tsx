@@ -38,7 +38,7 @@ const Header = ({ isInvisibleSideBarButton }: HeaderProps) => {
       axios
         .get(`/api/storage/download?key=${session?.user.image}`)
         .then((response) => response.data),
-    enabled: session?.user.image ? true : false,
+    enabled: session?.user.image.length > 0 ? true : false,
     staleTime: Infinity,
     throwOnError: false,
     retry: 1,

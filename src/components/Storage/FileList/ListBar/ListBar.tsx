@@ -71,12 +71,13 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
       axios
         .get(`/api/storage/download?key=${metas.ownerImage}`)
         .then((res) => res.data),
+    enabled: typeof metas.ownerImage === "string" ? true : false,
     staleTime: Infinity,
     throwOnError: false,
     retry: 1,
-    retryOnMount:false,
-    refetchOnMount:false,
-    refetchOnWindowFocus:false,
+    retryOnMount: false,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     refetchInterval: false,
   });
 
