@@ -8,17 +8,17 @@ import Link from "next/link";
 import { useMemo } from "react";
 type DirectoryHistoryProps = {
   rowHistories: string[];
-  initHistories?: DisplayHistory[];
-  histories?: DisplayHistory[];
-  isOnError?: boolean;
 
-  isLoading: boolean;
+  histories?: DisplayHistory[];
+  isOnError: boolean;
+
+  
 };
 const DirectoryHistory = ({
   rowHistories,
-  initHistories,
+
   histories,
-  isLoading,
+  
   isOnError,
 }: DirectoryHistoryProps) => {
   const createDisplayHistoryMap = (historyData: DisplayHistory[]) => {
@@ -65,15 +65,9 @@ const DirectoryHistory = ({
   const historyBlocks = useMemo(() => {
     const isRootDirectory = !rowHistories || rowHistories.length === 0;
     const isNoHistories = histories === undefined;
-    const isNoInitHistories = initHistories === undefined;
+
     if (isOnError) {
       return <div>{HISTORY_BLOCKS_FAIL_TO_LOAD_HISTORIES}</div>;
-    }
-
-    if (isLoading === true && isNoInitHistories === false) {
-      const displayHistoryMap = createDisplayHistoryMap(initHistories);
-      const displayHistories = matchHistory(rowHistories, displayHistoryMap);
-      return generateHistoryBlock(displayHistories);
     }
 
     if (isRootDirectory || isNoHistories) {

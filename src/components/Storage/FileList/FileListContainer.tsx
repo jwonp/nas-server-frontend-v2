@@ -26,11 +26,11 @@ const FilelistContainer = ({
     if (isLoading) {
       return <LoadingFiles />;
     }
-    if (isOnError) {
-      return <LoadingErrorAlert />;
-    }
     if (isInvalidDirectory) {
       return <InvaildDirectoryAlert />;
+    }
+    if (isOnError) {
+      return <LoadingErrorAlert />;
     }
     if (items === undefined) {
       return <NofilesAlert />;

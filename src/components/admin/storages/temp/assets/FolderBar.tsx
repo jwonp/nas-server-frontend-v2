@@ -1,7 +1,7 @@
 import RightIcon from "@public/icons/right-white.svg";
 import FolderIcon from "@public/icons/folder.png";
 import CheckedIcon from "@public/icons/checked-white.svg";
-import {  useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { ItemBarProps } from "./utils";
 type FolderBarProps = { children: React.ReactNode } & ItemBarProps;

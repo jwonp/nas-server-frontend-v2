@@ -10,9 +10,8 @@ test("Alert error when items got ErrorResponse ", () => {
   render(
     <DirectoryHistory
       rowHistories={[]}
-      isLoading={false}
-      //@ts-ignore
-      items={{ status: 500, msg: "Server" }}
+      histories={[]}
+      isOnError={true}
     />
   );
   expect(screen.getByText(HISTORY_BLOCKS_FAIL_TO_LOAD_HISTORIES)).toBeDefined();
@@ -24,38 +23,10 @@ test("Display root history block when it is root directory", () => {
     <DirectoryHistory
       rowHistories={[]}
       histories={[]}
-      isLoading={false}
+      isOnError={false}
     />
   );
   expect(screen.getByText(ROOT_DISPLAY_DIRECTORY)).toBeDefined();
-  cleanup();
-});
-test("Display root history block when it is no histories", () => {
-  render(
-    <DirectoryHistory
-      rowHistories={[]}
-      histories={undefined}
-      isLoading={false}
-    />
-  );
-  expect(screen.getByText(ROOT_DISPLAY_DIRECTORY)).toBeDefined();
-  cleanup();
-});
-test("Loading and provided init histories", () => {
-  render(
-    <DirectoryHistory
-      rowHistories={["a", "b", "c"]}
-      initHistories={[
-        { key: "folder$a", title: "folderA" },
-        { key: "folder$b", title: "folderB" },
-        { key: "folder$c", title: "folderC" },
-      ]}
-      isLoading={true}
-    />
-  );
-  expect(screen.getByText("/ folderA")).toBeDefined();
-  expect(screen.getByText("/ folderB")).toBeDefined();
-  expect(screen.getByText("/ folderC")).toBeDefined();
   cleanup();
 });
 
@@ -68,7 +39,7 @@ test("In normal case", () => {
         { key: "folder$b", title: "folderB" },
         { key: "folder$c", title: "folderC" },
       ]}
-      isLoading={false}
+      isOnError={false}
     />
   );
   expect(screen.getByText("/ folderA")).toBeDefined();

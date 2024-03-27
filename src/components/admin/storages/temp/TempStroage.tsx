@@ -48,7 +48,6 @@ const TempStorage = () => {
   const [selectedDirectory, setSelectedDirectory] = useState<string>("/");
   const [selectedItem, setSelectedItem] = useState<string>("");
   const [editedFileName, setEditedFileName] = useState<string>("");
-
   const [items, setItems] = useState<TempFileItem[]>([]);
   const [itemTree, setItemTree] = useState<DirectoryItems>({ root: {} });
   const tempMetasQuery = useQuery<
@@ -170,10 +169,10 @@ const TempStorage = () => {
     const value = 1;
     const rootItemTreeEntires = Object.entries(itemTree);
     if (rootItemTreeEntires[0][key] !== "root") {
-      return <p>error</p>;
+      return <p>파일 탐색기를 생성할 수 없습니다.</p>;
     }
     if (rootItemTreeEntires[0][value] === undefined) {
-      return <p>empty</p>;
+      return <p>파일 탐색기가 비어있습니다.</p>;
     }
     const itemTreeEntires = Object.entries(rootItemTreeEntires[0][value]);
     return (
@@ -185,7 +184,8 @@ const TempStorage = () => {
         handleClickFolderBar={handleClickFolderBar}
       />
     );
-  }, [itemTree, items, selectedItem]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemTree, selectedItem]);
   const handleClickSaveButton = async () => {
     const { tempMetas } = tempMetasQuery.data?.body as TempMetaResponse;
     const savedItems = items.filter((item) => item.isSaved === true);
@@ -333,10 +333,9 @@ const TempStorage = () => {
 
   const handleClickDeleteItems = () => {
     const target = items.find((item) => {
-      console.log(item.key, selectedItem.split("%")[2]);
       return item.key === selectedItem.split("%")[2];
     });
-    console.log(target);
+
     if (!target) {
       return;
     }
@@ -443,7 +442,6 @@ const TempStorage = () => {
         <figure
           className="flex w-full border-r-2"
           onClick={(e) => {
-            console.log(e.target);
             if ($input.current) {
               $input.current.click();
             }

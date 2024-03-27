@@ -61,6 +61,9 @@ export const isSameStringArrayRegardlessOfOrder = (
   array: string[],
   compareTo: string[]
 ) => {
+  if (array.length === 0) {
+    return false;
+  }
   const isSame = array.every((el) => compareTo.includes(el));
   return isSame;
 };
@@ -68,18 +71,39 @@ export const isSameStringArrayRegardlessOfOrder = (
 export const isFile = (
   item: TempFileItem | { [key: string]: TempFileItem | DirectoryItems }
 ) => {
-  const tempItem: TempFileItem = {
+  const tempItemSaved: TempFileItem = {
     directory: "",
     fileName: "",
     ownerId: "",
     key: "",
-    type: "folder",
+    type: "file",
     size: 0,
+    isSaved: false,
   };
-  return isSameStringArrayRegardlessOfOrder(
-    Object.keys(item),
-    Object.keys(tempItem)
+  const tempItemNotSaved: TempFileItem = {
+    directory: "",
+    fileName: "",
+    ownerId: "",
+    key: "",
+    type: "file",
+    size: 0,
+    isSaved: false,
+    originFile: new File([], ""),
+  };
+  const itemKeys = Object.keys(item);
+  const tempItemSavedKeys = Object.keys(tempItemSaved);
+  const tempItemNotSavedKey = Object.keys(tempItemNotSaved);
+  const isSavedFile = isSameStringArrayRegardlessOfOrder(
+    itemKeys,
+    tempItemSavedKeys
   );
+  const isNotSavedFile = isSameStringArrayRegardlessOfOrder(
+    itemKeys,
+    tempItemNotSavedKey
+  );
+  const isFile = isSavedFile || isNotSavedFile;
+
+  return isFile;
 };
 const addNode = (
   tree: DirectoryItems,
@@ -87,6 +111,7 @@ const addNode = (
   item: TempFileItem
 ): DirectoryItems => {
   const node = dirs[0];
+
   if (dirs[0] === "") {
     if (item.type === "folder") {
       const returnTree = addProperty(tree, item.key, {});
@@ -119,11 +144,13 @@ export const updateItemTree = (
 
   tempItems.forEach((item) => {
     const [_, ...dirs] = item.directory.split("/");
+
     const nextTree = tempTree["root"] as {
       [key: string]: TempFileItem | DirectoryItems;
     };
     tempTree["root"] = addNode(nextTree, dirs, item);
   });
+
   return tempTree;
 };
 

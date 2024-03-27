@@ -126,7 +126,7 @@ const StoragePage = ({
             <DirectoryHistory
               rowHistories={(router.query.history as string[]) ?? []}
               histories={histories}
-              isLoading={ItemQuery.isLoading}
+              
               isOnError={ItemQuery.isError}
             />
           </div>

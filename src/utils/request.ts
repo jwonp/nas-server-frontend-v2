@@ -35,6 +35,6 @@ export const response = async <T = any, D = any>(
       };
       return errorResponse;
     });
-  console.log(res);
+
   return res;
 };
