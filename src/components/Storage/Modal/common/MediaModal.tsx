@@ -20,9 +20,9 @@ const MediaModal = ({ isVisibleMedia, children }: MediaModalProps) => {
     );
   }
   return (
-    <div className="fixed flex top-0 left-0 w-screen h-screen">
+    <section className="fixed flex top-0 left-0 w-screen h-screen">
       <div className="fixed flex z-0 top-0 left-0 w-screen h-screen bg-slate-950 media-can-load:bg-emerald-400 media-can-play:bg-orange-500 opacity-45 " />
-      <div className="my-auto w-full h-full px-10  z-40 relative">
+      <div className="flex my-auto w-full h-full px-10  z-40 relative">
         <figure
           className="flex cursor-pointer absolute right-0"
           onClick={() => {
@@ -36,9 +36,9 @@ const MediaModal = ({ isVisibleMedia, children }: MediaModalProps) => {
             height={30}
           />
         </figure>
-        {children}
+        <figure className="flex w-full my-auto">{children}</figure>
       </div>
-    </div>
+    </section>
   );
 };
 export default MediaModal;

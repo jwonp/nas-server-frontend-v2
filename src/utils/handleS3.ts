@@ -128,6 +128,7 @@ export const uploadFilesToS3ByFileList = async (
     .map((file) => file.size)
     .reduce((acc, cur) => acc + cur, 0);
   if (volume.now + totalFileSize > volume.max) {
+    console.log(totalFileSize);
     return;
   }
   const storedMetas = new Promise<Nullable<Omit<MetaData, "isFavorite">>[]>(

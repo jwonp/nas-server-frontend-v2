@@ -39,7 +39,10 @@ const Header = ({ isInvisibleSideBarButton }: HeaderProps) => {
         .get(`/api/storage/download?key=${session?.user.image}`)
         .then((response) => response.data),
     enabled: session?.user.image ? true : false,
-    refetchInterval:false
+    staleTime: Infinity,
+    throwOnError: false,
+    retry: 5,
+    refetchInterval: false,
   });
   const userIcon = useMemo(() => {
     if (isLoading && !data) {

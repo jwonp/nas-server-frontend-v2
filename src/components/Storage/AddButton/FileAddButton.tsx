@@ -87,6 +87,7 @@ const FileAddButton = ({
     }
     dispatch(resetProgressPercent());
     dispatch(resetFileAmount());
+    
     addMetas.mutate(filterdMetas);
     if ($fileUploadInput.current) {
       $fileUploadInput.current.value = "";

@@ -22,7 +22,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useDirectory } from "@/hooks/useDirectory.hook";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import WarningSnackBar from "@/components/Storage/SnackBar/WarningSnackBar";
 import ProgressSnackBar from "@/components/Storage/SnackBar/ProgressSnackBar";
 

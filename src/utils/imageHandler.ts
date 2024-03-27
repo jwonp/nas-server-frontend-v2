@@ -1,28 +1,5 @@
 import { Size } from "@/types/ComponentTypes";
 
-
-export const getWindowWidth = (mainWrapper: HTMLElement): number => {
-  try {
-    const paddingWidth =
-      Number(
-        window
-          .getComputedStyle(mainWrapper, null)
-          .getPropertyValue("padding")
-          .split("px")[0]
-      ) * 2;
-    const paddingHeight =
-      Number(
-        window
-          .getComputedStyle(mainWrapper, null)
-          .getPropertyValue("padding")
-          .split("px")[0]
-      ) * 2;
-
-    return mainWrapper.offsetWidth - paddingWidth;
-  } catch {
-    return 0;
-  }
-};
 export const getNaturalImageSize = (img: HTMLImageElement): Size => {
   const size: Size = { width: img.naturalWidth, height: img.naturalHeight };
   return size;
@@ -30,13 +7,31 @@ export const getNaturalImageSize = (img: HTMLImageElement): Size => {
 
 export const getResizedImageSize = (
   naturalSize: Size,
-  windowWidth: number
+  windowSize: Size
 ): Size => {
-  if (naturalSize.width <= windowWidth) {
-    return { width: naturalSize.width, height: naturalSize.height };
+  const naturalWidth = naturalSize.width;
+  const naturalHeight = naturalSize.height;
+  const windowWidth = windowSize.width;
+  const windowHeight = windowSize.height;
+  console.log(naturalWidth, naturalHeight, windowWidth, windowHeight);
+  if (
+    naturalSize.width >= naturalSize.height &&
+    windowSize.width < windowSize.height
+  ) {
+    const ratio = Math.floor(windowWidth / naturalWidth);
+    console.log(ratio);
+    const imgSize: Size = {
+      width: naturalWidth * ratio,
+      height: naturalHeight * ratio,
+    };
+    return imgSize;
   }
-  const rate = windowWidth / naturalSize.width;
 
-  return { width: windowWidth, height: naturalSize.height * rate };
+  const ratio = Math.floor(windowHeight / naturalHeight);
+  console.log(ratio);
+  const imgSize: Size = {
+    width: naturalWidth * ratio,
+    height: naturalHeight * ratio,
+  };
+  return imgSize;
 };
-

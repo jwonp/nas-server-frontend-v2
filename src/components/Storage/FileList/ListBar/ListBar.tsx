@@ -54,6 +54,7 @@ const FileTypeIconSize = 40;
 const ButtonIconSize = 28;
 const WIDTH_ON_LG = 767;
 const ListBar = ({ directory, userId, metas }: ListBarType) => {
+  const dispatch = useAppDispatch();
   const $listBar = useRef<HTMLDivElement>(null);
   const [ref, hovering] = useHover();
   const queryClient = useQueryClient();
@@ -70,7 +71,9 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
       axios
         .get(`/api/storage/download?key=${metas.ownerImage}`)
         .then((res) => res.data),
-    enabled: metas.ownerImage ? true : false,
+    staleTime: Infinity,
+    throwOnError: false,
+    retry: 5,
     refetchInterval: false,
   });
 
