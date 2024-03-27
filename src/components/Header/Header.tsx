@@ -41,7 +41,7 @@ const Header = ({ isInvisibleSideBarButton }: HeaderProps) => {
     enabled: session?.user.image ? true : false,
     staleTime: Infinity,
     throwOnError: false,
-    retry: 5,
+    retry: 1,
     refetchInterval: false,
   });
   const userIcon = useMemo(() => {

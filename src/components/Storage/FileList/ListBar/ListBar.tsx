@@ -73,7 +73,7 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
         .then((res) => res.data),
     staleTime: Infinity,
     throwOnError: false,
-    retry: 5,
+    retry: 1,
     refetchInterval: false,
   });
 
