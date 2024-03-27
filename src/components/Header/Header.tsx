@@ -42,6 +42,9 @@ const Header = ({ isInvisibleSideBarButton }: HeaderProps) => {
     staleTime: Infinity,
     throwOnError: false,
     retry: 1,
+    retryOnMount: false,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     refetchInterval: false,
   });
   const userIcon = useMemo(() => {

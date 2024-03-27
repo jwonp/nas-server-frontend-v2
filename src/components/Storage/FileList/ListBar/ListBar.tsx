@@ -74,6 +74,9 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
     staleTime: Infinity,
     throwOnError: false,
     retry: 1,
+    retryOnMount:false,
+    refetchOnMount:false,
+    refetchOnWindowFocus:false,
     refetchInterval: false,
   });
 
