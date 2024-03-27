@@ -1,4 +1,3 @@
-//temp file
 import Image from "next/image";
 import AddFileIcon from "@public/icons/addFile.png";
 import AddFolderIcon from "@public/icons/addFolder.png";

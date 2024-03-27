@@ -35,12 +35,10 @@ import { DisplayHistory, Item } from "@/types/ComponentTypes";
 import VideoPlayerModal from "@/components/Storage/Modal/MediaModal/Video/VideoPlayerModal";
 import ImageViewerModal from "@/components/Storage/Modal/MediaModal/Image/ImageViewerModal";
 type StoragePageProps = {
-  // initItems: ItemResponse | ErrorResponse;
   isAdmin: AdminCheckResponse | ErrorResponse;
 };
 // ItemQuery.data -> itemList -> itemElements => render
 const StoragePage = ({
-  // initItems,
   isAdmin,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
@@ -127,7 +125,6 @@ const StoragePage = ({
           <div className="col-span-10 max-md:col-span-9">
             <DirectoryHistory
               rowHistories={(router.query.history as string[]) ?? []}
-              // initHistories={(initItems as ItemResponse)?.histories}
               histories={histories}
               isLoading={ItemQuery.isLoading}
               isOnError={ItemQuery.isError}
@@ -144,8 +141,6 @@ const StoragePage = ({
 
         <FilelistContainer
           isLoading={ItemQuery.isLoading}
-          // initItems={initItems as ItemResponse}
-          // data={ItemQuery.data as ItemResponse}
           userId={session?.user.id}
           directory={directory}
           isOnError={ItemQuery.isError}
@@ -175,22 +170,10 @@ export const getServerSideProps = (async (
   if (!session || !session.user) {
     return {
       props: {
-        // initItems: { status: 403, body: { msg: "Unauthorized" } },
         isAdmin: { status: 403, body: { msg: "Unauthorized" } },
       },
     };
   }
-  // init items
-  // let history = "/";
-
-  // if (context.query.history) {
-  //   history = `/${(context.query.history as string[]).join("/")}`;
-  // }
-  // const itemResponse = await response<ItemResponse>(
-  //   request(session?.user).get(
-  //     `${process.env.BACKEND_ENDPOINT}/storage/item?path=${history}`
-  //   )
-  // );
 
   // admin check
   const adminCheckResponse = await response<AdminCheckResponse>(
@@ -199,7 +182,6 @@ export const getServerSideProps = (async (
 
   return {
     props: {
-      // initItems: { ...(itemResponse.body as ItemResponse) },
       isAdmin: { ...(adminCheckResponse.body as AdminCheckResponse) },
     },
   };

@@ -1,8 +1,7 @@
-import { ParsedUrlQuery } from "querystring";
 import NavigatorSelectbutton, {
   NavigatorSelectbuttonProps,
 } from "@/components/admin/Navigator/assets/NavigatorSelectbutton";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
 type AdminPageNavigatorProps = {
   path: string[];

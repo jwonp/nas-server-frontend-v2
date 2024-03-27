@@ -3,7 +3,6 @@ import { useEffect } from "react";
 
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { AxiosError } from "axios";
 import {
   GetServerSidePropsContext,
   GetServerSideProps,

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { ErrorResponse, TemporaryAccountResponse } from "@/types/Responses";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, {  AxiosResponse } from "axios";
 import TemporaryAccountListBar from "@/components/admin/users/temporary/TemporaryAccountListBar";
 import { useMemo } from "react";
 
