@@ -1,5 +1,5 @@
 import { UserCredentials } from "@/types/UserCredentials";
-import { decryptObject, encryptObject } from "@/utils/crypto";
+import {  encryptObject } from "@/utils/crypto";
 
 import axios, { AxiosResponse } from "axios";
 import { useRef, useState } from "react";
@@ -36,8 +36,29 @@ const TemporaryAccountInput = () => {
         )
         .catch(() => ""),
     onSuccess: (data) => {
-      window.navigator.clipboard.writeText(data);
+      const isExistRefs =
+        $name.current &&
+        $domain.current &&
+        $password.current &&
+        $phone.current &&
+        $expireIn.current &&
+        $icon.current;
+      window.navigator.clipboard.writeText(
+        `${
+          process.env.NEXT_PUBLIC_FRONTEND_ENDPOINT
+        }/?code=${encodeURIComponent(data)}`
+      );
       queryClient.invalidateQueries({ queryKey: ["temporary", "users"] });
+
+      if (!isExistRefs) {
+        return;
+      }
+      $name.current.value = "";
+      $domain.current.value = "";
+      $password.current.value = "";
+      $phone.current.value = "";
+      $expireIn.current.value = "30";
+      $icon.current.value = "";
     },
   });
 
@@ -72,7 +93,7 @@ const TemporaryAccountInput = () => {
         icon: iconUrl,
         expireIn: Number($expireIn.current.value),
       };
-      console.log(credentials);
+
 
       const encryptedCredentials = encryptObject(credentials);
       if (!encryptedCredentials) {
@@ -80,8 +101,6 @@ const TemporaryAccountInput = () => {
         return;
       }
       addTemporaryAccount.mutate(encryptedCredentials);
-      console.log(encryptedCredentials);
-      console.log(decryptObject(encryptedCredentials as string));
     }
   };
   return (
@@ -198,7 +217,7 @@ const TemporaryAccountInput = () => {
             type="submit"
             className="ml-auto px-3 py-1 hover:bg-blue-500 bg-blue-600 rounded-lg h-10 ">
             <p className="text-center min-w-[84px]  text-white break-keep">
-              주소 복사
+              계정 코드 발급
             </p>
           </button>
         </div>

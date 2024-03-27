@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import S3 from "aws-sdk/clients/s3";
 import { randomUUID } from "crypto";
+import { type Error } from "@/types/Responses";
 
 const s3 = new S3({
   apiVersion: "latest",
@@ -15,7 +16,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  
   const fileType = req.query.fileType;
   const key = `icons/${randomUUID()}.${fileType}`;
   let responseData = {
@@ -31,8 +31,11 @@ export default async function handler(
     const uploadUrl = s3.getSignedUrl(`putObject`, params);
     responseData.key = key;
     responseData.uploadUrl = uploadUrl;
-  } catch (error) {
-    return res.status(500).json({ status: 500, msg: "Fail to upload icon" });
+  } catch (e) {
+    const error: Error = {
+      body: { msg: "Fail to upload icon" },
+    };
+    return res.status(500).json(error);
   }
 
   res.status(200).json(responseData);

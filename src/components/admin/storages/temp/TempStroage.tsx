@@ -25,13 +25,18 @@ import { Nullable, getFileArrayByFileList } from "@/utils/handleS3";
 import ProgressSnackBar from "@/components/Storage/SnackBar/ProgressSnackBar";
 import { useAppDispatch } from "@/redux/hooks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios from "axios";
 import { MetaData } from "@/types/MetaData";
 import {
   resetFileAmount,
   resetProgressPercent,
 } from "@/redux/featrues/fileLoadProgressSlice";
-import { ErrorResponse, TempMetaResponse } from "@/types/Responses";
+import {
+  ErrorResponse,
+  SuccessResponse,
+  TempMetaResponse,
+} from "@/types/Responses";
+import { response } from "@/utils/request";
 
 const ADD_ICON_SIZE = 36;
 
@@ -47,30 +52,20 @@ const TempStorage = () => {
 
   const [items, setItems] = useState<TempFileItem[]>([]);
   const [itemTree, setItemTree] = useState<DirectoryItems>({ root: {} });
-  const tempMetasQuery = useQuery<TempMetaResponse | ErrorResponse>({
+  const tempMetasQuery = useQuery<
+    SuccessResponse<TempMetaResponse> | ErrorResponse
+  >({
     queryKey: ["meta", "temp", "stoarges"],
     queryFn: () =>
-      axios
-        .get("/api/admin/storages/temp/meta")
-        .then((res: AxiosResponse<TempMetaResponse>) => res.data)
-        .catch(
-          (err: AxiosError<ErrorResponse>) =>
-            err.response?.data as ErrorResponse
-        ),
+      response<TempMetaResponse>(axios.get("/api/admin/storages/temp/meta")),
+
     refetchInterval: false,
   });
 
   const uploadTempFiles = useMutation({
     mutationFn: (metas: Nullable<Omit<MetaData, "isFavorite">>[]) =>
-      axios
-        .post("/api/admin/storages/temp/meta", { metas })
-        .then((res) => {
-          return { status: res.status, data: res.data };
-        })
-        .catch((err: AxiosError) => {
-          return { status: err.status ?? 400, msg: err.message };
-        }),
-    onSuccess: (data) => {
+      response(axios.post("/api/admin/storages/temp/meta", { metas })),
+    onSuccess: () => {
       progressDispatch(resetProgressPercent());
       progressDispatch(resetFileAmount());
       queryClient.invalidateQueries({ queryKey: ["meta", "temp", "stoarges"] });
@@ -79,30 +74,18 @@ const TempStorage = () => {
 
   const updateTempFiles = useMutation({
     mutationFn: (metas: (MetaData & { id: string })[]) =>
-      axios
-        .put("/api/admin/storages/temp/meta", { metas })
-        .then((res) => {
-          return { status: res.status, data: res.data };
-        })
-        .catch((err: AxiosError) => {
-          return { status: err.status ?? 400, msg: err.message };
-        }),
+      response(axios.put("/api/admin/storages/temp/meta", { metas })),
   });
   const deleteTempFiles = useMutation({
     mutationFn: (vars: {
       metas: (MetaData & { id: string })[];
       deletedItems: TempFileItem[];
     }) =>
-      axios
-        .delete("/api/admin/storages/temp/meta", {
+      response(
+        axios.delete("/api/admin/storages/temp/meta", {
           data: { metas: vars.metas },
         })
-        .then((res) => {
-          return { status: res.status, data: res.data };
-        })
-        .catch((err: AxiosError) => {
-          return { status: err.status ?? 400, msg: err.message };
-        }),
+      ),
   });
   const handleChangeFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -205,7 +188,7 @@ const TempStorage = () => {
     );
   }, [itemTree, items, selectedItem]);
   const handleClickSaveButton = async () => {
-    const { tempMetas } = tempMetasQuery.data as TempMetaResponse;
+    const { tempMetas } = tempMetasQuery.data?.body as TempMetaResponse;
     const savedItems = items.filter((item) => item.isSaved === true);
     const updatedItems = tempMetas
       .filter((meta) => {
@@ -327,7 +310,7 @@ const TempStorage = () => {
       return;
     }
     if (tempMetasQuery.isSuccess) {
-      const { tempMetas } = tempMetasQuery.data as TempMetaResponse;
+      const { tempMetas } = tempMetasQuery.data?.body as TempMetaResponse;
       const initItems = tempMetas.map<TempFileItem>((meta) => {
         const key =
           meta.type === "folder"
@@ -379,7 +362,7 @@ const TempStorage = () => {
       .map((item) => item.key);
 
     if (savedDeltedTargetItemKeys.length > 0) {
-      const { tempMetas } = tempMetasQuery.data as TempMetaResponse;
+      const { tempMetas } = tempMetasQuery.data?.body as TempMetaResponse;
       const targetDeleteMetas = tempMetas.filter((meta) => {
         const key =
           meta.type === "folder"
@@ -445,13 +428,6 @@ const TempStorage = () => {
             </div>
           </article>
           <article className="flex gap-3 p-4 select-none ml-auto">
-            <button
-              className="hover:bg-blue-500 bg-blue-600 w-30 h-10 my-auto px-3 rounded-lg"
-              onClick={() => {
-                console.log(items);
-              }}>
-              파일 확인
-            </button>
             <button
               className={`${
                 isNotAllowSave

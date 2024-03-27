@@ -12,11 +12,10 @@ const TemporaryAccountList = () => {
     queryFn: () =>
       axios
         .get("/api/admin/users/temporary")
-        .then((res: AxiosResponse<TemporaryAccountResponse>) => res.data)
-        .catch(
-          (err: AxiosError<ErrorResponse>) =>
-            err.response?.data as ErrorResponse
-        ),
+        .then((res: AxiosResponse<TemporaryAccountResponse>) => res.data),
+    staleTime: 24 * 60 * 60 * 1000,
+    refetchOnWindowFocus: "always",
+    refetchInterval: false,
   });
   const TemporaryAccountListBars = useMemo(() => {
     if (temporaryAccountQuery.isLoading) {

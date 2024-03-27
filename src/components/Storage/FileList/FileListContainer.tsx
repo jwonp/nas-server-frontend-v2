@@ -7,57 +7,66 @@ import LoadingFiles from "../Exception/LoadingFiles";
 import { ErrorResponse, ItemResponse } from "@/types/Responses";
 import ListColumnBar from "@/components/Storage/FileList/ListBar/FileListColumnBar";
 import NofilesAlert from "../Exception/NofilesAlert";
+import { DisplayHistory, Item } from "@/types/ComponentTypes";
 type FileListContainerProps = {
   isLoading: boolean;
-  initItems: ItemResponse | ErrorResponse;
-  data: ItemResponse | ErrorResponse | undefined;
+  isOnError: boolean;
+  isInvalidDirectory:boolean;
+  // initItems: ItemResponse | ErrorResponse;
+  // data: ItemResponse | ErrorResponse | undefined;
+  items: Item | undefined;
   userId: string;
   directory: string;
 };
 const FilelistContainer = ({
   isLoading,
-  data,
-  initItems,
+  isOnError,
+  isInvalidDirectory,
+  items,
+  // initItems,
   userId,
   directory,
 }: FileListContainerProps) => {
-  const [items, setItems] = useState<ItemResponse | ErrorResponse | undefined>(
-    undefined
-  );
-  useEffect(() => {
-    const isExistInitItem = initItems !== undefined;
-    const isItemQueryGotItems = data !== undefined;
+  // const [items, setItems] = useState<ItemResponse | ErrorResponse | undefined>(
+  //   undefined
+  // );
+  // useEffect(() => {
+  //   // const isExistInitItem = initItems !== undefined;
+  //   const isItemQueryGotItems = items !== undefined;
 
-    if (isExistInitItem === true && isItemQueryGotItems === false) {
-      return setItems(() => initItems);
-    }
-    if (isItemQueryGotItems === true) {
-      return setItems(() => data);
-    }
+  //   // if (isExistInitItem === true && isItemQueryGotItems === false) {
+  //   //   return setItems(() => initItems);
+  //   // }
+  //   if (isItemQueryGotItems === true) {
+  //     return setItems(() => data);
+  //   }
 
-    return setItems(() => undefined);
-  }, [initItems, data]);
+  //   return setItems(() => undefined);
+  // }, [
+  //   // initItems,
+  //   data,
+  // ]);
   const ItemElements = useMemo(() => {
     if (isLoading) {
       return <LoadingFiles />;
     }
-    if (data === undefined) {
+    if (isOnError) {
       return <LoadingErrorAlert />;
     }
-    if (Object.keys(initItems).includes(ERROR_RESPONSE.msg)) {
-      return <InvaildDirectoryAlert />;
-    }
+    // if (Object.keys(initItems).includes(ERROR_RESPONSE.msg)) {
+    //   return <InvaildDirectoryAlert />;
+    // }
     if (items === undefined) {
       return <NofilesAlert />;
     }
     return (
       <FileList
         userId={userId}
-        items={(items as ItemResponse).items}
+        items={items}
         directory={directory}
       />
     );
-  }, [isLoading, data, initItems, directory, userId, items]);
+  }, [isLoading, isOnError, items, userId, directory]);
   return (
     <>
       <ListColumnBar />

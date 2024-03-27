@@ -10,7 +10,7 @@ type DirectoryHistoryProps = {
   rowHistories: string[];
   initHistories?: DisplayHistory[];
   histories?: DisplayHistory[];
-  items?: Item;
+  isOnError?: boolean;
 
   isLoading: boolean;
 };
@@ -19,7 +19,7 @@ const DirectoryHistory = ({
   initHistories,
   histories,
   isLoading,
-  items,
+  isOnError,
 }: DirectoryHistoryProps) => {
   const createDisplayHistoryMap = (historyData: DisplayHistory[]) => {
     const displayHistoryMap = new Map<string, string>();
@@ -66,7 +66,7 @@ const DirectoryHistory = ({
     const isRootDirectory = !rowHistories || rowHistories.length === 0;
     const isNoHistories = histories === undefined;
     const isNoInitHistories = initHistories === undefined;
-    if (items && Object.keys(items).includes(ERROR_RESPONSE.msg)) {
+    if (isOnError) {
       return <div>{HISTORY_BLOCKS_FAIL_TO_LOAD_HISTORIES}</div>;
     }
 
@@ -75,7 +75,7 @@ const DirectoryHistory = ({
       const displayHistories = matchHistory(rowHistories, displayHistoryMap);
       return generateHistoryBlock(displayHistories);
     }
-    
+
     if (isRootDirectory || isNoHistories) {
       return (
         <Link

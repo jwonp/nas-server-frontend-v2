@@ -1,4 +1,3 @@
-
 import {
   DisplayHistory,
   Item,
@@ -10,16 +9,17 @@ import { FileType, MetaData } from "./MetaData";
 
 import { VolumeSize } from "./Volume";
 
-interface BasicResponse {
+export interface BasicResponse {
   status: number;
 }
-export interface SuccessResponse extends BasicResponse {
-  data: any;
+export interface Error {
+  body: { msg: string };
 }
-
-export interface ErrorResponse extends BasicResponse {
-  msg: string;
+export interface Success<T = any> {
+  body: T;
 }
+export interface ErrorResponse extends BasicResponse, Error {}
+export interface SuccessResponse<T = any> extends BasicResponse, Success<T> {}
 
 export type ItemResponse = {
   histories: DisplayHistory[];

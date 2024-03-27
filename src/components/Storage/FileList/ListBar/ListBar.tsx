@@ -46,6 +46,7 @@ export type ListBarType = {
     uploadTime: string | null;
     fileIcon: fileIconType;
     fileSize: number;
+    isPending?: boolean;
   };
 };
 
@@ -53,7 +54,6 @@ const FileTypeIconSize = 40;
 const ButtonIconSize = 28;
 const WIDTH_ON_LG = 767;
 const ListBar = ({ directory, userId, metas }: ListBarType) => {
-  const dispatch = useAppDispatch();
   const $listBar = useRef<HTMLDivElement>(null);
   const [ref, hovering] = useHover();
   const queryClient = useQueryClient();
@@ -143,7 +143,13 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
   }, [isEditTitle, metas.fileIcon]);
 
   return (
-    <div ref={$listBar}>
+    <div
+      ref={$listBar}
+      className={`${
+        metas.isPending && metas.isPending === true
+          ? "opacity-50"
+          : "opacity-100"
+      }`}>
       <div
         ref={ref}
         className="grid grid-cols-16 w-full min-w-[360px] h-14 py-1 cursor-pointer select-none border-b">

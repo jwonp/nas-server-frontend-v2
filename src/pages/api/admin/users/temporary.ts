@@ -2,55 +2,44 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
-import { request } from "@/utils/request";
-import { AxiosError } from "axios";
-import {
-  ErrorResponse,
-  FavoriteResponse,
-  SuccessResponse,
-} from "@/types/Responses";
+import { InitErroResponse, request, response } from "@/utils/request";
+import { type Error } from "@/types/Responses";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const session = await getServerSession(req, res, authOptions);
+  let result = InitErroResponse;
   if (!session) {
-    return res.status(403).json({ error: "Unauthorized" });
+    const error: Error = {
+      body: { msg: "Unauthorized" },
+    };
+
+    return res.status(403).json(error);
   }
 
   if (req.method === "GET") {
-    const result = await request(session?.user)
-      .get("/admin/users/temporary")
-      .then((res) => {
-        return { status: res.status, data: res.data };
-      })
-      .catch((err: AxiosError) => {
-        return {
-          status: (err.response?.data as ErrorResponse).status ?? 400,
-          msg: (err.response?.data as ErrorResponse).msg ?? "",
-        };
-      });
-    const responseData =
-      result.status / 100 < 4
-        ? ((result as SuccessResponse).data as FavoriteResponse)
-        : (result as ErrorResponse);
-    return res.status(result.status).json(responseData);
+    result = await response(
+      request(session?.user).get("/admin/users/temporary")
+    );
   }
+
   if (req.method === "POST") {
     const { account } = req.body;
-    const result = await request(session?.user)
-      .post("/admin/users/temporary", { account })
-      .then((res) => {
-        return { status: res.status, data: res.data };
-      })
-      .catch((err: AxiosError) => {
-        return { status: err.status ?? 400, msg: err.message };
-      });
-    const responseData =
-      result.status / 100 < 4
-        ? ((result as SuccessResponse).data as FavoriteResponse)
-        : (result as ErrorResponse);
-    return res.status(result.status).json(responseData);
+    result = await response(
+      request(session?.user).post("/admin/users/temporary", { account })
+    );
   }
+
+  if (req.method === "DELETE") {
+    const { user } = req.query;
+    result = await response(
+      request(session?.user).delete(`/admin/users/temporary?user=${user}`)
+    );
+  }
+
+  const { status, ...body } = result;
+  const data = body.body;
+  return res.status(status).json(data);
 }

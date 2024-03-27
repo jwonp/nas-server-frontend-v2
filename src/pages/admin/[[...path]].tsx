@@ -8,7 +8,7 @@ import {
   InferGetServerSidePropsType,
 } from "next";
 import { authOptions } from "../api/auth/[...nextauth]";
-import { request } from "@/utils/request";
+import { request, response } from "@/utils/request";
 import { useRouter } from "next/router";
 import TemporaryAccount from "@/components/admin/users/temporary/TemporaryAccount";
 import AdminPageNavigator from "@/components/admin/Navigator/AdminPageNavigator";
@@ -20,7 +20,7 @@ const AdminPage = (
 ) => {
   const router = useRouter();
   const [path, setPath] = useState<string[]>([]);
-  const isOccuerdError = (props as ErrorResponse)?.msg;
+  const isOccuerdError = (props as ErrorResponse)?.body?.msg;
   const isNotAdmin = (props as AdminCheckResponse)?.isAdmin === false;
   useEffect(() => {
     if (isOccuerdError || isNotAdmin) {
@@ -42,12 +42,8 @@ const AdminPage = (
       {getPath(router.query).join("/") === "users/temporary" && (
         <TemporaryAccount />
       )}
-      {getPath(router.query).join("/") === "users/user" && (
-        <AdminUser />
-      )}
-      {getPath(router.query).join("/") === "storages/temp" && (
-        <TempStorage />
-      )}
+      {getPath(router.query).join("/") === "users/user" && <AdminUser />}
+      {getPath(router.query).join("/") === "storages/temp" && <TempStorage />}
     </main>
   );
 };
@@ -60,21 +56,12 @@ export const getServerSideProps = (async (
   const session = await getServerSession(context.req, context.res, authOptions);
 
   if (!session || !session.user) {
-    return { props: { status: 403, msg: "Unauthorized" } };
+    return { props: { status: 403, body: { msg: "Unauthorized" } } };
   }
 
-  const adminCheckResponse = await request(session?.user)
-    .get(`${process.env.BACKEND_ENDPOINT}/admin/check`)
-    .then((res: AxiosResponse<AdminCheckResponse>) => {
-      return res.data;
-    })
-    .catch((err: AxiosError<{ error: string }>) => {
-      const error: ErrorResponse = {
-        status: err.status ?? 400,
-        msg: err.response?.data.error ?? "Unknown Error",
-      };
-      return error;
-    });
+  const adminCheckResponse = await response<AdminCheckResponse>(
+    request(session?.user).get(`${process.env.BACKEND_ENDPOINT}/admin/check`)
+  );
 
-  return { props: { ...adminCheckResponse } };
+  return { props: { ...(adminCheckResponse.body as AdminCheckResponse) } };
 }) satisfies GetServerSideProps<AdminCheckResponse | ErrorResponse>;

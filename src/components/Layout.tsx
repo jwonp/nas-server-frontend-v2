@@ -59,9 +59,7 @@ const Layout = ({
   return (
     <>
       {isHeader && <Header isInvisibleSideBarButton={!isSidebar} />}
-      <div
-        id={MAIN_ID}
-        className="w-screen min-w-[360px] bg-neutral-900 ">
+      <div className="w-screen min-h-screen min-w-[360px] bg-neutral-900 ">
         <main
           className={`${
             isSignedIn && isSidebar ? "grid lg:grid-cols-layout" : ""

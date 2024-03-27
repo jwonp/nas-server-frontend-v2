@@ -15,6 +15,10 @@ const SideBar = () => {
     queryFn: (): Promise<VolumeSize> =>
       axios.get("/api/user/volume").then((res) => res.data),
     enabled: session?.user.id ? true : false,
+    staleTime: 24 * 60 * 60 * 1000,
+    refetchOnWindowFocus: "always",
+    retry: 5,
+    refetchInterval: false,
   });
 
   return (
