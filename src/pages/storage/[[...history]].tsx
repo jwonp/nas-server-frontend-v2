@@ -52,7 +52,7 @@ const StoragePage = ({
     queryKey: ["item", { path: directory }],
     queryFn: () =>
       axios.get(`/api/storage/item/${directory}`).then((res) => res.data),
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: Infinity,
     refetchOnWindowFocus: "always",
     throwOnError: false,
     retry: 5,
@@ -126,7 +126,6 @@ const StoragePage = ({
             <DirectoryHistory
               rowHistories={(router.query.history as string[]) ?? []}
               histories={histories}
-              
               isOnError={ItemQuery.isError}
             />
           </div>
