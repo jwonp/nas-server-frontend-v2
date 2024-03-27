@@ -163,7 +163,7 @@ export const authOptions: AuthOptions = {
     // async session(message: any) {},
   },
 
-  debug: true,
+  debug: false,
 };
 
 export default NextAuth(authOptions);
