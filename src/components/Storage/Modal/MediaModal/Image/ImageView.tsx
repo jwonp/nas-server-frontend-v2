@@ -30,14 +30,13 @@ const ImageView = ({ src }: ImageViewProps) => {
     setImageSize(() => resizedImageSize);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [naturalImageSize, windowSize]);
+  }, [ windowSize]);
 
   const onLoad = (e: SyntheticEvent<HTMLImageElement, Event>) => {
     const naturalImageSize = getNaturalImageSize(e.target as HTMLImageElement);
     setNaturalImageSize(() => naturalImageSize);
   };
-  // 6.980.262.272
-  //6,980,262,272
+
   return (
     <div
       ref={$image}

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import MediaModal from "../../common/MediaModal";
 import { useAppSelector } from "@/redux/hooks";
 import { getImageMedia } from "@/redux/featrues/mediaSlice";

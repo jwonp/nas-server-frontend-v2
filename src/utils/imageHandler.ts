@@ -13,13 +13,13 @@ export const getResizedImageSize = (
   const naturalHeight = naturalSize.height;
   const windowWidth = windowSize.width;
   const windowHeight = windowSize.height;
-  console.log(naturalWidth, naturalHeight, windowWidth, windowHeight);
+
   if (
     naturalSize.width >= naturalSize.height &&
     windowSize.width < windowSize.height
   ) {
     const ratio = Math.floor(windowWidth / naturalWidth);
-    console.log(ratio);
+
     const imgSize: Size = {
       width: naturalWidth * ratio,
       height: naturalHeight * ratio,
@@ -28,7 +28,7 @@ export const getResizedImageSize = (
   }
 
   const ratio = Math.floor(windowHeight / naturalHeight);
-  console.log(ratio);
+
   const imgSize: Size = {
     width: naturalWidth * ratio,
     height: naturalHeight * ratio,
