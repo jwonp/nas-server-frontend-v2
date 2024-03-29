@@ -50,7 +50,7 @@ const Layout = ({
             isSignedIn && isSidebar ? "grid lg:grid-cols-layout" : ""
           } w-screen min-w-[360px] h-[calc(100vh-56px)] max-h-[calc(100vh-56px)] overflow-hidden  overflow-y-hidden`}>
           {isSignedIn && isSidebar && <SideBar />}
-          <article className="flex min-w-[360px] w-full h-full max-h-full px-2 overflow-y-scroll">
+          <article className="flex min-w-[360px] w-full h-full max-h-full px-2 max-lg:px-4 overflow-y-scroll">
             {mainCompoent}
           </article>
         </main>
