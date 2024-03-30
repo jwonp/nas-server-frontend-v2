@@ -24,6 +24,7 @@ import { convertFileSize } from "@/utils/parseFileSize";
 import { downloadFile } from "@/utils/download";
 import { useAppDispatch } from "@/redux/hooks";
 import { turnOnShareModal } from "@/redux/featrues/modalSwitchSlice";
+import ControlButton from "./ControlButton";
 
 const fileIcons = {
   back: backIcon,
@@ -52,8 +53,8 @@ export type ListBarType = {
   };
 };
 
-const FileTypeIconSize = 40;
-const ButtonIconSize = 28;
+const FileTypeIconSize = 32;
+
 const WIDTH_ON_LG = 767;
 const ListBar = ({ directory, userId, metas }: ListBarType) => {
   const dispatch = useAppDispatch();
@@ -124,6 +125,25 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
       });
     },
   });
+  const handleClickDownload = () => {
+    downloadFile(metas.fileId, metas.title);
+  };
+  const handleClickFavorite = () => {
+    changeFavorite.mutate({
+      directory: directory,
+      folder: metas.fileId,
+    });
+  };
+  const handleClickEditFileName = () => setEditTitle(!isEditTitle);
+  const handleClickDelete = () => {
+    deleteFile.mutate(metas.fileId);
+  };
+  const handleClickShare = () => {
+    dispatch(turnOnShareModal(metas.title));
+  };
+  const handleClickMore = () => {
+    setClickedMore((prev) => !prev);
+  };
   useEffect(() => {
     setFileTitle(metas.title);
   }, [metas.title]);
@@ -162,8 +182,8 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
     <div ref={$listBar}>
       <div
         ref={ref}
-        className="grid grid-cols-16 w-full min-w-[360px] h-14 py-1 cursor-pointer select-none border-b">
-        <article className="col-span-7  max-file:col-span-8 max-mobile:col-span-10">
+        className="grid grid-cols-16 w-full min-w-[360px] h-12 py-1 cursor-pointer select-none border-b">
+        <article className="col-span-6 max-file:col-span-8 max-mobile:col-span-10">
           <div
             className="grid grid-cols-listBarTitle gap-2"
             onClick={() => {
@@ -173,9 +193,8 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
                 );
               }
             }}>
-            <div className="my-auto w-10 h-10">
+            <div className="m-auto w-8 h-8">
               <Image
-                className="w-10 h-10"
                 src={fileIcons[metas.fileIcon]}
                 alt=""
                 width={FileTypeIconSize}
@@ -184,7 +203,7 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
             </div>
             {isEditTitle ? (
               <input
-                className="text-white truncate leading-12 text-lg font-semibold font-['Inter'] bg-neutral-700 focus:outline-none focus:border-0"
+                className="text-white truncate leading-10 text-lg font-semibold font-['Inter'] bg-neutral-700 focus:outline-none focus:border-0"
                 value={fileTitle}
                 onBlur={(e) => {
                   e.preventDefault();
@@ -201,7 +220,7 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
                 }}
               />
             ) : (
-              <div className="text-white truncate leading-12 text-lg font-semibold font-['Inter']">
+              <div className="text-white truncate leading-10  font-semibold font-['Inter']">
                 {fileTitle}
               </div>
             )}
@@ -211,7 +230,7 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
           <div className="flex">
             <div className="mx-auto">
               <div className="flex gap-2">
-                <div className="my-auto  rounded-full overflow-hidden max-h-7 h-7 w-7  relative">
+                <div className="my-auto  rounded-full overflow-hidden max-h-5 h-5 w-5  relative">
                   <Image
                     src={
                       iconQuery && iconQuery.data
@@ -223,22 +242,22 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
                 </div>
-                <div className=" text-white truncate leading-12 text-lg font-semibold font-['Inter']">
+                <div className=" text-white truncate leading-10 font-semibold font-['Inter']">
                   {metas.owner ?? "-"}
                 </div>
               </div>
             </div>
           </div>
         </article>
-        <article className="col-span-2 max-md:col-span-3 max-file:col-span-3 max-mobile:hidden text-center truncate leading-12 text-white text-lg font-semibold font-['Inter']">
+        <article className="col-span-2 max-md:col-span-3 max-file:col-span-3 max-mobile:hidden text-center truncate leading-10 text-white font-semibold font-['Inter']">
           {`${metas.uploadTime ?? "-"}`}
         </article>
-        <article className="col-span-2 max-md:col-span-3  max-file:hidden text-center leading-12 text-white text-lg font-semibold font-['Inter']">
+        <article className="col-span-2 max-md:col-span-3  max-file:hidden text-center leading-10 text-white font-semibold font-['Inter']">
           {`${convertFileSize(metas.fileSize) ?? "-"}`}
         </article>
 
         <section
-          className={`col-span-3 max-file:col-span-5 max-mobile:col-span-6 flex  justify-between w-full ${
+          className={`col-span-4 max-file:col-span-5 max-mobile:col-span-6 flex  justify-between w-full ${
             !isClickedMore ? "max-lg:ml-auto" : ""
           } ${
             !isVisible
@@ -252,96 +271,36 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
           <div className={`flex${!isClickedMore ? " max-lg:hidden" : ""}`}>
             <article className="flex gap-1">
               {metas.fileIcon !== "folder" && (
-                <figure className="my-auto w-9 h-9 lg:hover:bg-slate-500 rounded-full">
-                  <div
-                    className="m-1 w-7 h-7 "
-                    onClick={() => {
-                      downloadFile(metas.fileId, metas.title);
-                    }}>
-                    <Image
-                      src={downloadIcon}
-                      alt=""
-                      width={ButtonIconSize}
-                      height={ButtonIconSize}
-                    />
-                  </div>
-                </figure>
+                <ControlButton
+                  icon={downloadIcon}
+                  onClick={handleClickDownload}
+                />
               )}
-              <figure className="my-auto w-9 h-9 lg:hover:bg-slate-500  rounded-full">
-                <div
-                  className="m-1 w-7 h-7 "
-                  onClick={() => setEditTitle(!isEditTitle)}>
-                  <Image
-                    src={editTitleIcon}
-                    alt=""
-                    width={ButtonIconSize}
-                    height={ButtonIconSize}
-                  />
-                </div>
-              </figure>
-              {/* {metas.fileIcon === "folder" && ( )} */}
-              <div className="my-auto w-9 h-9 hover:bg-slate-500 rounded-full">
-                <div
-                  className="m-1 w-7 h-7 "
-                  onClick={() => {
-                    changeFavorite.mutate({
-                      directory: directory,
-                      folder: metas.fileId,
-                    });
-                  }}>
-                  <Image
-                    src={metas.isFavorite ? favoritedIcon : favoriteIcon}
-                    alt=""
-                    width={ButtonIconSize}
-                    height={ButtonIconSize}
-                  />
-                </div>
-              </div>
+              <ControlButton
+                icon={editTitleIcon}
+                onClick={handleClickEditFileName}
+              />
 
-              <figure className="my-auto w-9 h-9 lg:hover:bg-slate-500  rounded-full">
-                <div
-                  className="m-1 w-7 h-7 "
-                  onClick={() => {
-                    deleteFile.mutate(metas.fileId);
-                  }}>
-                  <Image
-                    src={deleteIcon}
-                    alt=""
-                    width={ButtonIconSize}
-                    height={ButtonIconSize}
-                  />
-                </div>
-              </figure>
-              <figure className="my-auto w-9 h-9 lg:hover:bg-slate-500  rounded-full">
-                <div
-                  className="m-1 w-7 h-7 "
-                  onClick={() => {
-                    dispatch(turnOnShareModal(metas.title));
-                  }}>
-                  <Image
-                    src={ShareIcon}
-                    alt=""
-                    width={ButtonIconSize}
-                    height={ButtonIconSize}
-                  />
-                </div>
-              </figure>
+              {/* {metas.fileIcon === "folder" && ( )} */}
+              <ControlButton
+                icon={metas.isFavorite ? favoritedIcon : favoriteIcon}
+                onClick={handleClickFavorite}
+              />
+              <ControlButton
+                icon={deleteIcon}
+                onClick={handleClickDelete}
+              />
+              <ControlButton
+                icon={ShareIcon}
+                onClick={handleClickShare}
+              />
             </article>
           </div>
-          <figure
+          <ControlButton
             className="lg:hidden max-lg:block my-auto w-9 h-9  float-right rounded-full"
-            onClick={() => {
-              setClickedMore((prev) => !prev);
-            }}>
-            <div className="m-1 w-7 h-7 ">
-              <Image
-                src={MoreIcon}
-                alt=""
-                width={ButtonIconSize}
-                height={ButtonIconSize}
-              />
-            </div>
-          </figure>
+            icon={MoreIcon}
+            onClick={handleClickMore}
+          />
         </section>
       </div>
     </div>

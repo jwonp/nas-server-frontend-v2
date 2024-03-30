@@ -10,7 +10,7 @@ const Modal = ({ children }: ModalProps) => {
           <div className="mx-auto w-2/5 max-lg:w-screen">
             <div className="flex w-full h-screen">
               <div
-                className="my-auto w-full h-4/5 max-lg:h-screen  min-h-[512px]"
+                className="my-auto w-full h-4/5 max-lg:h-screen  "
                 aria-description="layout">
                 {children}
               </div>
