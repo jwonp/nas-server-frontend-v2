@@ -24,15 +24,28 @@ const Header = ({ isInvisibleSideBarButton }: HeaderProps) => {
   const handleMenuClick = (e: React.MouseEvent<HTMLDivElement>) => {
     dispatch(setVisibleSideBar(!isVisibleSidebar));
   };
-  const handleLoginOutClick = session ? () => signOut() : () => signIn();
+  const handleLoginOutClick = session
+    ? () => {
+        window.localStorage.removeItem("guest");
+        window.localStorage.removeItem("accountCode");
+        signOut();
+      }
+    : () => signIn();
 
   const { data, error, isLoading } = useQuery({
-    queryKey: ["profileIcon"],
+    queryKey: ["icon", { source: session?.user.image }],
     queryFn: (): Promise<{ url: string }> =>
       axios
         .get(`/api/storage/download?key=${session?.user.image}`)
         .then((response) => response.data),
-    enabled: session?.user.image ? true : false,
+    enabled: session?.user.image.length > 0 ? true : false,
+    staleTime: Infinity,
+    throwOnError: false,
+    retry: 1,
+    retryOnMount: false,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchInterval: false,
   });
   const userIcon = useMemo(() => {
     if (isLoading && !data) {
@@ -45,7 +58,7 @@ const Header = ({ isInvisibleSideBarButton }: HeaderProps) => {
   }, [data, isLoading]);
 
   return (
-    <header className="sticky grid lg:grid-cols-2 grid-cols-3  w-screen min-w-[360px] h-14 p-3  border-b border-zinc-100 select-none">
+    <header className="sticky grid lg:grid-cols-2 grid-cols-3  w-screen min-w-[360px] h-14 p-3 bg-neutral-900  border-b border-zinc-100 select-none">
       <section className="lg:hidden">
         <div className={`${isInvisibleSideBarButton ? "hidden" : "block"}`}>
           <div

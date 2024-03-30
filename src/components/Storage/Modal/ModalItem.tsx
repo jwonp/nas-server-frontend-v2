@@ -14,6 +14,7 @@ const ModalItem = ({ iconURL, topText, bottomText }: ModalItemProps) => {
     queryFn: (): Promise<{ url: string }> =>
       axios.get(`/api/storage/download?key=${iconURL}`).then((res) => res.data),
     enabled: iconURL ? true : false,
+    refetchInterval:false
   });
   return (
     <article className="cursor-pointer flex gap-2 rounded-lg bg-slate-800 hover:bg-slate-700 group-has-[:checked]:bg-slate-400 w-full min-w-[244px] h-14 p-2 mb-1">

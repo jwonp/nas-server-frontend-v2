@@ -37,6 +37,7 @@ const FileAddButton = ({
       axios.get("/api/user/volume").then((res) => res.data),
     initialData: { max: -1, now: -1 },
     enabled: userId ? true : false,
+    refetchInterval:false
   });
   const handleChangeFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -49,16 +50,18 @@ const FileAddButton = ({
       return;
     }
     // const history = router.query.history as string[];
-    
-    const directory = history && history.length > 0 ? `/${history.join("/")}` : "";
+
+    const directory =
+      history && history.length > 0 ? `/${history.join("/")}` : "";
     const meta: Omit<
       MetaData,
-      "key" | "uploadTime" | "size" | "fileName" | "type"|"isFavorite"
+      "key" | "uploadTime" | "size" | "fileName" | "type" | "isFavorite"
     > = {
       directory: directory,
       ownerId: userId,
     };
 
+    
     const storedMetas = await uploadFilesToS3ByFileList(
       files,
       volumeQuery.data,
@@ -71,9 +74,12 @@ const FileAddButton = ({
         message: "저장 공간이 부족합니다.",
       };
       dispatch(setWarningSnackBar(warningSnackBarProps));
+      if ($fileUploadInput.current) {
+        $fileUploadInput.current.value = "";
+      }
       return;
     }
-    const filterdMetas: Omit<MetaData,"isFavorite"> [] = [];
+    const filterdMetas: Omit<MetaData, "isFavorite">[] = [];
     for (let meta of storedMetas) {
       if (meta) {
         filterdMetas.push(meta);
@@ -81,7 +87,11 @@ const FileAddButton = ({
     }
     dispatch(resetProgressPercent());
     dispatch(resetFileAmount());
+    
     addMetas.mutate(filterdMetas);
+    if ($fileUploadInput.current) {
+      $fileUploadInput.current.value = "";
+    }
   };
   return (
     <div
@@ -115,7 +125,7 @@ const FileAddButton = ({
             name="file-upload"
             type="file"
             multiple
-            onChange={handleChangeFileUpload}
+            onInput={handleChangeFileUpload}
           />
         </div>
       </div>

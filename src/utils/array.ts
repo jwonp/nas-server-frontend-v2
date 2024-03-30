@@ -41,10 +41,27 @@ export const deleteObjectElementOnArray = <T extends object>(
     const filteredArrayEntriesMap = arrayEntriesMap.filter((item) =>
       elementKeys.some((key) => item.get(key) !== elementEntriesMap.get(key))
     );
-    const resultArray = filteredArrayEntriesMap.map((item) =>
-      Object.fromEntries(item) as T
+    const resultArray = filteredArrayEntriesMap.map(
+      (item) => Object.fromEntries(item) as T
     );
     return resultArray;
   }
   return array;
+};
+
+export const isSameArray = <T = any>(
+  array: T[],
+  compareTo: T[],
+  depth?: number
+) => {
+  if (depth) {
+    const subArray = array.slice(0, depth);
+    return subArray.every((el, idx) => el === compareTo[idx]);
+  }
+
+  if (array.length !== compareTo.length) {
+    return false;
+  }
+
+  return array.every((el, idx) => el === compareTo[idx]);
 };

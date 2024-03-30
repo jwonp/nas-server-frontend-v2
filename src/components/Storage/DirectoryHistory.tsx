@@ -1,4 +1,4 @@
-import { DisplayHistory, Item } from "@/types/Responses";
+import { DisplayHistory, Item } from "@/types/ComponentTypes";
 import {
   ERROR_RESPONSE,
   HISTORY_BLOCKS_FAIL_TO_LOAD_HISTORIES,
@@ -8,18 +8,18 @@ import Link from "next/link";
 import { useMemo } from "react";
 type DirectoryHistoryProps = {
   rowHistories: string[];
-  initHistories?: DisplayHistory[];
-  histories?: DisplayHistory[];
-  items?: Item;
 
-  isLoading: boolean;
+  histories?: DisplayHistory[];
+  isOnError: boolean;
+
+  
 };
 const DirectoryHistory = ({
   rowHistories,
-  initHistories,
+
   histories,
-  isLoading,
-  items,
+  
+  isOnError,
 }: DirectoryHistoryProps) => {
   const createDisplayHistoryMap = (historyData: DisplayHistory[]) => {
     const displayHistoryMap = new Map<string, string>();
@@ -65,17 +65,11 @@ const DirectoryHistory = ({
   const historyBlocks = useMemo(() => {
     const isRootDirectory = !rowHistories || rowHistories.length === 0;
     const isNoHistories = histories === undefined;
-    const isNoInitHistories = initHistories === undefined;
-    if (items && Object.keys(items).includes(ERROR_RESPONSE.msg)) {
+
+    if (isOnError) {
       return <div>{HISTORY_BLOCKS_FAIL_TO_LOAD_HISTORIES}</div>;
     }
 
-    if (isLoading === true && isNoInitHistories === false) {
-      const displayHistoryMap = createDisplayHistoryMap(initHistories);
-      const displayHistories = matchHistory(rowHistories, displayHistoryMap);
-      return generateHistoryBlock(displayHistories);
-    }
-    
     if (isRootDirectory || isNoHistories) {
       return (
         <Link
@@ -95,9 +89,9 @@ const DirectoryHistory = ({
 
   return (
     <div className="p-2 text-white text-2xl font-semibold font-['Inter']">
-      <div className="flex gap-2">{historyBlocks}</div>
+      <div className="flex flex-wrap gap-2">{historyBlocks}</div>
     </div>
   );
 };
-// 네 알겠습니다!
+
 export default DirectoryHistory;

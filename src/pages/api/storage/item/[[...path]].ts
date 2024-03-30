@@ -1,45 +1,44 @@
-import { request } from "@/utils/request";
+import { InitErroResponse, request, response } from "@/utils/request";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]";
-import { AxiosError, AxiosResponse } from "axios";
-import {
-  ErrorResponse,
-  ItemResponse,
-  SuccessResponse,
-} from "@/types/Responses";
+import { ItemResponse } from "@/types/Responses";
+import { type Error } from "@/types/Responses";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getServerSession(req, res, authOptions);
-  const { path } = req.query;
-  if (req.method === "GET") {
-    if (!session || !session.user) {
-      return res.status(403).json({ status: 403, msg: "Unauthorized" });
-    }
 
-    const result = await request(session?.user)
-      .get(
+  let result = InitErroResponse;
+
+  if (!session || !session.user) {
+    const error: Error = {
+      body: { msg: "Unauthorized" },
+    };
+    return res.status(403).json(error);
+  }
+
+  if (req.method === "GET") {
+    const { path } = req.query;
+
+    result = await response<ItemResponse>(
+      request(session?.user).get(
         `/storage/item?path=${path ? `/${(path as string[]).join("/")}` : "/"}`
       )
-      .then((res: AxiosResponse<ItemResponse>) => {
-        return { status: res.status, data: res.data };
-      })
-      .catch((err: AxiosError<{ error: string }>) => {
-        return {
-          status: err.response?.status ?? 400,
-          msg: err.response?.data.error ?? "",
-        };
-      });
-    const responseData =
-      result.status / 100 < 4
-        ? ((result as SuccessResponse).data as ItemResponse)
-        : (result as ErrorResponse);
-    return res.status(result.status).json(responseData);
+    );
   }
+
   if (req.method === "DELETE") {
-    const { fileId, fileSize, fileType, directory } = req.body;
-    
-    const result = await request(session?.user)
-      .delete(
+    const body = req.body;
+    if (!body) {
+      const error: Error = {
+        body: { msg: "No body" },
+      };
+
+      return res.status(400).json(error);
+    }
+    const { fileId, fileSize, fileType, directory } = body;
+
+    result = await response(
+      request(session?.user).delete(
         fileType === "folder" ? `/storage/item/folder` : `/storage/item`,
         {
           data: {
@@ -50,20 +49,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         }
       )
-      .then((res) => {
-        return { status: res.status, data: res.data };
-      })
-      .catch((err: AxiosError) => {
-        return { status: err.status ?? 400, msg: err.message };
-      });
-
-    const responseData =
-      result.status / 100 < 4
-        ? ((result as SuccessResponse).data as ItemResponse)
-        : (result as ErrorResponse);
-
-    return res.status(result.status).json(responseData);
+    );
   }
+  const { status, ...body } = result;
+  const data = body.body;
+  res.status(result.status).json(data);
 };
 
 export default handler;

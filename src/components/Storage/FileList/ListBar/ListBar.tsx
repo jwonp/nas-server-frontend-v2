@@ -8,11 +8,11 @@ import imageIcon from "@public/icons/photo.png";
 import videoIcon from "@public/icons/video.png";
 import userIcon from "@public/icons/userCircle.png";
 import deleteIcon from "@public/icons/delete.png";
-import favoriteIcon from "@public/icons/favorite.png";
-import favoritedIcon from "@public/icons/favorited.png";
 import ShareIcon from "@public/icons/share.png";
 import MoreIcon from "@public/icons/more.svg";
 import editTitleIcon from "@public/icons/edit.png";
+import favoriteIcon from "@public/icons/favorite.png";
+import favoritedIcon from "@public/icons/favorited.png";
 import downloadIcon from "@public/icons/download.png";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { useHover } from "@uidotdev/usehooks";
@@ -21,8 +21,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { convertFileSize } from "@/utils/parseFileSize";
-import { downloadFile } from "@/utils/download";
+import { downloadFile, getDownloadMediaUrl } from "@/utils/download";
 import { useAppDispatch } from "@/redux/hooks";
+import { setImageMedia, setVideoMedia } from "@/redux/featrues/mediaSlice";
 import { turnOnShareModal } from "@/redux/featrues/modalSwitchSlice";
 import ControlButton from "./ControlButton";
 import { ItemResponse } from "@/types/Responses";
@@ -51,6 +52,7 @@ export type ListBarType = {
     uploadTime: string | null;
     fileIcon: fileIconType;
     fileSize: number;
+    isPending?: boolean;
   };
 };
 
@@ -76,8 +78,17 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
       axios
         .get(`/api/storage/download?key=${metas.ownerImage}`)
         .then((res) => res.data),
-    enabled: metas.ownerImage ? true : false,
+    enabled: typeof metas.ownerImage === "string" ? true : false,
+    staleTime: Infinity,
+    throwOnError: false,
+    retry: 1,
+    retryOnMount: false,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchInterval: false,
   });
+
+
   const changeFavorite = useMutation({
     mutationFn: (variables: { directory: string; folder: string }) =>
       axios.put("/api/storage/favorite", {
@@ -207,7 +218,13 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
   }, [isEditTitle, metas.fileIcon]);
 
   return (
-    <div ref={$listBar}>
+    <div
+      ref={$listBar}
+      className={`${
+        metas.isPending && metas.isPending === true
+          ? "opacity-50"
+          : "opacity-100"
+      }`}>
       <div
         ref={ref}
         className="grid grid-cols-16 w-full min-w-[360px] h-12 py-1 cursor-pointer select-none border-b">
@@ -249,6 +266,18 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
               />
             ) : (
               <div className="text-white truncate leading-10  font-semibold font-['Inter']">
+              <div
+                className={`text-white truncate leading-12 text-lg font-semibold font-['Inter']`}
+                onClick={async () => {
+                  if (metas.fileIcon === "video") {
+                    const url = await getDownloadMediaUrl(metas.fileId);
+                    dispatch(setVideoMedia({ src: url, title: fileTitle }));
+                  }
+                  if (metas.fileIcon === "image") {
+                    const url = await getDownloadMediaUrl(metas.fileId);
+                    dispatch(setImageMedia({ src: url, title: fileTitle }));
+                  }
+                }}>
                 {fileTitle}
               </div>
             )}

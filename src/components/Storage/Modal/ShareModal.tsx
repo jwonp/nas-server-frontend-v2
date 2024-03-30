@@ -6,7 +6,8 @@ import DarkCancelIcon from "@public/icons/close.svg";
 import ModalItem from "./ModalItem";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
-import { SearchedUser, UserSearchResponse } from "@/types/Responses";
+import { UserSearchResponse } from "@/types/Responses";
+import { SearchedUser } from "@/types/ComponentTypes";
 import {
   SHARE_MODAL_ERROR_TO_LOAD_SEARCH_RESULT,
   SHARE_MODAL_LOADING_SEARCH_RESULT,
@@ -38,6 +39,7 @@ const ShareModal = ({}: ShareModalProps) => {
         .get(`/api/user/search?query=${userSearchquery}`)
         .then((res: AxiosResponse<UserSearchResponse>) => res.data),
     enabled: userSearchquery !== "" ? true : false,
+    refetchInterval:false
   });
   const addShare = useMutation({
     mutationFn: (selectedUsers: SearchedUser[]) =>

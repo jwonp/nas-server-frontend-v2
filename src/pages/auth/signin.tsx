@@ -1,3 +1,4 @@
+import { decryptObject } from "@/utils/crypto";
 import { SIGNIN_PASSWORD_REGEX_PATTERN } from "@/utils/strings";
 import { randomBytes } from "crypto";
 import type {
@@ -6,22 +7,50 @@ import type {
 } from "next";
 import { getCsrfToken } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 export default function SignIn({
   csrfToken,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
   const [error, setError] = useState<string>("");
+  const $usernameInput = useRef<HTMLInputElement>(null);
+  const $passwordInput = useRef<HTMLInputElement>(null);
+  const $submitButton = useRef<HTMLButtonElement>(null);
   const getRandomID = () => {
     return randomBytes(128).toString("hex");
   };
   useEffect(() => {
+    if (window.localStorage) {
+      const guestCode = window.localStorage.getItem("guest");
+      if (!guestCode) {
+        return;
+      }
+      const guest = decryptObject(guestCode) as {
+        username: string;
+        password: string;
+      };
+      if (
+        $passwordInput.current &&
+        $usernameInput.current &&
+        $submitButton.current
+      ) {
+        $usernameInput.current.value = guest.username;
+        $passwordInput.current.value = guest.password;
+        $submitButton.current.click();
+      }
+    }
+  }, []);
+  useEffect(() => {
     const { error } = router.query;
-    console.log(error);
     if (error && typeof error === "string") {
       setError(() => error);
     }
   }, [router]);
+  useEffect(() => {
+    if (error.length > 0 && window.localStorage.getItem("guest")) {
+      window.localStorage.removeItem("guest");
+    }
+  }, [error]);
   const handleClickSignUp = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     router.push("/auth/signup");
@@ -51,6 +80,7 @@ export default function SignIn({
                 </div>
                 <div>
                   <input
+                    ref={$usernameInput}
                     className={`text-white rounded-lg leading-10 indent-3 w-full bg-slate-900 ${
                       error === "CredentialsSignin" && "placeholder-red-600"
                     }`}
@@ -73,6 +103,7 @@ export default function SignIn({
                 </div>
                 <div>
                   <input
+                    ref={$passwordInput}
                     className={`text-white rounded-lg leading-10 indent-3 w-full bg-slate-900 ${
                       error === "CredentialsSignin" && "placeholder-red-600"
                     }`}
@@ -91,6 +122,7 @@ export default function SignIn({
                 </div>
               </div>
               <button
+                ref={$submitButton}
                 type="submit"
                 className="text-white mb-1 mt-4 text-xl rounded-lg border w-full py-1">
                 로그인

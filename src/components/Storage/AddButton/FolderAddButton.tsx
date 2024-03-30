@@ -2,7 +2,6 @@ import { MetaData } from "@/types/MetaData";
 import Image from "next/image";
 import addFolderIcon from "@public/icons/addFolder.png";
 import { v4 as uuidv4 } from "uuid";
-import { useEffect } from "react";
 import { useMetaMutation } from "@/hooks/useMetaMutation.hook";
 type FolderAddButtonProps = {
   userId?: string;

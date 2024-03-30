@@ -7,9 +7,8 @@ import { MetaData } from "@/types/MetaData";
 import {
   FILE_LIST_ERROR_LOAD_FILES,
   FILE_LIST_INVAILD_DIRECTORY,
-  FILE_LIST_LOADING,
 } from "@/utils/strings";
-import { ErrorResponse, ItemResponse } from "@/types/Responses";
+import { ItemResponse } from "@/types/Responses";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const histories = [
@@ -25,7 +24,7 @@ const metas: Omit<MetaData, "ownerId">[] = [
     uploadTime: 1709129585257,
     type: "file",
     size: 331226,
-    isFavorite:false
+    isFavorite: false,
   },
   {
     directory: "/a/b/c",
@@ -34,7 +33,7 @@ const metas: Omit<MetaData, "ownerId">[] = [
     uploadTime: 1709129585258,
     type: "image",
     size: 131226,
-    isFavorite:false
+    isFavorite: false,
   },
   {
     directory: "/a/b/c",
@@ -43,22 +42,10 @@ const metas: Omit<MetaData, "ownerId">[] = [
     uploadTime: 1709129585259,
     type: "video",
     size: 1331226,
-    isFavorite:false
+    isFavorite: false,
   },
 ];
-const initItems: ItemResponse = {
-  histories: histories,
-  items: {
-    id: "userId",
-    username: "userName",
-    image: "icon/asdasd.png",
-    files: metas,
-  },
-};
-const initError: ErrorResponse = {
-  msg: "Invaild Directory",
-  status: 404,
-};
+
 const data: ItemResponse = {
   histories: histories,
   items: {
@@ -69,28 +56,15 @@ const data: ItemResponse = {
   },
 };
 
-test("When loading", () => {
-  render(
-    <FileListContainer
-      isLoading={true}
-      initItems={initItems}
-      data={undefined}
-      userId={"userId"}
-      directory={"/a/b/c"}
-    />
-  );
-  expect(screen.getByText(FILE_LIST_LOADING)).toBeDefined();
-  cleanup();
-});
-
 test("When erorr to load file list", () => {
   const queryClient = new QueryClient();
   render(
     <QueryClientProvider client={queryClient}>
       <FileListContainer
         isLoading={false}
-        initItems={initItems}
-        data={undefined}
+        isOnError={true}
+        isInvalidDirectory={false}
+        items={undefined}
         userId={"userId"}
         directory={"/a/b/c"}
       />
@@ -104,8 +78,9 @@ test("When invaild directory", () => {
   render(
     <FileListContainer
       isLoading={false}
-      initItems={initError}
-      data={initError}
+      isOnError={true}
+      isInvalidDirectory={true}
+      items={undefined}
       userId={"userId"}
       directory={"/a/b/c"}
     />
@@ -121,8 +96,9 @@ test("In normal case", () => {
       <Provider store={store}>
         <FileListContainer
           isLoading={false}
-          initItems={initItems}
-          data={data}
+          isOnError={false}
+          isInvalidDirectory={false}
+          items={data.items}
           userId={"userId"}
           directory={"/a/b/c"}
         />

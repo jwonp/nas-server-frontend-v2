@@ -1,4 +1,4 @@
-import { SideFolder } from "@/types/Responses";
+import { SideFolder } from "@/types/ComponentTypes";
 import Link from "next/link";
 import { useMemo } from "react";
 import SideFolderBar from "./SideFolderBar";
