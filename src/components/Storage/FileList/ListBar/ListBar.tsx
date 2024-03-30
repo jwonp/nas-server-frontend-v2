@@ -25,6 +25,7 @@ import { downloadFile } from "@/utils/download";
 import { useAppDispatch } from "@/redux/hooks";
 import { turnOnShareModal } from "@/redux/featrues/modalSwitchSlice";
 import ControlButton from "./ControlButton";
+import { ItemResponse } from "@/types/Responses";
 
 const fileIcons = {
   back: backIcon,
@@ -58,6 +59,7 @@ const FileTypeIconSize = 32;
 const WIDTH_ON_LG = 767;
 const ListBar = ({ directory, userId, metas }: ListBarType) => {
   const dispatch = useAppDispatch();
+
   const $listBar = useRef<HTMLDivElement>(null);
   const [ref, hovering] = useHover();
   const queryClient = useQueryClient();
@@ -82,6 +84,32 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
         directory: variables.directory,
         folder: variables.folder,
       }),
+    onMutate: async () => {
+      // await queryClient.cancelQueries({
+      //   queryKey: ["item", { path: directory }],
+      // });
+
+      const prevItems: ItemResponse | undefined = queryClient.getQueryData([
+        "item",
+        { path: directory },
+      ]);
+      const files = prevItems?.items.files;
+      if (!files) {
+        return;
+      }
+
+      const file = files.find((file) => file.key === metas.fileId);
+      const fileIndex = files.findIndex((file) => file.key === metas.fileId);
+      if (!file || !fileIndex) {
+        return;
+      }
+      file.isFavorite = !file.isFavorite;
+      const newFiles = files.toSpliced(fileIndex, 1, file);
+      prevItems.items.files = newFiles;
+      console.log(prevItems)
+      queryClient.setQueryData(["item", { path: directory }], () => prevItems);
+      return { prevItems };
+    },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["favorite", userId],
