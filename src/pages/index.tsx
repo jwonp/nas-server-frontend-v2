@@ -74,12 +74,12 @@ export default function Home(
                       ? `게스트 계정이 준비되었습니다.`
                       : ""
                   } `}</p>
-                  <p className="text-white text-center font-bold">{`아래 버튼을 누르시면 자동으로 로그인 됩니다.`}</p>
+                  <p className="text-white text-center font-bold">{`아래 버튼을 누르시면 자동으로 로그인된 후 스토리지로 이동합니다.`}</p>
                   <div className="flex mt-5 cursor-pointer">
                     <button
                       className="mx-auto text-white font-bold bg-blue-700 hover:bg-blue-600 px-5 py-2 rounded-xl"
                       onClick={() => signIn()}>
-                      자동 로그인
+                      저장소로 이동
                     </button>
                   </div>
                 </>
