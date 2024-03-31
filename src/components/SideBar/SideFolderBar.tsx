@@ -12,7 +12,7 @@ const SideFolderBar = ({ title }: SideFolderBarProps) => {
         width={32}
         height={32}
       />
-      <div className="px-2 leading-9 text-white text-l font-semibold font-['Inter']">
+      <div className="px-2 truncate leading-9 text-white text-l font-semibold font-['Inter']">
         {title}
       </div>
     </div>

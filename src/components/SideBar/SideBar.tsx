@@ -8,6 +8,8 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import AddUserIcon from "@public/icons/addUser-white.svg";
 import Image from "next/image";
+import FavoriteFolder from "./FavoriteFolder";
+import { SideFolder } from "@/types/ComponentTypes";
 const SideBar = () => {
   const isVisibleSidebar = useAppSelector(getVisibleSideBar);
   const { data: session } = useSession();
@@ -22,13 +24,21 @@ const SideBar = () => {
     retry: 5,
     refetchInterval: false,
   });
-
+  const favoriteQuery = useQuery<{
+    favorites: SideFolder[];
+  }>({
+    queryKey: ["favorite"],
+    queryFn: () => axios.get("/api/storage/favorite").then((res) => res.data),
+  });
   return (
     <aside
       className={`lg:col-span-1 lg:block lg:static ${
         isVisibleSidebar ? "fixed" : "hidden"
       } w-[240px] h-full bg-neutral-900`}>
       <div className="w-full h-full left-0 top-56 py-4   border-zinc-100">
+        <section>
+          <FavoriteFolder folders={favoriteQuery.data?.favorites ?? []} />
+        </section>
         <section>
           <RemainingStorageSize
             isLoading={volumeQuery.isLoading}
