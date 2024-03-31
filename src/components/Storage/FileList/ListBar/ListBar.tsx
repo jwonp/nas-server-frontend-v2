@@ -88,42 +88,15 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
     refetchInterval: false,
   });
 
-
   const changeFavorite = useMutation({
     mutationFn: (variables: { directory: string; folder: string }) =>
       axios.put("/api/storage/favorite", {
         directory: variables.directory,
         folder: variables.folder,
       }),
-    onMutate: async () => {
-      // await queryClient.cancelQueries({
-      //   queryKey: ["item", { path: directory }],
-      // });
-
-      const prevItems: ItemResponse | undefined = queryClient.getQueryData([
-        "item",
-        { path: directory },
-      ]);
-      const files = prevItems?.items.files;
-      if (!files) {
-        return;
-      }
-
-      const file = files.find((file) => file.key === metas.fileId);
-      const fileIndex = files.findIndex((file) => file.key === metas.fileId);
-      if (!file || !fileIndex) {
-        return;
-      }
-      file.isFavorite = !file.isFavorite;
-      const newFiles = files.toSpliced(fileIndex, 1, file);
-      prevItems.items.files = newFiles;
-      console.log(prevItems)
-      queryClient.setQueryData(["item", { path: directory }], () => prevItems);
-      return { prevItems };
-    },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["favorite", userId],
+        queryKey: ["favorite"],
       });
       queryClient.invalidateQueries({
         queryKey: ["item", { path: directory }],
@@ -248,7 +221,7 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
             </div>
             {isEditTitle ? (
               <input
-                className="text-white truncate leading-10 text-lg font-semibold font-['Inter'] bg-neutral-700 focus:outline-none focus:border-0"
+                className="text-white truncate leading-10 text-lg font-semibold bg-neutral-700 focus:outline-none focus:border-0"
                 value={fileTitle}
                 onBlur={(e) => {
                   e.preventDefault();
@@ -265,9 +238,8 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
                 }}
               />
             ) : (
-              <div className="text-white truncate leading-10  font-semibold font-['Inter']">
               <div
-                className={`text-white truncate leading-12 text-lg font-semibold font-['Inter']`}
+                className={`text-white truncate leading-10 text-lg font-semibold font-['Inter']`}
                 onClick={async () => {
                   if (metas.fileIcon === "video") {
                     const url = await getDownloadMediaUrl(metas.fileId);
@@ -338,11 +310,12 @@ const ListBar = ({ directory, userId, metas }: ListBarType) => {
                 onClick={handleClickEditFileName}
               />
 
-              {/* {metas.fileIcon === "folder" && ( )} */}
-              <ControlButton
-                icon={metas.isFavorite ? favoritedIcon : favoriteIcon}
-                onClick={handleClickFavorite}
-              />
+              {metas.fileIcon === "folder" && (
+                <ControlButton
+                  icon={metas.isFavorite ? favoritedIcon : favoriteIcon}
+                  onClick={handleClickFavorite}
+                />
+              )}
               <ControlButton
                 icon={deleteIcon}
                 onClick={handleClickDelete}
