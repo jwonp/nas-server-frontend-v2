@@ -46,7 +46,7 @@ export default function Home(
     <div className="w-screen h-screen ">
       <main className="flex w-1/2 h-full mx-auto my-5">
         <section className="w-full">
-          <div className="mx-auto w-full  bg-slate-800 py-10 rounded-xl">
+          <div className="mx-auto w-full  bg-slate-800 py-10 px-4 rounded-xl">
             {status === "unauthenticated" &&
               !router.query.code &&
               (props as ErrorResponse).body?.msg !== undefined && (
