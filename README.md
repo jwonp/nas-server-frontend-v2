@@ -155,7 +155,7 @@
 
 #### 문제 해결
 
-- 실질적인 파일들의 state는 Array로 관리하고, 이를 Object  Entry의 변환 과정을 걸쳐서 랜더링 하는 방식으로 파일 탐색기를 구현했습니다.
+- 실질적인 파일들의 state는 Array로 관리하고, 이를 Object -> Entry의 변환 과정을 걸쳐서 랜더링 하는 방식으로 파일 탐색기를 구현했습니다.
 - 파일 리스트의 블록을 생성하는 JSX 컴포넌트는 재귀형으로 호출되어서 하나의 컴포넌트로 파일 리스트를 구현할 수 있게 설계했습니다.
 
 ![itemBarList.png](https://s3.ap-northeast-2.amazonaws.com/ikiningyou.portfolio.s3.bucket/Images/NasServerV2/%E1%84%91%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AF+%E1%84%90%E1%85%A1%E1%86%B7%E1%84%89%E1%85%A2%E1%86%A8%E1%84%80%E1%85%B5+%E1%84%82%E1%85%A9%E1%84%83%E1%85%B3+%E1%84%92%E1%85%AA%E1%84%89%E1%85%A1%E1%86%AF%E1%84%91%E1%85%AD.png)
