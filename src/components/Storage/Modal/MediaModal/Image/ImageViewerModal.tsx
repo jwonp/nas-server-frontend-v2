@@ -9,8 +9,14 @@ const ImageViewerModal = () => {
   return (
     <MediaModal isVisibleMedia={imageMedia.isVisible}>
       <div className="w-full h-auto">
-        <p className="text-center font-bold text-xl my-6 text-white">{imageMedia.title}</p>
-        <ImageView src={imageMedia.src} />
+        <div className="flex w-full  rounded-sm">
+          <p className="text-center font-bold text-xl my-0 mx-auto px-10 text-white ">
+            {imageMedia.title}
+          </p>
+        </div>
+        <figure>
+          <ImageView src={imageMedia.src} />
+        </figure>
       </div>
     </MediaModal>
   );
