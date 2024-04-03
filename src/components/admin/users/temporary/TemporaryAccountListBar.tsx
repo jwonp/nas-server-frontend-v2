@@ -53,8 +53,8 @@ const TemporaryAccountListBar = ({ account }: TemporaryAccountListBarProps) => {
     deleteTemporaryAccount.mutate(account.username);
   };
   return (
-    <div className="grid grid-cols-8 w-full h-14 py-1 border-b-2 border-white">
-      <div className="col-span-2 flex gap-2 p-2">
+    <div className="grid grid-cols-8 max-md:grid-rows-3 w-full md:h-14  py-1 border-b-2 border-white">
+      <div className="max-md:col-span-8 col-span-2 flex gap-2 p-2">
         <figure className=" rounded-full overflow-hidden max-h-8 h-8 w-8 ">
           <Image
             className="mx-auto"
@@ -66,17 +66,17 @@ const TemporaryAccountListBar = ({ account }: TemporaryAccountListBarProps) => {
         </figure>
         <p className=" text-white leading-8">{account.name}</p>
       </div>
-      <div className="col-span-2">
+      <div className="max-md:col-span-8 col-span-2">
         <p className=" text-white ">{account.username}</p>
         <p className=" text-white ">{getPhoneString(account.phone)}</p>
       </div>
-      <div className="col-span-2">
+      <div className="max-md:col-span-8 col-span-2">
         <p className=" px-3 text-white text-end ">{`by ${account.admin}`}</p>
         <p className=" px-3 text-white text-end ">
           {getExpiredString(account.expireIn)}
         </p>
       </div>
-      <div className="col-span-1 flex ml-auto px-3 py-2">
+      <div className="max-md:col-span-3 col-span-1 flex ml-auto px-3 py-2">
         <figure className=" rounded-full overflow-hidden max-h-8 h-8 w-8 ">
           <Image
             className="mx-auto"
@@ -87,7 +87,7 @@ const TemporaryAccountListBar = ({ account }: TemporaryAccountListBarProps) => {
           />
         </figure>
       </div>
-      <div className="col-span-1 flex ml-auto px-3 py-2 relative">
+      <div className="max-md:col-span-5 col-span-1 flex ml-auto px-3 py-2 relative">
         <div className={`${isVisibieCopyToast ? "block" : "hidden"}`}>
           <div className="absolute flex -bottom-4 -left-9 bg-green-600 px-2 py-1 rounded-lg">
             <figure className=" rounded-full overflow-hidden max-h-6 h-6 w-6">
