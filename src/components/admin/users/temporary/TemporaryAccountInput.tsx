@@ -1,5 +1,5 @@
 import { UserCredentials } from "@/types/UserCredentials";
-import {  encryptObject } from "@/utils/crypto";
+import { encryptObject } from "@/utils/crypto";
 
 import axios, { AxiosResponse } from "axios";
 import { useRef, useState } from "react";
@@ -59,6 +59,7 @@ const TemporaryAccountInput = () => {
       $phone.current.value = "";
       $expireIn.current.value = "30";
       $icon.current.value = "";
+      setPreview(() => null);
     },
   });
 
@@ -93,7 +94,6 @@ const TemporaryAccountInput = () => {
         icon: iconUrl,
         expireIn: Number($expireIn.current.value),
       };
-
 
       const encryptedCredentials = encryptObject(credentials);
       if (!encryptedCredentials) {
