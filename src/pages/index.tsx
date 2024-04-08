@@ -78,7 +78,18 @@ export default function Home(
                   <div className="flex mt-5 cursor-pointer">
                     <button
                       className="mx-auto text-white font-bold bg-blue-700 hover:bg-blue-600 px-5 py-2 rounded-xl"
-                      onClick={() => signIn()}>
+                      onClick={() => {
+                        if ((props as Guest).userDetail) {
+                          if (window.localStorage.getItem("guest")) {
+                            return;
+                          }
+                          window.localStorage.setItem(
+                            "guest",
+                            (props as Guest).userDetail
+                          );
+                        }
+                        signIn();
+                      }}>
                       저장소로 이동
                     </button>
                   </div>
