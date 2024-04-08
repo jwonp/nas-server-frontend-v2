@@ -13,6 +13,7 @@ export default function SignIn({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
   const [error, setError] = useState<string>("");
+  const [isSubmitted, setSubmitted] = useState<boolean>(false);
   const $usernameInput = useRef<HTMLInputElement>(null);
   const $passwordInput = useRef<HTMLInputElement>(null);
   const $submitButton = useRef<HTMLButtonElement>(null);
@@ -62,7 +63,10 @@ export default function SignIn({
           <div className="w-full">
             <form
               method="post"
-              action="/api/auth/callback/credentials">
+              action="/api/auth/callback/credentials"
+              onSubmit={() => {
+                setSubmitted(() => true);
+              }}>
               <input
                 name="csrfToken"
                 type="hidden"
@@ -124,8 +128,11 @@ export default function SignIn({
               <button
                 ref={$submitButton}
                 type="submit"
-                className="text-white mb-1 mt-4 text-xl rounded-lg border w-full py-1">
-                로그인
+                disabled={isSubmitted}
+                className={`text-white mb-1 mt-4 text-xl rounded-lg border w-full py-1 ${
+                  isSubmitted ? "opacity-50" : "opacity-100"
+                }`}>
+                {isSubmitted ? "로그인 중 입니다..." : "로그인"}
               </button>
             </form>
             <form
