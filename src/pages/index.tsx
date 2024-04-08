@@ -79,10 +79,10 @@ export default function Home(
                     <button
                       className="mx-auto text-white font-bold bg-blue-700 hover:bg-blue-600 px-5 py-2 rounded-xl"
                       onClick={() => {
-                        if ((props as Guest).userDetail) {
-                          if (window.localStorage.getItem("guest")) {
-                            return;
-                          }
+                        const isGuestButNoItem =
+                          (props as Guest).userDetail &&
+                          !window.localStorage.getItem("guest");
+                        if (isGuestButNoItem) {
                           window.localStorage.setItem(
                             "guest",
                             (props as Guest).userDetail
