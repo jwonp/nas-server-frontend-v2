@@ -110,11 +110,11 @@ const StoragePage = ({
         {(isAdmin as AdminCheckResponse).isAdmin === true && (
           <section className="m-2 px-4 py-2 bg-green-700 rounded-lg">
             <div className="flex">
-              <p className="text-white mr-1">{`관리자 계정으로 로그인했습니다. 이`}</p>
-              <p className="text-white underline underline-offset-1">
-                <Link href={"/admin"}>{`링크`}</Link>
-              </p>
-              <p className="text-white">
+              <p className="text-white mr-1">
+                관리자 계정으로 로그인했습니다. 이{" "}
+                <u>
+                  <Link href={"/admin"}>{`링크`}</Link>
+                </u>
                 를 클릭해서 관리자 페이지로 이동할 수 있습니다.
               </p>
             </div>
