@@ -205,7 +205,7 @@ export const changeSelectedFileName = (
   return items;
 };
 
-export const saveTempFiles = () => {};
+
 
 export const uploadTempFileList = async (
   items: TempFileItem[],
